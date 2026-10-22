@@ -1,0 +1,25 @@
+# среда разработки
+.idea/
+*.iml
+.vscode/
+
+# система
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# данные — только в выпусках GitHub, не в git
+*.tsv
+*.tsv.gz
+*.sql
+*.sql.gz
+*.rar
+*.duckdb
+*.duckdb.wal
+air-data-v*/
+air-build-*/
