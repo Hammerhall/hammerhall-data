@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Генератор sto-data-v1 (магазин «Кременъ»). Сборка без Maven — ./build.sh sto из корня репозитория.
+         Сборочные тесты ищут airports.tsv.gz: -Dsto.airports=…, STO_AIRPORTS или sto/work/airports.tsv.gz. -->
+    <parent>
+        <groupId>io.hammerhall</groupId>
+        <artifactId>hammerhall-data</artifactId>
+        <version>0.1.0</version>
+    </parent>
+    <artifactId>sto-gen</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.hammerhall</groupId>
+            <artifactId>data-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.hammerhall</groupId>
+            <artifactId>data-core</artifactId>
+            <type>test-jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>io.hammerhall.data.sto.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

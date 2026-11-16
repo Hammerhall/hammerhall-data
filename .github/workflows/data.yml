@@ -1,0 +1,316 @@
+# Выпуск любого набора репозитория (<код>-data-v*): сборка и тесты, small дважды на Ubuntu и на Windows, сверка
+# манифестов, full на Ubuntu с замером времени и памяти, проверка выпуска против <код>/expected/, выгрузка в GitHub Release.
+# Всё доменное — из паспорта набора <код>/dataset.properties (tools/ci/dataset.sh, tools/ci/inputs.sh).
+#
+#   тег sto-data-v1         → набор sto, всё выше; проверка против ожиданий — обязательна; выпуск — после одобрения
+#                             в окружении <код>-data-release
+#   запуск вручную          → набор из поля «dataset», то же без выпуска; проверка — справочно; новые ожидания
+#                             (freeze) — в артефакты «expected-*»
+#   набор без генератора на Java (build≠java в паспорте, нет <код>/src) → задача «Набор» падает с причиной, остальные не идут
+#
+# Тождество выпуска — содержимое: rows и sha256_tsv таблиц (+ тексты и поля манифеста, см. README.md).
+# Сжатые байты между ОС могут отличаться — это отчёт в сводке, не провал.
+#
+# Версии actions — на Node 24 (сверено 16.11.2026: checkout v5, setup-java v5, setup-python v6, upload-artifact v6,
+# download-artifact v7); прогон #3 предупреждал про Node 20 у upload-artifact v5 и download-artifact v6.
+name: data
+
+on:
+  push:
+    tags: ['*-data-v*']
+  workflow_dispatch:
+    inputs:
+      dataset:
+        description: 'Код набора — папка в репозитории (sto, …)'
+        type: string
+        required: true
+        default: sto
+      full:
+        description: 'Собрать и full (≈ 10 мин на GitHub)'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: data-${{ github.ref }}-${{ inputs.dataset || 'tag' }}
+  cancel-in-progress: false
+
+env:
+  # Точная сборка JDK: от неё зависят tzdata (пояса городов) и встроенная zlib (байты gzip). Менять — осознанно,
+  # вместе с новой версией генератора или повторной заморозкой ожиданий. Запись — как в списке Temurin у setup-java:
+  # с «+сборка» он ищет точное совпадение, и «25.0.4+7» не равно «25.0.4+7.0.LTS».
+  JAVA_VERSION: '25.0.4+7.0.LTS'
+  PYTHON_VERSION: '3.12'
+  # тег — проверка против ожиданий обязательна; ручной запуск — справочно
+  STRICT: ${{ github.event_name == 'push' && '1' || '' }}
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  dataset:
+    name: Набор
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      code: ${{ steps.passport.outputs.code }}
+      version: ${{ steps.passport.outputs.version }}
+      environment: ${{ steps.passport.outputs.environment }}
+      xmx: ${{ steps.passport.outputs.xmx }}
+      budget_minutes: ${{ steps.passport.outputs.budget_minutes }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Паспорт набора (код — из тега или поля «dataset»)
+        id: passport
+        env:
+          EVENT: ${{ github.event_name }}
+          TAG: ${{ github.ref_name }}
+          DATASET: ${{ inputs.dataset }}
+        run: bash tools/ci/dataset.sh
+
+  small:
+    name: small · ${{ matrix.os }}
+    needs: dataset
+    strategy:
+      fail-fast: false
+      matrix:
+        # образы закреплены: ubuntu-latest переезжает на Ubuntu 26 (другие пакеты — Postgres, Maven)
+        os: [ubuntu-24.04, windows-2025]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    env:
+      CODE: ${{ needs.dataset.outputs.code }}
+      VERSION: ${{ needs.dataset.outputs.version }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Среда
+        run: |
+          java -XshowSettings:properties -version 2>&1 | grep -E 'java.runtime.version|java.vendor.version|os.name|file.encoding|native.encoding' || true
+          python --version
+          git config --get core.autocrlf || true
+          file build.sh 2>/dev/null || true
+
+      - name: Входы набора (паспорт)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash tools/ci/inputs.sh "$CODE" work/inputs
+
+      - name: JUnit — в локальный репозиторий Maven (build.sh берёт его оттуда)
+        # без Maven: список банок — из build.sh, каждая сверяется с .sha1 из Maven Central. Папка — та же, что у
+        # build.sh: M2_REPO, если задана (на образе Windows она есть — C:\ProgramData\m2), иначе ~/.m2/repository
+        run: |
+          M2="${M2_REPO:-$HOME/.m2/repository}"
+          if [ "$RUNNER_OS" = Windows ]; then M2="$(cygpath -u "$M2")"; fi
+          echo "банки JUnit → $M2"
+          for j in $(sed -n '/^JUNIT=(/,/)$/p' build.sh | tr -d '()' | sed 's/JUNIT=//'); do
+            [ -f "$M2/$j" ] && continue
+            mkdir -p "$M2/$(dirname "$j")"
+            curl -fsSL --retry 5 --retry-delay 3 -o "$M2/$j" "https://repo1.maven.org/maven2/$j"
+            want="$(curl -fsSL --retry 5 --retry-delay 3 "https://repo1.maven.org/maven2/$j.sha1" | cut -c1-40)"
+            [ "$(sha1sum "$M2/$j" | cut -c1-40)" = "$want" ] || { echo "::error::sha1 не сошёлся: $j"; exit 1; }
+            echo "✓ $j"
+          done
+
+      - name: Сборка (предупреждения — ошибки) и тесты — ядро и набор
+        run: ./build.sh "$CODE"
+
+      - name: Схема в git совпадает с генератором
+        run: |
+          ./build.sh "$CODE" exec schema --out work/schema
+          for f in schema-tables.sql schema-constraints.sql schema.mmd schema-fields.md; do
+            diff -u "$CODE/schema/$f" "work/schema/$f"
+          done
+
+      - name: small — два прогона
+        run: |
+          for run in a b; do
+            ./build.sh "$CODE" exec generate --profile small --out "work/small-$run" --inputs strict
+          done
+
+      - name: Два прогона — один выпуск, побайтно
+        run: |
+          cmp work/small-a/manifest.json work/small-b/manifest.json
+          cmp work/small-a/SOURCE.md work/small-b/SOURCE.md
+          python -X utf8 -I tools/compare_manifests.py work/small-a/manifest.json work/small-b/manifest.json \
+            --names "$RUNNER_OS-a" "$RUNNER_OS-b"
+
+      - name: Внутренних имён платформы в выпуске нет
+        run: ./build.sh "$CODE" exec names work/small-a
+
+      - name: Версия выпуска = тег
+        if: github.event_name == 'push'
+        run: |
+          python -X utf8 -I -c "import json,sys; v=json.load(open('work/small-a/manifest.json',encoding='utf-8'))['version']; sys.exit(0 if v=='${{ github.ref_name }}' else 'версия в манифесте '+v+' ≠ тег ${{ github.ref_name }}')"
+
+      - name: Проверка выпуска против ожиданий (<код>/expected/)
+        run: |
+          if python -X utf8 -I tools/check_data.py work/small-a; then exit 0; fi
+          if [ -n "$STRICT" ]; then exit 1; fi
+          echo "::warning::small не совпал с $CODE/expected/ — для ручного запуска это справка; новые ожидания — в артефакте expected-small"
+
+      - name: Загрузка в Postgres
+        if: runner.os == 'Linux'
+        run: bash tools/pg-check.sh work/small-a /usr/lib/postgresql/16/bin
+
+      - name: Новые ожидания (freeze)
+        if: github.event_name == 'workflow_dispatch' && runner.os == 'Linux'
+        run: ./build.sh "$CODE" exec freeze work/small-a --out "work/expected/$VERSION-small.json"
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: small-${{ runner.os }}
+          path: work/small-a/
+          retention-days: 7
+          compression-level: 0
+
+      - uses: actions/upload-artifact@v6
+        if: github.event_name == 'workflow_dispatch' && runner.os == 'Linux'
+        with:
+          name: expected-small
+          path: work/expected/
+          retention-days: 30
+
+  compare:
+    name: Сверка Linux ↔ Windows
+    needs: small
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          sparse-checkout: tools
+      - uses: actions/download-artifact@v7
+        with:
+          pattern: small-*
+          path: work
+      - name: Тождество — rows и sha256_tsv; сжатые байты — справочно
+        run: |
+          python3 -X utf8 -I tools/compare_manifests.py work/small-Linux/manifest.json work/small-Windows/manifest.json \
+            --names Linux Windows --summary "$GITHUB_STEP_SUMMARY"
+
+  full:
+    name: full · ubuntu
+    needs: dataset
+    if: github.event_name == 'push' || inputs.full
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    env:
+      CODE: ${{ needs.dataset.outputs.code }}
+      VERSION: ${{ needs.dataset.outputs.version }}
+      BUDGET_MINUTES: ${{ needs.dataset.outputs.budget_minutes }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Входы набора (паспорт)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash tools/ci/inputs.sh "$CODE" work/inputs
+      - name: Сборка
+        run: ./build.sh "$CODE" compile
+
+      - name: full — время и память (бюджет и куча — из паспорта набора, 2 ядра)
+        env:
+          JAVA_XMX: ${{ needs.dataset.outputs.xmx }}
+        run: |
+          command -v /usr/bin/time >/dev/null || sudo apt-get install -y -qq time
+          nproc
+          /usr/bin/time -v -o work/full-time.txt \
+            ./build.sh "$CODE" exec generate --profile full --out work/full --inputs strict \
+            | tee work/full-log.txt | { grep -v '^  OK ' || true; }
+          {
+            echo "### full: время и память"
+            echo
+            echo '```'
+            grep -E 'Elapsed|Maximum resident|User time|System time|Percent of CPU' work/full-time.txt
+            grep -E 'итого:|проверки ключей и ссылок' work/full-log.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          secs=$(awk -F': ' '/Elapsed/ { n = split($2, t, ":"); s = 0; for (i = 1; i <= n; i++) s = s * 60 + t[i]; print int(s) }' work/full-time.txt)
+          [ "$secs" -le $((BUDGET_MINUTES * 60)) ] || echo "::warning::full шёл $((secs / 60)) мин — больше бюджета $BUDGET_MINUTES мин"
+
+      - name: Проверка выпуска против ожиданий (<код>/expected/)
+        run: |
+          if python -X utf8 -I tools/check_data.py work/full; then exit 0; fi
+          if [ -n "$STRICT" ]; then exit 1; fi
+          echo "::warning::full не совпал с $CODE/expected/ — для ручного запуска это справка"
+
+      - name: Новые ожидания (freeze)
+        if: github.event_name == 'workflow_dispatch'
+        run: ./build.sh "$CODE" exec freeze work/full --out "work/expected/$VERSION-full.json"
+      - uses: actions/upload-artifact@v6
+        if: github.event_name == 'workflow_dispatch'
+        with:
+          name: expected-full
+          path: work/expected/
+          retention-days: 30
+
+      - uses: actions/upload-artifact@v6
+        if: github.event_name == 'push'
+        with:
+          name: full
+          path: work/full/
+          retention-days: 3
+          compression-level: 0
+
+  publish:
+    name: Выпуск GitHub
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    needs: [dataset, small, compare, full]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    # Окружение набора (<код>-data-release, из паспорта): правило «только теги <код>-data-v*» и обязательное одобрение.
+    # Ключ — секрет окружения RELEASE_TOKEN (если GITHUB_TOKEN организации не может писать в Releases); секретов
+    # репозитория workflow не берёт.
+    environment: ${{ needs.dataset.outputs.environment }}
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ github.ref_name }}
+      CODE: ${{ needs.dataset.outputs.code }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          sparse-checkout: |
+            tools
+            ${{ needs.dataset.outputs.code }}
+      - uses: actions/download-artifact@v7
+        with:
+          name: full
+          path: work/full
+      - uses: actions/download-artifact@v7
+        with:
+          name: small-Linux
+          path: work/${{ github.ref_name }}-small
+      - name: small — одним архивом (tar без отметок времени и владельцев)
+        run: |
+          tar --sort=name --owner=0 --group=0 --numeric-owner --mtime='1970-01-01 00:00Z' --mode='u=rwX,go=rX' \
+            -C work -cf "work/$TAG-small.tar" "$TAG-small"
+          sha256sum "work/$TAG-small.tar"
+      - name: Заметки к выпуску
+        run: |
+          python3 -X utf8 -I tools/ci/notes.py "$CODE" "$TAG" work/full > work/notes.md
+          cat work/notes.md
+      - name: Создать выпуск и выложить файлы
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
+        run: |
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 \
+            || gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --verify-tag --title "$TAG" --notes-file work/notes.md
+          gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber work/full/* "work/$TAG-small.tar"

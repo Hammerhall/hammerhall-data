@@ -10,8 +10,8 @@ if hasattr(sys.stdout, 'reconfigure'):
 
 EXPECTED = {
  "airports.tsv.gz": [
-  5501,
-  "a049dbc3ff9ee29a70f8c3546953090b326961ec600b0318e975288d47dfeb41"
+  5498,
+  "7473494a65e9af17527beebb9d8c632739b079c4b26eb377b65cd5bbde16f62e"
  ],
  "airplanes.tsv.gz": [
   10,

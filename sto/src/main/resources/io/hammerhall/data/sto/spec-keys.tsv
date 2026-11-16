@@ -1,0 +1,111 @@
+key	name_ru	name_en	unit	unit_ru	value_type
+screen_diagonal	Диагональ экрана	Screen size	in	"	num
+ram_gb	Оперативная память	RAM	GB	ГБ	num
+storage_gb	Встроенная память	Storage	GB	ГБ	num
+ssd_gb	Объём SSD	SSD capacity	GB	ГБ	num
+capacity_gb	Ёмкость	Capacity	GB	ГБ	num
+battery_mah	Ёмкость аккумулятора	Battery capacity	mAh	мА·ч	num
+battery_wh	Ёмкость батареи	Battery capacity	Wh	Вт·ч	num
+battery_h	Время работы от батареи	Battery life	h	ч	num
+battery_days	Время работы без подзарядки	Battery life	days	дн.	num
+battery_min	Время работы от аккумулятора	Battery runtime	min	мин	num
+camera_mp	Разрешение камеры	Camera resolution	MP	Мп	num
+cpu_cores	Ядер процессора	CPU cores			num
+cpu_ghz	Частота процессора	CPU clock	GHz	ГГц	num
+nfc	NFC	NFC			text
+network_5g	Поддержка 5G	5G support			text
+sim_count	Число SIM-карт	SIM slots			num
+color	Цвет	Colour			text
+material	Материал	Material			text
+compatible_model	Совместимая модель	Compatible model			text
+power_w	Мощность	Power	W	Вт	num
+ports	Число разъёмов	Ports			num
+length_m	Длина	Length	m	м	num
+connector	Разъёмы	Connectors			text
+interface	Интерфейс	Interface			text
+read_mbs	Скорость чтения	Read speed	MB/s	МБ/с	num
+resolution	Разрешение	Resolution			text
+refresh_hz	Частота обновления	Refresh rate	Hz	Гц	num
+panel	Тип матрицы	Panel type			text
+smart_tv	Smart TV	Smart TV			text
+hdr	HDR	HDR			text
+gpu	Видеокарта	Graphics			text
+os_preinstalled	Операционная система	Operating system			text
+anc	Активное шумоподавление	Active noise cancelling			text
+bt_version	Версия Bluetooth	Bluetooth version			num
+driver_mm	Размер динамика	Driver size	mm	мм	num
+channels	Конфигурация каналов	Channel configuration			text
+waterproof	Защита от воды	Water resistance			text
+wifi_standard	Стандарт Wi-Fi	Wi-Fi standard			text
+speed_mbps	Скорость	Speed	Mbps	Мбит/с	num
+connection	Подключение	Connection			text
+dpi	Разрешение сенсора	Sensor resolution	dpi	dpi	num
+switch_type	Тип переключателей	Switch type			text
+color_print	Цветная печать	Colour printing			text
+ppm	Скорость печати	Print speed	ppm	стр/мин	num
+duplex	Двусторонняя печать	Duplex printing			text
+yield_pages	Ресурс	Page yield	pages	стр.	num
+sensor	Матрица	Sensor			text
+video	Видео	Video			text
+focal_mm	Фокусное расстояние	Focal length	mm	мм	num
+aperture	Светосила	Aperture			text
+zoom_x	Оптический зум	Optical zoom	x	×	num
+flight_min	Время полёта	Flight time	min	мин	num
+range_km	Дальность	Range	km	км	num
+max_speed_kmh	Максимальная скорость	Top speed	km/h	км/ч	num
+max_load_kg	Максимальная нагрузка	Max load	kg	кг	num
+volume_l	Объём	Volume	l	л	num
+freezer_l	Объём морозильной камеры	Freezer volume	l	л	num
+height_cm	Высота	Height	cm	см	num
+width_cm	Ширина	Width	cm	см	num
+depth_cm	Глубина	Depth	cm	см	num
+no_frost	No Frost	No Frost			text
+energy_class	Класс энергопотребления	Energy class			text
+noise_db	Уровень шума	Noise level	dB	дБ	num
+load_kg	Загрузка	Load capacity	kg	кг	num
+spin_rpm	Скорость отжима	Spin speed	rpm	об/мин	num
+place_settings	Комплектов посуды	Place settings			num
+burners	Конфорок	Cooking zones			num
+suction_w	Мощность всасывания	Suction power	W	Вт	num
+dust_l	Объём пылесборника	Dust capacity	l	л	num
+cordless	Беспроводной	Cordless			text
+steam_gmin	Подача пара	Steam output	g/min	г/мин	num
+programs	Программ	Programmes			num
+area_m2	Площадь помещения	Room area	m²	м²	num
+btu	Холодопроизводительность	Cooling capacity	BTU	BTU	num
+inverter	Инверторный компрессор	Inverter compressor			text
+modes	Режимов	Modes			num
+voltage_v	Напряжение	Voltage	V	В	num
+battery_ah	Ёмкость аккумулятора	Battery capacity	Ah	А·ч	num
+torque_nm	Крутящий момент	Torque	N·m	Н·м	num
+disc_mm	Диаметр диска	Disc diameter	mm	мм	num
+pieces	Предметов в наборе	Pieces			num
+diameter_cm	Диаметр	Diameter	cm	см	num
+induction	Для индукционных плит	Induction-ready			text
+lumen	Световой поток	Luminous flux	lm	лм	num
+socket	Цоколь	Socket			text
+color_temp_k	Цветовая температура	Colour temperature	K	К	num
+outlets	Розеток	Outlets			num
+pack_qty	Штук в упаковке	Pack quantity			num
+cell_type	Типоразмер	Battery size			text
+protocol	Протокол связи	Protocol			text
+vesa	Крепление VESA	VESA mount			text
+max_diagonal	Максимальная диагональ	Max screen size	in	"	num
+handsets	Трубок	Handsets			num
+backlight	Подсветка экрана	Screen backlight			text
+gps	GPS	GPS			text
+case_mm	Размер корпуса	Case size	mm	мм	num
+sheets	Листов в пачке	Sheets per pack			num
+format	Формат	Format			text
+tdp_w	Рассеиваемая мощность	Heat dissipation	W	Вт	num
+form_factor	Форм-фактор	Form factor			text
+memory_type	Тип памяти	Memory type			text
+frequency_mhz	Частота	Frequency	MHz	МГц	num
+cutting_width_cm	Ширина скашивания	Cutting width	cm	см	num
+pressure_bar	Давление	Pressure	bar	бар	num
+type	Тип	Type			text
+country_of_origin	Страна производства	Country of manufacture			text
+model_year	Год выпуска модели	Model year			num
+net_weight_g	Вес нетто	Net weight	g	г	num
+vendor_code	Артикул производителя	Manufacturer part number			text
+body_material	Материал корпуса	Body material			text

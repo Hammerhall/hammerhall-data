@@ -1,0 +1,349 @@
+# Дерево категорий «Кременъ». Отступ — 2 пробела на уровень (корень — без отступа, уровень 1).
+# Строка: название ru | название en [| вид товара [| facet=ключ:порог=ru/en;…;*=ru/en]]
+# Вид — код из kinds.tsv: у листа он обязателен. facet — лист делится на дочерние по значению характеристики:
+# число — «не больше порога», текст — равенство; «*» — остальное. Дочерние названия — полностью.
+Все товары | All products
+  Смартфоны и гаджеты | Phones and gadgets
+    Смартфоны и телефоны | Smartphones and phones
+      Смартфоны | Smartphones | smartphone | facet=storage_gb:128=Смартфоны до 128 ГБ/Smartphones up to 128 GB;256=Смартфоны 256 ГБ/Smartphones with 256 GB;*=Смартфоны 512 ГБ и больше/Smartphones with 512 GB or more
+      Складные смартфоны | Foldable smartphones | smartphone_fold
+      Защищённые смартфоны | Rugged smartphones | smartphone_rugged | facet=battery_mah:8000=Защищённые смартфоны с батареей до 8 000 мА·ч/Rugged smartphones up to 8,000 mAh;*=Защищённые смартфоны с батареей от 8 500 мА·ч/Rugged smartphones 8,500 mAh and more
+      Кнопочные телефоны | Feature phones | feature_phone | facet=sim_count:1=Кнопочные телефоны с одной SIM-картой/Single-SIM feature phones;*=Кнопочные телефоны с двумя SIM-картами/Dual-SIM feature phones
+      Телефоны для пожилых | Senior phones | senior_phone
+      Радиотелефоны | Cordless phones | dect_phone
+    Планшеты и электронные книги | Tablets and e-readers
+      Планшеты | Tablets | tablet | facet=screen_diagonal:9=Планшеты до 9 дюймов/Tablets up to 9 inches;11.9=Планшеты 10–11 дюймов/Tablets 10–11 inches;*=Планшеты от 12 дюймов/Tablets 12 inches and larger
+      Детские планшеты | Kids tablets | tablet_kids
+      Графические планшеты | Graphics tablets | graphics_tablet
+      Электронные книги | E-readers | ereader | facet=screen_diagonal:7=Электронные книги до 7 дюймов/E-readers up to 7 inches;*=Электронные книги от 7,8 дюйма/E-readers 7.8 inches and larger
+    Умные часы и браслеты | Smartwatches and fitness bands
+      Умные часы | Smartwatches | smartwatch | facet=gps:да=Умные часы с GPS/Smartwatches with GPS;*=Умные часы без GPS/Smartwatches without GPS
+      Детские умные часы | Kids smartwatches | smartwatch_kids
+      Фитнес-браслеты | Fitness bands | fitness_band
+      Ремешки для часов и браслетов | Watch and band straps | watch_strap | facet=material:силикон=Силиконовые ремешки/Silicone straps;кожа=Кожаные ремешки/Leather straps;*=Ремешки из нейлона и металла/Nylon and metal straps
+    Аксессуары для смартфонов | Smartphone accessories
+      Чехлы для смартфонов | Smartphone cases
+        Чехлы-накладки | Back covers | case | facet=material:силикон=Силиконовые чехлы-накладки/Silicone back covers;пластик=Пластиковые чехлы-накладки/Plastic back covers;*=Чехлы-накладки из кожи и ткани/Leather and fabric back covers
+        Чехлы-книжки | Folio cases | case_folio
+        Противоударные чехлы | Rugged cases | case_rugged
+      Защита экрана | Screen protection
+        Защитные стёкла | Tempered glass | glass | facet=type:2.5D=Защитные стёкла 2.5D/2.5D tempered glass;3D=Защитные стёкла 3D/3D tempered glass;*=Матовые защитные стёкла/Matte tempered glass
+        Защитные плёнки | Protective films | film
+      Зарядные устройства | Chargers
+        Сетевые зарядные устройства | Wall chargers | charger | facet=power_w:25=Сетевые зарядные устройства до 25 Вт/Wall chargers up to 25 W;45=Сетевые зарядные устройства 30–45 Вт/Wall chargers 30–45 W;*=Сетевые зарядные устройства от 65 Вт/Wall chargers 65 W and more
+        Беспроводные зарядные устройства | Wireless chargers | charger_wireless
+        Автомобильные зарядные устройства | Car chargers | charger_car
+      Кабели и переходники | Cables and adapters
+        Кабели USB-C | USB-C cables | cable_usbc | facet=length_m:1=Кабели USB-C до 1 м/USB-C cables up to 1 m;*=Кабели USB-C от 1,5 м/USB-C cables 1.5 m and longer
+        Кабели micro-USB | Micro-USB cables | cable_micro
+        Переходники | Adapters | adapter
+      Внешние аккумуляторы | Power banks | powerbank | facet=battery_mah:10000=Внешние аккумуляторы до 10 000 мА·ч/Power banks up to 10,000 mAh;20000=Внешние аккумуляторы 20 000 мА·ч/Power banks 20,000 mAh;*=Внешние аккумуляторы от 30 000 мА·ч/Power banks 30,000 mAh and more
+      Держатели для смартфонов | Phone holders | holder | facet=type:магнитный=Магнитные держатели/Magnetic holders;на присоске=Держатели на присоске/Suction cup holders;в дефлектор=Держатели в дефлектор/Vent clip holders;*=Настольные держатели/Desk holders
+      Карты памяти | Memory cards | memory_card | facet=capacity_gb:64=Карты памяти до 64 ГБ/Memory cards up to 64 GB;256=Карты памяти 128–256 ГБ/Memory cards 128–256 GB;*=Карты памяти от 512 ГБ/Memory cards 512 GB and more
+      Стабилизаторы и моноподы | Gimbals and selfie sticks | gimbal
+    Аксессуары для планшетов | Tablet accessories
+      Чехлы для планшетов | Tablet cases | case_tablet
+      Стилусы | Styluses | stylus
+      Клавиатуры для планшетов | Tablet keyboards | tablet_keyboard
+  Компьютеры и ноутбуки | Computers and laptops
+    Ноутбуки | Laptops
+      Ноутбуки для работы и учёбы | Laptops for work and study | laptop | facet=screen_diagonal:14=Ноутбуки для работы и учёбы 13–14 дюймов/Work and study laptops 13–14 inches;16=Ноутбуки для работы и учёбы 15–16 дюймов/Work and study laptops 15–16 inches;*=Ноутбуки для работы и учёбы от 17 дюймов/Work and study laptops 17 inches and larger
+      Игровые ноутбуки | Gaming laptops | laptop_gaming | facet=screen_diagonal:16=Игровые ноутбуки 15–16 дюймов/Gaming laptops 15–16 inches;*=Игровые ноутбуки 17–18 дюймов/Gaming laptops 17–18 inches
+      Ультрабуки | Ultrabooks | ultrabook | facet=screen_diagonal:14=Ультрабуки 13–14 дюймов/Ultrabooks 13–14 inches;*=Ультрабуки 15–16 дюймов/Ultrabooks 15–16 inches
+      Ноутбуки-трансформеры | Convertible laptops | laptop_convertible | facet=screen_diagonal:14=Ноутбуки-трансформеры 13–14 дюймов/Convertible laptops 13–14 inches;*=Ноутбуки-трансформеры 16 дюймов/Convertible laptops 16 inches
+    Аксессуары для ноутбуков | Laptop accessories
+      Сумки и рюкзаки для ноутбуков | Laptop bags and backpacks | laptop_bag | facet=type:сумка=Сумки для ноутбуков/Laptop bags;рюкзак=Рюкзаки для ноутбуков/Laptop backpacks;*=Чехлы для ноутбуков/Laptop sleeves
+      Подставки для ноутбуков | Laptop stands | laptop_stand
+      Блоки питания для ноутбуков | Laptop power adapters | laptop_charger
+      Док-станции | Docking stations | dock
+    Компьютеры | Desktop computers
+      Системные блоки | Desktop PCs | desktop | facet=gpu:встроенная=Системные блоки со встроенной графикой/Desktop PCs with integrated graphics;*=Системные блоки с дискретной видеокартой/Desktop PCs with discrete graphics
+      Игровые компьютеры | Gaming PCs | desktop_gaming
+      Моноблоки | All-in-one PCs | aio | facet=screen_diagonal:24=Моноблоки до 24 дюймов/All-in-one PCs up to 24 inches;*=Моноблоки от 27 дюймов/All-in-one PCs 27 inches and larger
+      Мини-компьютеры | Mini PCs | mini_pc
+    Мониторы | Monitors
+      Мониторы для работы | Office monitors | monitor | facet=screen_diagonal:24=Мониторы для работы до 24 дюймов/Office monitors up to 24 inches;28=Мониторы для работы 27 дюймов/Office monitors 27 inches;*=Мониторы для работы от 31 дюйма/Office monitors 31 inches and larger
+      Игровые мониторы | Gaming monitors | monitor_gaming | facet=screen_diagonal:25=Игровые мониторы до 25 дюймов/Gaming monitors up to 25 inches;28=Игровые мониторы 27 дюймов/Gaming monitors 27 inches;*=Игровые мониторы от 31 дюйма/Gaming monitors 31 inches and larger
+      Кронштейны для мониторов | Monitor arms | monitor_arm | facet=type:для одного монитора=Кронштейны для одного монитора/Single monitor arms;*=Кронштейны для двух мониторов/Dual monitor arms
+    Периферия | Peripherals
+      Клавиатуры | Keyboards
+        Механические клавиатуры | Mechanical keyboards | keyboard_mech | facet=type:полноразмерная=Полноразмерные механические клавиатуры/Full-size mechanical keyboards;без цифрового блока=Механические клавиатуры без цифрового блока/Tenkeyless mechanical keyboards;*=Компактные механические клавиатуры/Compact mechanical keyboards
+        Мембранные клавиатуры | Membrane keyboards | keyboard | facet=connection:проводное=Проводные клавиатуры/Wired keyboards;*=Беспроводные клавиатуры/Wireless keyboards
+      Мыши | Mice
+        Игровые мыши | Gaming mice | mouse_gaming | facet=connection:проводное=Проводные игровые мыши/Wired gaming mice;*=Беспроводные игровые мыши/Wireless gaming mice
+        Офисные мыши | Office mice | mouse | facet=connection:проводное=Проводные офисные мыши/Wired office mice;*=Беспроводные офисные мыши/Wireless office mice
+      Комплекты клавиатура и мышь | Keyboard and mouse sets | kb_mouse_set
+      Коврики для мыши | Mouse pads | mousepad
+      Веб-камеры | Webcams | webcam
+      Компьютерные гарнитуры | PC headsets | pc_headset | facet=connection:проводное=Проводные компьютерные гарнитуры/Wired PC headsets;*=Беспроводные компьютерные гарнитуры/Wireless PC headsets
+      Микрофоны | Microphones | microphone | facet=type:конденсаторный=Конденсаторные микрофоны/Condenser microphones;*=Динамические микрофоны/Dynamic microphones
+      Компьютерная акустика | PC speakers | pc_speakers
+    Комплектующие | PC components
+      Накопители | Storage drives
+        SSD-накопители M.2 | M.2 SSDs | ssd_m2 | facet=capacity_gb:512=SSD-накопители M.2 до 512 ГБ/M.2 SSDs up to 512 GB;1024=SSD-накопители M.2 1 ТБ/M.2 SSDs 1 TB;*=SSD-накопители M.2 от 2 ТБ/M.2 SSDs 2 TB and more
+        SSD-накопители 2,5" | 2.5" SSDs | ssd_sata | facet=capacity_gb:512=SSD-накопители 2,5" до 512 ГБ/2.5" SSDs up to 512 GB;1024=SSD-накопители 2,5" 1 ТБ/2.5" SSDs 1 TB;*=SSD-накопители 2,5" от 2 ТБ/2.5" SSDs 2 TB and more
+        Жёсткие диски | Hard drives | hdd | facet=capacity_gb:2000=Жёсткие диски до 2 ТБ/Hard drives up to 2 TB;8000=Жёсткие диски 4–8 ТБ/Hard drives 4–8 TB;*=Жёсткие диски от 12 ТБ/Hard drives 12 TB and more
+      Оперативная память | Memory modules | ram | facet=memory_type:DDR4=Модули памяти DDR4/DDR4 memory modules;*=Модули памяти DDR5/DDR5 memory modules
+      Блоки питания | Power supplies | psu | facet=power_w:650=Блоки питания до 650 Вт/Power supplies up to 650 W;850=Блоки питания 750–850 Вт/Power supplies 750–850 W;*=Блоки питания от 1000 Вт/Power supplies 1000 W and more
+      Корпуса | PC cases | pc_case
+      Системы охлаждения | CPU coolers | cooler | facet=type:башенный=Башенные кулеры/Tower coolers;*=Системы жидкостного охлаждения/Liquid coolers
+    Сетевое оборудование | Networking
+      Wi-Fi роутеры | Wi-Fi routers | router | facet=wifi_standard:Wi-Fi 5=Роутеры Wi-Fi 5/Wi-Fi 5 routers;Wi-Fi 6=Роутеры Wi-Fi 6/Wi-Fi 6 routers;*=Роутеры Wi-Fi 6E и Wi-Fi 7/Wi-Fi 6E and Wi-Fi 7 routers
+      Mesh-системы | Mesh systems | mesh
+      Коммутаторы | Network switches | switch
+      Сетевые адаптеры | Network adapters | net_adapter
+    Оргтехника | Office equipment
+      Принтеры и МФУ | Printers and MFPs
+        Лазерные принтеры | Laser printers | printer_laser | facet=color_print:да=Цветные лазерные принтеры/Colour laser printers;*=Чёрно-белые лазерные принтеры/Monochrome laser printers
+        Струйные принтеры | Inkjet printers | printer_inkjet
+        Лазерные МФУ | Laser MFPs | mfp_laser | facet=color_print:да=Цветные лазерные МФУ/Colour laser MFPs;*=Чёрно-белые лазерные МФУ/Monochrome laser MFPs
+        Струйные МФУ | Inkjet MFPs | mfp_inkjet
+      Картриджи | Cartridges | cartridge
+      Сканеры | Scanners | scanner
+      Шредеры | Paper shredders | shredder
+      Бумага для печати | Printing paper | paper
+    Внешние накопители | External storage
+      USB-флешки | USB flash drives | flash | facet=capacity_gb:32=USB-флешки до 32 ГБ/USB flash drives up to 32 GB;128=USB-флешки 64–128 ГБ/USB flash drives 64–128 GB;*=USB-флешки от 256 ГБ/USB flash drives 256 GB and more
+      Внешние жёсткие диски | External hard drives | ext_hdd
+      Внешние SSD | External SSDs | ext_ssd
+  ТВ, аудио и видео | TV, audio and video
+    Телевизоры | TVs
+      Телевизоры | Televisions
+        Телевизоры LED | LED TVs | tv | facet=screen_diagonal:32=Телевизоры LED до 32 дюймов/LED TVs up to 32 inches;43=Телевизоры LED 40–43 дюйма/LED TVs 40–43 inches;50=Телевизоры LED 50 дюймов/LED TVs 50 inches;55=Телевизоры LED 55 дюймов/LED TVs 55 inches;65=Телевизоры LED 65 дюймов/LED TVs 65 inches;*=Телевизоры LED от 75 дюймов/LED TVs 75 inches and larger
+        Телевизоры OLED | OLED TVs | tv_oled | facet=screen_diagonal:55=Телевизоры OLED до 55 дюймов/OLED TVs up to 55 inches;65=Телевизоры OLED 65 дюймов/OLED TVs 65 inches;*=Телевизоры OLED от 77 дюймов/OLED TVs 77 inches and larger
+        Телевизоры для кухни и дачи | Compact TVs | tv_small | facet=screen_diagonal:24=Компактные телевизоры до 24 дюймов/Compact TVs up to 24 inches;*=Компактные телевизоры 28–32 дюйма/Compact TVs 28–32 inches
+      Аксессуары для телевизоров | TV accessories
+        Кронштейны для телевизоров | TV mounts | tv_mount | facet=type:фиксированный=Фиксированные кронштейны/Fixed TV mounts;наклонный=Наклонные кронштейны/Tilting TV mounts;*=Поворотные кронштейны/Full-motion TV mounts
+        Пульты ДУ | Remote controls | remote
+        ТВ-приставки | TV boxes | tv_box
+        Антенны | TV antennas | antenna
+        Кабели HDMI | HDMI cables | cable_hdmi
+    Аудиотехника | Audio
+      Наушники | Headphones
+        Беспроводные наушники TWS | True wireless earbuds | tws | facet=anc:да=Наушники TWS с шумоподавлением/Noise-cancelling true wireless earbuds;*=Наушники TWS без шумоподавления/True wireless earbuds without ANC
+        Накладные наушники | On-ear headphones | headphones_onear | facet=connection:проводное=Проводные накладные наушники/Wired on-ear headphones;*=Беспроводные накладные наушники/Wireless on-ear headphones
+        Полноразмерные наушники | Over-ear headphones | headphones_over | facet=anc:да=Полноразмерные наушники с шумоподавлением/Noise-cancelling over-ear headphones;*=Полноразмерные наушники без шумоподавления/Over-ear headphones without ANC
+        Проводные наушники | Wired earphones | earphones_wired | facet=connector:3,5 мм=Проводные наушники с разъёмом 3,5 мм/3.5 mm wired earphones;*=Проводные наушники USB-C/USB-C wired earphones
+        Спортивные наушники | Sport headphones | headphones_sport
+      Портативные колонки | Portable speakers | speaker_portable | facet=power_w:10=Портативные колонки до 10 Вт/Portable speakers up to 10 W;30=Портативные колонки 16–30 Вт/Portable speakers 16–30 W;*=Портативные колонки от 40 Вт/Portable speakers 40 W and more
+      Умные колонки | Smart speakers | smart_speaker
+      Саундбары | Soundbars | soundbar | facet=channels:2.0=Саундбары 2.0/2.0 soundbars;2.1=Саундбары 2.1/2.1 soundbars;*=Многоканальные саундбары/Multichannel soundbars
+      Музыкальные центры | Music systems | music_center
+      Hi-Fi техника | Hi-Fi
+        Усилители | Amplifiers | amplifier
+        Акустические системы | Loudspeakers | loudspeakers | facet=type:полочная=Полочная акустика/Bookshelf loudspeakers;*=Напольная акустика/Floorstanding loudspeakers
+        Проигрыватели винила | Turntables | turntable
+      Караоке-системы | Karaoke systems | karaoke
+      Радиоприёмники | Radios | radio
+    Видеотехника | Video
+      Проекторы | Projectors | projector | facet=resolution:1920×1080=Проекторы Full HD/Full HD projectors;*=Проекторы 4K/4K projectors
+      Экраны для проекторов | Projector screens | projector_screen
+      Домашние кинотеатры | Home theatre systems | home_theater
+  Фото и видео | Photo and video
+    Фотоаппараты | Cameras
+      Беззеркальные камеры | Mirrorless cameras | camera_mirrorless
+      Зеркальные фотоаппараты | DSLR cameras | camera_dslr
+      Компактные камеры | Compact cameras | camera_compact
+      Камеры моментальной печати | Instant cameras | camera_instant
+    Объективы | Lenses | lens | facet=focal_mm:24=Широкоугольные объективы/Wide-angle lenses;50=Стандартные объективы/Standard lenses;*=Длиннофокусные объективы/Telephoto lenses
+    Экшн-камеры | Action cameras
+      Экшн-камеры | Action cameras | action_cam
+      Крепления для экшн-камер | Action camera mounts | action_mount
+    Квадрокоптеры | Drones | drone
+    Видеокамеры | Camcorders | camcorder
+    Фотоаксессуары | Photo accessories
+      Штативы | Tripods | tripod | facet=material:алюминий=Алюминиевые штативы/Aluminium tripods;*=Карбоновые штативы/Carbon tripods
+      Сумки для фототехники | Camera bags | camera_bag
+      Вспышки и свет | Flashes and lighting | flash_light
+      Аккумуляторы для камер | Camera batteries | camera_battery
+  Игры и развлечения | Gaming and entertainment
+    Игровые консоли | Game consoles
+      Стационарные консоли | Home consoles | console
+      Портативные консоли | Handheld consoles | console_handheld
+    Игровые аксессуары | Gaming accessories
+      Геймпады | Gamepads | gamepad | facet=connection:проводное=Проводные геймпады/Wired gamepads;*=Беспроводные геймпады/Wireless gamepads
+      Рули и джойстики | Wheels and joysticks | wheel
+      Игровые гарнитуры | Gaming headsets | gaming_headset
+      VR-шлемы | VR headsets | vr
+    Игровая мебель | Gaming furniture
+      Игровые кресла | Gaming chairs | gaming_chair | facet=material:экокожа=Игровые кресла из экокожи/Faux leather gaming chairs;*=Игровые кресла из ткани/Fabric gaming chairs
+      Игровые столы | Gaming desks | gaming_desk
+    Электротранспорт | E-mobility
+      Электросамокаты | E-scooters | escooter | facet=range_km:30=Электросамокаты с запасом хода до 30 км/E-scooters with range up to 30 km;*=Электросамокаты с запасом хода от 40 км/E-scooters with range 40 km and more
+      Электровелосипеды | E-bikes | ebike
+      Гироскутеры | Hoverboards | hoverboard
+  Крупная бытовая техника | Large appliances
+    Холодильники и морозильники | Refrigerators and freezers
+      Холодильники | Refrigerators
+        Двухкамерные холодильники | Two-door refrigerators | fridge | facet=height_cm:160=Двухкамерные холодильники высотой до 160 см/Two-door refrigerators up to 160 cm;189=Двухкамерные холодильники высотой 170–185 см/Two-door refrigerators 170–185 cm;*=Двухкамерные холодильники высотой от 190 см/Two-door refrigerators 190 cm and taller
+        Однокамерные холодильники | Single-door refrigerators | fridge_single | facet=height_cm:85=Однокамерные холодильники высотой до 85 см/Single-door refrigerators up to 85 cm;145=Однокамерные холодильники высотой 120–145 см/Single-door refrigerators 120–145 cm;*=Однокамерные холодильники высотой от 185 см/Single-door refrigerators 185 cm and taller
+        Холодильники Side-by-Side | Side-by-side refrigerators | fridge_sbs
+        Встраиваемые холодильники | Built-in refrigerators | fridge_builtin | facet=height_cm:122=Встраиваемые холодильники высотой до 122 см/Built-in refrigerators up to 122 cm;*=Встраиваемые холодильники высотой от 177 см/Built-in refrigerators 177 cm and taller
+      Морозильники | Freezers
+        Морозильные камеры | Upright freezers | freezer | facet=no_frost:да=Морозильные камеры No Frost/No Frost upright freezers;*=Морозильные камеры с ручной разморозкой/Manual defrost upright freezers
+        Морозильные лари | Chest freezers | freezer_chest
+      Винные шкафы | Wine coolers | wine_cooler
+    Стиральные и сушильные машины | Washers and dryers
+      Стиральные машины | Washing machines
+        Фронтальные стиральные машины | Front-load washing machines | washer | facet=load_kg:6=Фронтальные стиральные машины загрузкой до 6 кг/Front-load washers up to 6 kg;8=Фронтальные стиральные машины загрузкой 7–8 кг/Front-load washers 7–8 kg;*=Фронтальные стиральные машины загрузкой от 9 кг/Front-load washers 9 kg and more
+        Узкие стиральные машины | Slim washing machines | washer_slim | facet=load_kg:6=Узкие стиральные машины загрузкой до 6 кг/Slim washers up to 6 kg;*=Узкие стиральные машины загрузкой от 7 кг/Slim washers 7 kg and more
+        Стиральные машины с вертикальной загрузкой | Top-load washing machines | washer_top
+        Встраиваемые стиральные машины | Built-in washing machines | washer_builtin
+        Стирально-сушильные машины | Washer-dryers | washer_dryer
+      Сушильные машины | Tumble dryers | dryer
+    Посудомоечные машины | Dishwashers
+      Отдельностоящие посудомоечные машины | Freestanding dishwashers | dishwasher | facet=width_cm:45=Отдельностоящие посудомоечные машины шириной 45 см/Freestanding dishwashers 45 cm;*=Отдельностоящие посудомоечные машины шириной 60 см/Freestanding dishwashers 60 cm
+      Встраиваемые посудомоечные машины | Built-in dishwashers | dishwasher_builtin | facet=width_cm:45=Встраиваемые посудомоечные машины шириной 45 см/Built-in dishwashers 45 cm;*=Встраиваемые посудомоечные машины шириной 60 см/Built-in dishwashers 60 cm
+      Компактные посудомоечные машины | Compact dishwashers | dishwasher_compact
+    Плиты и духовые шкафы | Cookers and ovens
+      Электрические плиты | Electric cookers | cooker_electric | facet=width_cm:50=Электрические плиты шириной 50 см/Electric cookers 50 cm;*=Электрические плиты шириной 60 см/Electric cookers 60 cm
+      Газовые плиты | Gas cookers | cooker_gas | facet=width_cm:50=Газовые плиты шириной 50 см/Gas cookers 50 cm;*=Газовые плиты шириной 60 см/Gas cookers 60 cm
+      Варочные панели | Hobs
+        Индукционные варочные панели | Induction hobs | hob_induction | facet=width_cm:45=Индукционные варочные панели шириной до 45 см/Induction hobs up to 45 cm;*=Индукционные варочные панели шириной от 60 см/Induction hobs 60 cm and wider
+        Электрические варочные панели | Electric hobs | hob_electric
+        Газовые варочные панели | Gas hobs | hob_gas | facet=width_cm:45=Газовые варочные панели шириной до 45 см/Gas hobs up to 45 cm;*=Газовые варочные панели шириной от 60 см/Gas hobs 60 cm and wider
+      Духовые шкафы | Built-in ovens | oven | facet=type:электрический=Электрические духовые шкафы/Electric built-in ovens;*=Газовые духовые шкафы/Gas built-in ovens
+    Вытяжки | Cooker hoods
+      Купольные вытяжки | Chimney hoods | hood | facet=width_cm:50=Купольные вытяжки шириной 50 см/Chimney hoods 50 cm;60=Купольные вытяжки шириной 60 см/Chimney hoods 60 cm;*=Купольные вытяжки шириной 90 см/Chimney hoods 90 cm
+      Встраиваемые вытяжки | Built-in hoods | hood_builtin | facet=width_cm:50=Встраиваемые вытяжки шириной 50 см/Built-in hoods 50 cm;60=Встраиваемые вытяжки шириной 60 см/Built-in hoods 60 cm;*=Встраиваемые вытяжки шириной 90 см/Built-in hoods 90 cm
+  Техника для кухни | Kitchen appliances
+    Приготовление пищи | Cooking
+      Микроволновые печи | Microwave ovens | microwave | facet=volume_l:20=Микроволновые печи до 20 л/Microwave ovens up to 20 l;25=Микроволновые печи 21–25 л/Microwave ovens 21–25 l;*=Микроволновые печи от 26 л/Microwave ovens 26 l and more
+      Мультиварки | Multicookers | multicooker | facet=volume_l:4=Мультиварки до 4 л/Multicookers up to 4 l;*=Мультиварки от 5 л/Multicookers 5 l and more
+      Мини-печи | Mini ovens | mini_oven
+      Аэрогрили | Air fryers | air_fryer | facet=volume_l:4.5=Аэрогрили до 4,5 л/Air fryers up to 4.5 l;*=Аэрогрили от 5,5 л/Air fryers 5.5 l and more
+      Электрогрили | Electric grills | grill
+      Тостеры | Toasters | toaster
+      Вафельницы и сэндвичницы | Waffle and sandwich makers | waffle
+      Хлебопечки | Bread makers | bread_maker
+      Настольные плиты | Tabletop cookers | table_cooker
+    Приготовление напитков | Drinks
+      Электрочайники | Electric kettles | kettle | facet=material:стекло=Электрочайники стеклянные/Glass electric kettles;металл=Электрочайники металлические/Metal electric kettles;*=Электрочайники пластиковые/Plastic electric kettles
+      Термопоты | Thermopots | thermopot
+      Кофемашины и кофеварки | Coffee machines
+        Автоматические кофемашины | Bean-to-cup coffee machines | coffee_auto
+        Рожковые кофеварки | Espresso machines | coffee_espresso
+        Капсульные кофемашины | Capsule coffee machines | coffee_capsule
+        Капельные кофеварки | Drip coffee makers | coffee_drip
+      Кофемолки | Coffee grinders | coffee_grinder
+      Соковыжималки | Juicers | juicer | facet=type:центробежная=Центробежные соковыжималки/Centrifugal juicers;шнековая=Шнековые соковыжималки/Slow juicers;*=Соковыжималки для цитрусовых/Citrus juicers
+    Измельчение и смешивание | Food preparation
+      Блендеры | Blenders
+        Стационарные блендеры | Countertop blenders | blender | facet=power_w:1000=Стационарные блендеры до 1000 Вт/Countertop blenders up to 1000 W;*=Стационарные блендеры от 1200 Вт/Countertop blenders 1200 W and more
+        Погружные блендеры | Hand blenders | blender_hand | facet=power_w:800=Погружные блендеры до 800 Вт/Hand blenders up to 800 W;*=Погружные блендеры от 1000 Вт/Hand blenders 1000 W and more
+      Миксеры | Mixers | mixer | facet=type:ручной=Ручные миксеры/Hand mixers;*=Планетарные миксеры/Stand mixers
+      Кухонные комбайны | Food processors | food_processor
+      Мясорубки | Meat grinders | meat_grinder
+      Измельчители | Food choppers | chopper
+    Прочая техника для кухни | Other kitchen appliances
+      Кухонные весы | Kitchen scales | kitchen_scale
+      Вакуумные упаковщики | Vacuum sealers | vacuum_sealer
+      Сушилки для овощей и фруктов | Food dehydrators | dehydrator
+      Йогуртницы | Yogurt makers | yogurt_maker
+  Техника для дома | Home appliances
+    Уборка | Cleaning
+      Пылесосы | Vacuum cleaners
+        Пылесосы с контейнером | Bagless vacuum cleaners | vacuum
+        Пылесосы с мешком | Bagged vacuum cleaners | vacuum_bag
+        Вертикальные пылесосы | Stick vacuum cleaners | vacuum_stick | facet=battery_min:45=Вертикальные пылесосы до 45 минут работы/Stick vacuums up to 45 minutes;*=Вертикальные пылесосы от 60 минут работы/Stick vacuums 60 minutes and more
+        Моющие пылесосы | Washing vacuum cleaners | vacuum_wash
+        Ручные пылесосы | Handheld vacuum cleaners | vacuum_hand
+      Роботы-пылесосы | Robot vacuums | robot_vacuum | facet=type:сухая уборка=Роботы-пылесосы для сухой уборки/Dry robot vacuums;*=Роботы-пылесосы с влажной уборкой/Wet and dry robot vacuums
+      Пароочистители | Steam cleaners | steam_cleaner
+      Роботы-мойщики окон | Window cleaning robots | window_robot
+      Аксессуары для пылесосов | Vacuum accessories | vacuum_acc
+    Уход за одеждой | Garment care
+      Утюги | Irons | iron | facet=power_w:2200=Утюги до 2200 Вт/Irons up to 2200 W;*=Утюги от 2400 Вт/Irons 2400 W and more
+      Парогенераторы | Steam generator irons | steam_station
+      Отпариватели | Garment steamers | steamer | facet=type:ручной=Ручные отпариватели/Handheld garment steamers;*=Напольные отпариватели/Standing garment steamers
+      Швейные машины | Sewing machines | sewing
+    Климатическая техника | Climate control
+      Кондиционеры | Air conditioners
+        Сплит-системы | Split air conditioners | ac_split | facet=btu:9000=Сплит-системы для помещений до 25 м²/Split air conditioners for rooms up to 25 m²;12000=Сплит-системы для помещений 26–35 м²/Split air conditioners for rooms 26–35 m²;*=Сплит-системы для помещений от 36 м²/Split air conditioners for rooms 36 m² and larger
+        Мобильные кондиционеры | Portable air conditioners | ac_mobile
+      Вентиляторы | Fans
+        Напольные вентиляторы | Floor fans | fan_floor
+        Настольные вентиляторы | Desk fans | fan_desk
+        Колонные вентиляторы | Tower fans | fan_tower
+      Обогреватели | Heaters
+        Масляные радиаторы | Oil-filled radiators | heater_oil
+        Конвекторы | Convector heaters | heater_convector
+        Тепловентиляторы | Fan heaters | heater_fan | facet=type:керамический=Керамические тепловентиляторы/Ceramic fan heaters;*=Спиральные тепловентиляторы/Spiral fan heaters
+        Инфракрасные обогреватели | Infrared heaters | heater_ir
+      Увлажнители воздуха | Humidifiers | humidifier | facet=type:ультразвуковой=Ультразвуковые увлажнители/Ultrasonic humidifiers;традиционный=Традиционные увлажнители/Evaporative humidifiers;*=Паровые увлажнители/Steam humidifiers
+      Очистители воздуха | Air purifiers | purifier
+      Метеостанции | Weather stations | weather_station
+    Водонагреватели | Water heaters
+      Накопительные водонагреватели | Storage water heaters | water_heater | facet=volume_l:50=Накопительные водонагреватели до 50 л/Storage water heaters up to 50 l;*=Накопительные водонагреватели от 80 л/Storage water heaters 80 l and more
+      Проточные водонагреватели | Instant water heaters | water_heater_instant
+    Фильтры для воды | Water filters | water_filter | facet=type:кувшин=Фильтры-кувшины/Water filter pitchers;под мойку=Фильтры под мойку/Under-sink water filters;*=Насадки на кран/Faucet water filters
+  Красота и здоровье | Beauty and health
+    Уход за волосами | Hair care
+      Фены | Hair dryers | hair_dryer | facet=power_w:2000=Фены до 2000 Вт/Hair dryers up to 2000 W;*=Фены от 2200 Вт/Hair dryers 2200 W and more
+      Стайлеры | Hair stylers | styler
+      Выпрямители для волос | Hair straighteners | straightener
+      Плойки | Curling irons | curler
+    Бритьё и стрижка | Shaving and grooming
+      Электробритвы | Electric shavers | shaver | facet=type:роторная=Роторные электробритвы/Rotary shavers;*=Сеточные электробритвы/Foil shavers
+      Триммеры | Trimmers | trimmer
+      Машинки для стрижки | Hair clippers | clipper
+      Эпиляторы | Epilators | epilator
+    Уход за полостью рта | Oral care
+      Электрические зубные щётки | Electric toothbrushes | toothbrush | facet=type:звуковая=Звуковые зубные щётки/Sonic toothbrushes;*=Вращательные зубные щётки/Oscillating toothbrushes
+      Ирригаторы | Oral irrigators | irrigator
+      Насадки для зубных щёток | Toothbrush heads | brush_heads
+    Здоровье | Health
+      Напольные весы | Bathroom scales | bath_scale | facet=type:электронные=Электронные напольные весы/Electronic bathroom scales;*=Умные напольные весы/Smart bathroom scales
+      Тонометры | Blood pressure monitors | tonometer | facet=type:плечевой=Плечевые тонометры/Upper arm blood pressure monitors;*=Запястные тонометры/Wrist blood pressure monitors
+      Массажёры | Massagers | massager | facet=type:для шеи=Массажёры для шеи/Neck massagers;перкуссионный=Перкуссионные массажёры/Percussion massagers;*=Массажёры для ног/Foot massagers
+      Термометры | Thermometers | thermometer
+  Умный дом и освещение | Smart home and lighting
+    Умный дом | Smart home
+      Умные лампы | Smart bulbs | smart_bulb | facet=socket:E27=Умные лампы E27/E27 smart bulbs;E14=Умные лампы E14/E14 smart bulbs;*=Умные лампы GU10/GU10 smart bulbs
+      Умные розетки | Smart plugs | smart_plug
+      Датчики | Sensors | sensor | facet=type:движения=Датчики движения/Motion sensors;открытия=Датчики открытия/Door sensors;протечки=Датчики протечки/Leak sensors;*=Датчики температуры и дыма/Temperature and smoke sensors
+      Камеры видеонаблюдения | Security cameras | security_cam | facet=type:внутренняя=Внутренние камеры видеонаблюдения/Indoor security cameras;*=Уличные камеры видеонаблюдения/Outdoor security cameras
+      Видеозвонки | Video doorbells | doorbell
+      Умные замки | Smart locks | smart_lock
+    Освещение | Lighting
+      Светодиодные лампы | LED bulbs | led_bulb | facet=socket:E27=Светодиодные лампы с цоколем E27/LED bulbs E27;E14=Светодиодные лампы с цоколем E14/LED bulbs E14;*=Светодиодные лампы с цоколем GU10/LED bulbs GU10
+      Настольные лампы | Desk lamps | desk_lamp
+      Светильники | Ceiling lights | ceiling_light
+      Фонари | Flashlights | flashlight | facet=type:ручной=Ручные фонари/Handheld flashlights;налобный=Налобные фонари/Headlamps;*=Кемпинговые фонари/Camping lanterns
+      Гирлянды | String lights | garland | facet=type:нить=Гирлянды-нити/String lights;штора=Гирлянды-шторы/Curtain lights;*=Гирлянды-бахрома и сетки/Icicle and net lights
+    Электрика | Electrical
+      Удлинители и сетевые фильтры | Extension cords and surge protectors | extension | facet=type:сетевой фильтр=Сетевые фильтры/Surge protectors;*=Удлинители/Extension cords
+      Батарейки | Batteries | battery | facet=cell_type:AA=Батарейки AA/AA batteries;AAA=Батарейки AAA/AAA batteries;*=Батарейки других типоразмеров/Other batteries
+      Аккумуляторы AA и AAA | Rechargeable AA and AAA batteries | battery_rech
+  Инструменты | Tools
+    Электроинструмент | Power tools
+      Дрели и шуруповёрты | Drills and drivers
+        Аккумуляторные дрели-шуруповёрты | Cordless drill drivers | drill_cordless | facet=voltage_v:12=Аккумуляторные дрели-шуруповёрты 12 В/Cordless drill drivers 12 V;18=Аккумуляторные дрели-шуруповёрты 14–18 В/Cordless drill drivers 14–18 V;*=Аккумуляторные дрели-шуруповёрты от 20 В/Cordless drill drivers 20 V and more
+        Ударные дрели | Hammer drills | drill_hammer
+      Перфораторы | Rotary hammers | rotary_hammer | facet=type:SDS-plus=Перфораторы SDS-plus/SDS-plus rotary hammers;*=Перфораторы SDS-max/SDS-max rotary hammers
+      Угловые шлифмашины | Angle grinders | grinder | facet=disc_mm:125=Угловые шлифмашины до 125 мм/Angle grinders up to 125 mm;*=Угловые шлифмашины от 150 мм/Angle grinders 150 mm and larger
+      Лобзики и пилы | Jigsaws and saws | saw | facet=type:лобзик=Электролобзики/Jigsaws;циркулярная пила=Циркулярные пилы/Circular saws;*=Сабельные пилы/Reciprocating saws
+      Аккумуляторы для инструмента | Tool batteries | tool_battery
+    Ручной инструмент | Hand tools
+      Наборы инструментов | Tool sets | tool_set
+      Измерительный инструмент | Measuring tools | measuring
+    Садовая техника | Garden equipment
+      Газонокосилки | Lawn mowers | mower | facet=type:электрическая=Электрические газонокосилки/Electric lawn mowers;аккумуляторная=Аккумуляторные газонокосилки/Cordless lawn mowers;*=Бензиновые газонокосилки/Petrol lawn mowers
+      Садовые триммеры | Grass trimmers | grass_trimmer
+      Мойки высокого давления | Pressure washers | pressure_washer
+  Дом и кухня | Home and kitchen
+    Посуда | Cookware
+      Сковороды | Frying pans | pan | facet=diameter_cm:24=Сковороды до 24 см/Frying pans up to 24 cm;28=Сковороды 26–28 см/Frying pans 26–28 cm;*=Сковороды от 30 см/Frying pans 30 cm and larger
+      Кастрюли | Pots | pot | facet=material:нержавеющая сталь=Кастрюли из нержавеющей стали/Stainless steel pots;эмаль=Эмалированные кастрюли/Enamel pots;*=Алюминиевые кастрюли/Aluminium pots
+      Наборы посуды | Cookware sets | cookware_set
+      Ножи | Knives | knife | facet=type:поварской=Поварские ножи/Chef's knives;сантоку=Ножи сантоку/Santoku knives;универсальный=Универсальные ножи/Utility knives;*=Наборы ножей/Knife sets
+      Термосы и термокружки | Thermoses and travel mugs | thermos | facet=type:термос=Термосы/Vacuum flasks;*=Термокружки/Travel mugs
+    Хранение | Storage
+      Контейнеры для еды | Food containers | container
+      Системы хранения | Storage boxes | storage_box
+  Автоэлектроника | Car electronics
+    Видеорегистраторы | Dash cams | dashcam | facet=gps:да=Видеорегистраторы с GPS/Dash cams with GPS;*=Видеорегистраторы без GPS/Dash cams without GPS
+    Автомагнитолы | Car stereos | car_stereo
+    Автомобильные пылесосы | Car vacuum cleaners | car_vacuum
+    Пуско-зарядные устройства | Jump starters | jump_starter
+    Автомобильные компрессоры | Tyre inflators | compressor

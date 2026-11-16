@@ -1,0 +1,150 @@
+city_en	name_en	region_ru	region_en	district	population	main_airport	exclude_airports
+Abakan		Республика Хакасия	Republic of Khakassia	siberia	186000
+Aldan		Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	20000
+Amderma		Ненецкий автономный округ	Nenets Autonomous Okrug	northwest	500
+Anadyr		Чукотский автономный округ	Chukotka Autonomous Okrug	far_east	15000
+Anapa		Краснодарский край	Krasnodar Krai	south	90000
+Apatity		Мурманская область	Murmansk Oblast	northwest	54000
+Arkhangelsk		Архангельская область	Arkhangelsk Oblast	northwest	300000	ARH	LDG
+Astrakhan		Астраханская область	Astrakhan Oblast	south	465000
+Balakovo		Саратовская область	Saratov Oblast	volga	180000
+Barnaul		Алтайский край	Altai Krai	siberia	625000
+Batagay		Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	3500
+Belgorod		Белгородская область	Belgorod Oblast	central	335000
+Beloyarsky		Ханты-Мансийский автономный округ — Югра	Khanty-Mansi Autonomous Okrug — Yugra	ural	20000
+Berezovo		Ханты-Мансийский автономный округ — Югра	Khanty-Mansi Autonomous Okrug — Yugra	ural	7000
+Blagoveschensk	Blagoveshchensk	Амурская область	Amur Oblast	far_east	240000
+Bodaibo		Иркутская область	Irkutsk Oblast	siberia	12000
+Bor		Красноярский край	Krasnoyarsk Krai	siberia	1500
+Bratsk		Иркутская область	Irkutsk Oblast	siberia	220000
+Bryansk		Брянская область	Bryansk Oblast	central	380000
+Bugulma		Республика Татарстан	Republic of Tatarstan	volga	85000
+Cheboksary		Чувашская Республика	Chuvash Republic	volga	490000
+Chelyabinsk		Челябинская область	Chelyabinsk Oblast	ural	1180000
+Cherepovets		Вологодская область	Vologda Oblast	northwest	300000
+Cherskiy	Chersky	Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	2500
+Chita		Забайкальский край	Zabaykalsky Krai	far_east	330000
+Chokurdah	Chokurdakh	Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	2000
+Dikson		Красноярский край	Krasnoyarsk Krai	siberia	500
+Elista		Республика Калмыкия	Republic of Kalmykia	south	102000
+Eysk		Краснодарский край	Krasnodar Krai	south	85000
+Gelendzhik		Краснодарский край	Krasnodar Krai	south	77000
+Gorno-Altaysk		Республика Алтай	Altai Republic	siberia	62000
+Grozny		Чеченская Республика	Chechen Republic	north_caucasus	330000
+Honuu	Khonuu	Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	2500
+Igarka		Красноярский край	Krasnoyarsk Krai	siberia	4500
+Irkutsk		Иркутская область	Irkutsk Oblast	siberia	610000
+Ivanovo		Ивановская область	Ivanovo Oblast	central	360000
+Izhevsk		Удмуртская Республика	Udmurt Republic	volga	620000
+Kaliningrad		Калининградская область	Kaliningrad Oblast	northwest	490000
+Kaluga		Калужская область	Kaluga Oblast	central	330000
+Kavalerovo		Приморский край	Primorsky Krai	far_east	14000
+Kazan		Республика Татарстан	Republic of Tatarstan	volga	1320000
+Kemerovo		Кемеровская область — Кузбасс	Kemerovo Oblast — Kuzbass	siberia	540000
+Khabarovsk		Хабаровский край	Khabarovsk Krai	far_east	610000
+Khandyga		Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	6000
+Khanty-Mansiysk		Ханты-Мансийский автономный округ — Югра	Khanty-Mansi Autonomous Okrug — Yugra	ural	105000
+Khatanga		Красноярский край	Krasnoyarsk Krai	siberia	2500
+Kirensk		Иркутская область	Irkutsk Oblast	siberia	10000
+Kirov		Кировская область	Kirov Oblast	volga	470000
+Kogalym		Ханты-Мансийский автономный округ — Югра	Khanty-Mansi Autonomous Okrug — Yugra	ural	60000
+Komsomolsk-on-Amur		Хабаровский край	Khabarovsk Krai	far_east	235000
+Kostroma		Костромская область	Kostroma Oblast	central	260000
+Kotlas		Архангельская область	Arkhangelsk Oblast	northwest	60000
+Krasnodar		Краснодарский край	Krasnodar Krai	south	1120000
+Krasnoyarsk		Красноярский край	Krasnoyarsk Krai	siberia	1190000
+Kurgan		Курганская область	Kurgan Oblast	ural	300000
+Kursk		Курская область	Kursk Oblast	central	440000
+Kyzyl		Республика Тыва	Tuva Republic	siberia	125000
+Lensk		Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	22000
+Lipetsk		Липецкая область	Lipetsk Oblast	central	500000
+Magadan		Магаданская область	Magadan Oblast	far_east	90000
+Magas		Республика Ингушетия	Republic of Ingushetia	north_caucasus	15000
+Magnetiogorsk	Magnitogorsk	Челябинская область	Chelyabinsk Oblast	ural	410000
+Makhachkala		Республика Дагестан	Republic of Dagestan	north_caucasus	625000
+Markovo		Чукотский автономный округ	Chukotka Autonomous Okrug	far_east	700
+Mineralnye Vody		Ставропольский край	Stavropol Krai	north_caucasus	70000
+Mirny		Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	35000
+Moscow		Москва	Moscow	central	13100000	SVO
+Murmansk		Мурманская область	Murmansk Oblast	northwest	270000
+Nadym		Ямало-Ненецкий автономный округ	Yamalo-Nenets Autonomous Okrug	ural	45000
+Nalchik		Кабардино-Балкарская Республика	Kabardino-Balkarian Republic	north_caucasus	245000
+Naryan-Mar		Ненецкий автономный округ	Nenets Autonomous Okrug	northwest	22000
+Nefteyugansk		Ханты-Мансийский автономный округ — Югра	Khanty-Mansi Autonomous Okrug — Yugra	ural	125000
+Neryungri		Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	55000
+Nizhnekamsk		Республика Татарстан	Republic of Tatarstan	volga	240000
+Nizhnevartovsk		Ханты-Мансийский автономный округ — Югра	Khanty-Mansi Autonomous Okrug — Yugra	ural	285000
+Nizhniy Novgorod	Nizhny Novgorod	Нижегородская область	Nizhny Novgorod Oblast	volga	1210000
+Norilsk		Красноярский край	Krasnoyarsk Krai	siberia	175000
+Novokuznetsk		Кемеровская область — Кузбасс	Kemerovo Oblast — Kuzbass	siberia	535000
+Novosibirsk		Новосибирская область	Novosibirsk Oblast	siberia	1640000
+Novy Urengoy		Ямало-Ненецкий автономный округ	Yamalo-Nenets Autonomous Okrug	ural	105000
+Noyabrsk		Ямало-Ненецкий автономный округ	Yamalo-Nenets Autonomous Okrug	ural	105000
+Nyagan		Ханты-Мансийский автономный округ — Югра	Khanty-Mansi Autonomous Okrug — Yugra	ural	50000
+Okhotsk		Хабаровский край	Khabarovsk Krai	far_east	3500
+Olekminsk		Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	9000
+Olenyok		Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	2500
+Omsk		Омская область	Omsk Oblast	siberia	1110000
+Orenburg		Оренбургская область	Orenburg Oblast	volga	545000
+Orsk		Оренбургская область	Orenburg Oblast	volga	220000
+Pechora		Республика Коми	Komi Republic	northwest	37000
+Penza		Пензенская область	Penza Oblast	volga	495000
+Perm		Пермский край	Perm Krai	volga	1030000
+Petropavlovsk	Petropavlovsk-Kamchatsky	Камчатский край	Kamchatka Krai	far_east	160000
+Petrozavodsk		Республика Карелия	Republic of Karelia	northwest	225000
+Provideniya		Чукотский автономный округ	Chukotka Autonomous Okrug	far_east	2000
+Pskov		Псковская область	Pskov Oblast	northwest	190000
+Raduzhnyi	Raduzhny	Ханты-Мансийский автономный округ — Югра	Khanty-Mansi Autonomous Okrug — Yugra	ural	43000
+Rostov-on-Don		Ростовская область	Rostov Oblast	south	1140000
+Rybinsk		Ярославская область	Yaroslavl Oblast	central	175000
+Saint Petersburg		Санкт-Петербург	Saint Petersburg	northwest	5600000
+Salekhard		Ямало-Ненецкий автономный округ	Yamalo-Nenets Autonomous Okrug	ural	52000
+Samara		Самарская область	Samara Oblast	volga	1160000
+Saransk		Республика Мордовия	Republic of Mordovia	volga	295000
+Saskylakh		Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	2000
+Shchyolkovo		Московская область	Moscow Oblast	central	130000
+Sochi		Краснодарский край	Krasnodar Krai	south	450000
+Solovetsky Islands		Архангельская область	Arkhangelsk Oblast	northwest	800
+Sovetskiy	Sovetsky	Ханты-Мансийский автономный округ — Югра	Khanty-Mansi Autonomous Okrug — Yugra	ural	30000
+Srednekolymsk		Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	3500
+Stavropol		Ставропольский край	Stavropol Krai	north_caucasus	550000
+Strezhevoy		Томская область	Tomsk Oblast	siberia	40000
+Suntar		Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	10000
+Surgut		Ханты-Мансийский автономный округ — Югра	Khanty-Mansi Autonomous Okrug — Yugra	ural	410000
+Syktyvkar		Республика Коми	Komi Republic	northwest	220000
+Taganrog		Ростовская область	Rostov Oblast	south	245000
+Tambov		Тамбовская область	Tambov Oblast	central	260000
+Tiksi		Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	4500
+Tomsk		Томская область	Tomsk Oblast	siberia	570000
+Turukhansk		Красноярский край	Krasnoyarsk Krai	siberia	4500
+Tver		Тверская область	Tver Oblast	central	400000
+Tyumen		Тюменская область	Tyumen Oblast	ural	850000
+Udachny		Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	11000
+Ufa		Республика Башкортостан	Republic of Bashkortostan	volga	1160000
+Ukhta		Республика Коми	Komi Republic	northwest	95000
+Ulan-ude	Ulan-Ude	Республика Бурятия	Republic of Buryatia	far_east	435000
+Ulyanovsk		Ульяновская область	Ulyanovsk Oblast	volga	610000	ULV
+Uray		Ханты-Мансийский автономный округ — Югра	Khanty-Mansi Autonomous Okrug — Yugra	ural	40000
+Usinsk		Республика Коми	Komi Republic	northwest	38000
+Ust Ilimsk	Ust-Ilimsk	Иркутская область	Irkutsk Oblast	siberia	75000
+Ust-Kut		Иркутская область	Irkutsk Oblast	siberia	40000
+Ust-Maya		Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	2500
+Ust-Nera		Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	6000
+Ust-Tsylma		Республика Коми	Komi Republic	northwest	4500
+Velikiye Luki		Псковская область	Pskov Oblast	northwest	85000
+Veliky Ustyug		Вологодская область	Vologda Oblast	northwest	30000
+Vladikavkaz		Республика Северная Осетия — Алания	Republic of North Ossetia — Alania	north_caucasus	295000
+Vladivostok		Приморский край	Primorsky Krai	far_east	600000
+Volgograd		Волгоградская область	Volgograd Oblast	south	1020000
+Vologda		Вологодская область	Vologda Oblast	northwest	310000
+Vorkuta		Республика Коми	Komi Republic	northwest	55000
+Voronezh		Воронежская область	Voronezh Oblast	central	1050000
+Yakutsk		Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	360000	YKS
+Yaroslavl		Ярославская область	Yaroslavl Oblast	central	570000
+Yekaterinburg		Свердловская область	Sverdlovsk Oblast	ural	1540000
+Yeniseysk		Красноярский край	Krasnoyarsk Krai	siberia	17000
+Yerbogachen		Иркутская область	Irkutsk Oblast	siberia	1500
+Yoshkar-Ola		Республика Марий Эл	Mari El Republic	volga	280000
+Yuzhno-Sakhalinsk		Сахалинская область	Sakhalin Oblast	far_east	180000
+Zhukovsky		Московская область	Moscow Oblast	central	110000
+Zyryanka		Республика Саха (Якутия)	Sakha (Yakutia) Republic	far_east	3000

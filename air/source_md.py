@@ -29,7 +29,7 @@ text = f"""# Авиаперевозки — набор данных `{m['version
 
 ## Что изменено против выгрузки
 
-Значения не менялись. Сделано три вещи:
+Значения не менялись. Сделано четыре вещи:
 
 1. **Время** — секунды Unix, UTC; доли секунды отброшены.
 2. **Брони отобраны целиком** — со всеми билетами, сегментами и посадочными талонами: из
@@ -39,7 +39,9 @@ text = f"""# Авиаперевозки — набор данных `{m['version
    в остальные дни — с вероятностью «месяц × день недели». Решает не случай, а номер брони: первые
    4 байта MD5(номер брони) как целое без знака, little-endian, делённые на 2^32, меньше доли —
    бронь остаётся. Сборка повторяема.
-3. **Строки упорядочены**, файлы сжаты gzip без отметки времени.
+3. **Справочник аэропортов** — без нескольких аэропортов источника (список — в `build_air_data.py`); в сеть
+   маршрутов они не входят, рейсы и брони это не задевает.
+4. **Строки упорядочены**, файлы сжаты gzip без отметки времени.
 
 Доля по месяцу — по региону страны вылета:
 
@@ -70,7 +72,7 @@ TSV, UTF-8, разделитель — табуляция, первая стро
 
 | файл | строк | МБ | поля |
 |---|---|---|---|
-| `airports.tsv.gz` | {n('airports')} | {mb('airports')} | `airport_code`, `name_en`, `name_ru`, `city_en`, `city_ru`, `country_en`, `country_ru`, `longitude`, `latitude`, `timezone` — все аэропорты мира; в маршрутной сети — 73 |
+| `airports.tsv.gz` | {n('airports')} | {mb('airports')} | `airport_code`, `name_en`, `name_ru`, `city_en`, `city_ru`, `country_en`, `country_ru`, `longitude`, `latitude`, `timezone` — аэропорты мира; в маршрутной сети — 73 |
 | `airplanes.tsv.gz` | {n('airplanes')} | {mb('airplanes')} | `airplane_code`, `model_en`, `model_ru`, `range_km`, `speed_kmh` |
 | `seats.tsv.gz` | {n('seats')} | {mb('seats')} | `airplane_code`, `seat_no`, `fare_conditions` (Economy, Comfort, Business) |
 | `routes.tsv.gz` | {n('routes')} | {mb('routes')} | `route_no`, `valid_from`, `valid_to` — период [с, по), `departure_airport`, `arrival_airport`, `airplane_code`, `days_of_week` (1 — пн … 7 — вс, через запятую), `scheduled_time` — местное время вылета, `duration_min` |
@@ -84,5 +86,5 @@ TSV, UTF-8, разделитель — табуляция, первая стро
 равна сумме цен её сегментов. Контрольные суммы — в `manifest.json` (`sha256` — сжатого файла,
 `sha256_tsv` — содержимого).
 """
-(out / 'SOURCE.md').write_text(text, encoding='utf-8')
+(out / 'SOURCE.md').write_text(text, encoding='utf-8', newline='\n')
 print('SOURCE.md ok')

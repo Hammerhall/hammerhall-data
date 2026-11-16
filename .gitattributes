@@ -1,0 +1,21 @@
+# Переводы строк — LF в репозитории и в рабочей копии на любой ОС. Git for Windows по умолчанию ставит
+# core.autocrlf=true: без этого файла build.sh не запустится в Git Bash ($'\r'), а схема в git разойдётся со схемой
+# генератора. Данные и архивы — двоичные.
+* text=auto eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+*.java text eol=lf
+*.xml text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.sql text eol=lf
+*.mmd text eol=lf
+*.tsv text eol=lf
+*.txt text eol=lf
+*.properties text eol=lf
+*.psql text eol=lf
+*.gz binary
+*.tar binary
+*.zip binary
+*.jar binary

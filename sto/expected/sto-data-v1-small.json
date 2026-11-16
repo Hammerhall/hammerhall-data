@@ -1,0 +1,1305 @@
+{
+ "version": "sto-data-v1",
+ "profile": "small",
+ "identity": "manifest (без files) + rows и sha256_tsv каждой таблицы + sha256 texts + aggregates; sha256 и bytes файлов .tsv.gz, manifest.json и SOURCE.md — справочно (зависят от сборки zlib)",
+ "manifest": {
+  "version": "sto-data-v1",
+  "generator": "sto-gen 0.1.0",
+  "seed": 20251001,
+  "profile": "small",
+  "scale": "0.01",
+  "period": {
+   "from": "2025-10-01",
+   "to": "2027-10-30",
+   "now": "2027-09-01T00:00:00Z",
+   "business_timezone": "Europe/Moscow"
+  },
+  "modules": [
+   "geo",
+   "catalog",
+   "pricing",
+   "suppliers",
+   "market",
+   "customers",
+   "orders"
+  ],
+  "inputs": [
+   {
+    "name": "airports.tsv.gz",
+    "release": "air-data-v1",
+    "license": "MIT, Copyright (c) 2025 Postgres Professional",
+    "sha256_tsv": "7473494a65e9af17527beebb9d8c632739b079c4b26eb377b65cd5bbde16f62e"
+   }
+  ],
+  "format": {
+   "encoding": "UTF-8",
+   "delimiter": "TAB",
+   "header": true,
+   "null": "empty field",
+   "time": "Unix seconds, UTC",
+   "date": "ISO 8601, YYYY-MM-DD",
+   "money": "decimal string, 2 digits, rubles",
+   "boolean": "t / f",
+   "compression": "gzip, mtime=0"
+  }
+ },
+ "files": [
+  {
+   "name": "categories.tsv.gz",
+   "table": "categories",
+   "rows": 627,
+   "sha256_tsv": "f0875b7e4bf6f5b2c31ecf4a8286be0d36bc07e954dd40e2996d3cd72ec8149e",
+   "sha256_gz_reference": "454fe39358c4583eeb66ada85b86717b1fffa4090b66f7dee02f8989d5097a48"
+  },
+  {
+   "name": "spec_keys.tsv.gz",
+   "table": "spec_keys",
+   "rows": 110,
+   "sha256_tsv": "20a2efe66288a0abf3f6c206a4e23172fefb78cb389508d340b9eb1ac758dd12",
+   "sha256_gz_reference": "0fe5e9283678702630ca3a1f559c019805a866e99fc98db8b1d54011df5fccca"
+  },
+  {
+   "name": "brands.tsv.gz",
+   "table": "brands",
+   "rows": 150,
+   "sha256_tsv": "be89dc4537f0bd9607ee6242aee30645d2adc2f77dbc2c12c84ed03a9faac4bc",
+   "sha256_gz_reference": "7dfc44d146f760c0fee75fc935e24f8e13bc10314acff055d6e0ce027c71c5a9"
+  },
+  {
+   "name": "products.tsv.gz",
+   "table": "products",
+   "rows": 50332,
+   "sha256_tsv": "f08bed689fe83301bf50af4056cc1f835406d36b3ce5a34149a36cd09d811b54",
+   "sha256_gz_reference": "ee6e741db2ba41173b372493347eb65ec6785f4d607dbce06b665bea5a9fb5af"
+  },
+  {
+   "name": "product_specs.tsv.gz",
+   "table": "product_specs",
+   "rows": 390788,
+   "sha256_tsv": "719ab5b2382e4281fd1111f602d4dc177b0eef8de91750561546ced435a6ecbc",
+   "sha256_gz_reference": "6f0c5245653521b213411819ef1736267f6eb0ac0579c04340a86be52f1bbe4f"
+  },
+  {
+   "name": "bundle_items.tsv.gz",
+   "table": "bundle_items",
+   "rows": 8388,
+   "sha256_tsv": "b6d6f1c4a0cbdbb4fc9a6010408c50b5302947364c241eafad13e24122af8034",
+   "sha256_gz_reference": "a1f5efc72bc3ae3b3a251a9ff7e89cecf983be3cc99bb1a32fa5c310ee2fc2a2"
+  },
+  {
+   "name": "prices.tsv.gz",
+   "table": "prices",
+   "rows": 1186938,
+   "sha256_tsv": "fcd879bcba2bd1d8ee9b5eeaab62ec1dda1a0889e27d9204b27431445b048ea2",
+   "sha256_gz_reference": "3cc44b2b55b52d7b3342f88a6f7b05aadf65f62de51d712a16a3403086ec76b8"
+  },
+  {
+   "name": "promotions.tsv.gz",
+   "table": "promotions",
+   "rows": 2566,
+   "sha256_tsv": "4cd12bd96119c83a6b56192418d16ea011c0a0dd6c029bc9d35cf6a13adca21e",
+   "sha256_gz_reference": "8fca3bb48a13bef5089513d7fd700cbdcb27269b551c788216ce25b0f61763b9"
+  },
+  {
+   "name": "promotion_targets.tsv.gz",
+   "table": "promotion_targets",
+   "rows": 181231,
+   "sha256_tsv": "4172d3eacb7111dcb2c8b141b17380c6df93ed0aeb201d78f8570997f6335b7e",
+   "sha256_gz_reference": "bb64e6fa24801f3e59044114a84726acd8bf7bc05e5731e8853477eafdb16063"
+  },
+  {
+   "name": "cities.tsv.gz",
+   "table": "cities",
+   "rows": 149,
+   "sha256_tsv": "d8bbfdf8b08a6df360922c55698e2789835b71f2d1da81c967c9ccd3a8931cee",
+   "sha256_gz_reference": "0e06fecfa18e3a7a29e613c7ae991d81c2745220c97a93471dc75848be6f5e88"
+  },
+  {
+   "name": "warehouses.tsv.gz",
+   "table": "warehouses",
+   "rows": 3078,
+   "sha256_tsv": "444ba88bcc0348fe2b20aaaa423e1aeacfc5cb16a672bde9f0b6e694330d0a76",
+   "sha256_gz_reference": "1895f4104724e5ad5246cd8ad76c8e696e1605768f02b80316816742938e43eb"
+  },
+  {
+   "name": "storage_cells.tsv.gz",
+   "table": "storage_cells",
+   "rows": 291000,
+   "sha256_tsv": "d8cb98262cfe5e8d2ba7e58ae164b41768ab630dddb600a98abd9f4e58da7919",
+   "sha256_gz_reference": "11d7a1f08c580dfe42fcca8e8626017a82d9ec42cdf9e228358358160a62cb6d"
+  },
+  {
+   "name": "carriers.tsv.gz",
+   "table": "carriers",
+   "rows": 8,
+   "sha256_tsv": "fb2cff492ffbc74e5835bbf4f87b9cd0c63e85eb333604414403ee39edbb32a7",
+   "sha256_gz_reference": "d9899529dc64ec9be5d3e4ee9591d7b28612f423548896d4e114f96fa8450ea9"
+  },
+  {
+   "name": "delivery_zones.tsv.gz",
+   "table": "delivery_zones",
+   "rows": 1394,
+   "sha256_tsv": "35f557d778948025845f844a104d52fd1612351718bcc251adb5e5d9b67fe9da",
+   "sha256_gz_reference": "9dab29ad9bc1a6b8cd263ac7fd59a357e29a32afffdabc658dad61142257c9fa"
+  },
+  {
+   "name": "suppliers.tsv.gz",
+   "table": "suppliers",
+   "rows": 300,
+   "sha256_tsv": "41630f36d042410dc5fdd93877fafbaf9498b9a48d7a3f9937fd34c585f87f4e",
+   "sha256_gz_reference": "7ce30ea76188ff76f2b105560651ec58f2c96a7129fbb5d6ca319f77f054ab4b"
+  },
+  {
+   "name": "purchase_orders.tsv.gz",
+   "table": "purchase_orders",
+   "rows": 30077,
+   "sha256_tsv": "99f5c77ba9fabf24f0637ac11e5b62fe8df6bb9f94a1502744db8584022c0919",
+   "sha256_gz_reference": "6a904f69ce65b27d90199158e9ee696c705a270b41bec17e0a0dceb83842958e"
+  },
+  {
+   "name": "batches.tsv.gz",
+   "table": "batches",
+   "rows": 156022,
+   "sha256_tsv": "8432d92981a43cb06d95b68cea93c982e96cfe21f5d2f112de81f9c908338312",
+   "sha256_gz_reference": "fa86afe9a1da579ccace3fa4e3f4ca403f92262985ea374811a3176abb1f39f7"
+  },
+  {
+   "name": "stock_movements.tsv.gz",
+   "table": "stock_movements",
+   "rows": 832697,
+   "sha256_tsv": "74a2fe54bd134ebf28117ade029cafa4aa470925068601ec7c2db276f13b3f52",
+   "sha256_gz_reference": "5730c30b8a2d973f650efea5d04c197f59e6695fb1a03ae2c266a5a2b2822d7c"
+  },
+  {
+   "name": "sellers.tsv.gz",
+   "table": "sellers",
+   "rows": 3014,
+   "sha256_tsv": "e2d5d9e426c14f149d44d1aeb04255e64b31b9202f124f65cb8c311b149e2eea",
+   "sha256_gz_reference": "759e3009fcf52c0009df871d02f279f0399bd10f6405eb193f302cef3b24dd0e"
+  },
+  {
+   "name": "offers.tsv.gz",
+   "table": "offers",
+   "rows": 134328,
+   "sha256_tsv": "4d72ac416a37269360c40d1fa180a7ec5253e70d6966eab1e0ecc4e34a4e9b0d",
+   "sha256_gz_reference": "6050aa8032d6ce24b97aa5581a6cb012de1ea1a3b0aa34e80e0a01a92b968430"
+  },
+  {
+   "name": "customers.tsv.gz",
+   "table": "customers",
+   "rows": 20840,
+   "sha256_tsv": "a0e5189dba7d2a87bae952563b616239422eb97484a31aba8f41787380b5ab02",
+   "sha256_gz_reference": "d23ccce4ac8881f97f62474a6740b28b9b50c50429b8db5f9a0bad5e84fd5629"
+  },
+  {
+   "name": "addresses.tsv.gz",
+   "table": "addresses",
+   "rows": 24716,
+   "sha256_tsv": "bc5aef5a10299afb46096d61658497d82016b5fab0ae2c791c6a01e0ac76cb9d",
+   "sha256_gz_reference": "80bc22659da72ebdc6ec1c0c3c7eb253028b6fa2c4a00d9b051bd8f7da3d6040"
+  },
+  {
+   "name": "orders.tsv.gz",
+   "table": "orders",
+   "rows": 50229,
+   "sha256_tsv": "2d90f3dbeb06b34b36b1d0e80beb06f9c68d8b150953df2b3588c0dbf585d61e",
+   "sha256_gz_reference": "74f2c300f1c2096081e5ef39c802ec7c023a94396288cea233b98abd110a3579"
+  },
+  {
+   "name": "order_items.tsv.gz",
+   "table": "order_items",
+   "rows": 112537,
+   "sha256_tsv": "3248d7b34ab2cc1db8c0f9fcdd287d25c847bfc7935356603acc4d922a8e1d7a",
+   "sha256_gz_reference": "67f614bc0e4eda99c952d3dbc066dc0eedbac5bb1d9aca20ba8c2c06c7f2f90c"
+  },
+  {
+   "name": "order_status_log.tsv.gz",
+   "table": "order_status_log",
+   "rows": 316386,
+   "sha256_tsv": "f61f7abdaacf7511c5bdb0d6f5cf5cbe77dff745118d237e7c7bf83ee6cd6b68",
+   "sha256_gz_reference": "cbf1cba8e2eff416b13bd1d852f89a012dbcafae88c89190c9664a2800b8061e"
+  },
+  {
+   "name": "payments.tsv.gz",
+   "table": "payments",
+   "rows": 61156,
+   "sha256_tsv": "ea150e4cbd0e82336eafc09d572f8e1664a992eeebbfebd57e10aa701b0a2363",
+   "sha256_gz_reference": "41e36e86c88626b8b648f08024ef66ced42e8b4d3bcd4d87eaf659feabe3d37a"
+  },
+  {
+   "name": "shipments.tsv.gz",
+   "table": "shipments",
+   "rows": 58390,
+   "sha256_tsv": "5e2ad671fcf44b8c14b243e55b3cc699a95942f7e35397204d3b502f3228c0e2",
+   "sha256_gz_reference": "c97c4211993494cffd7849a065afdd443442c0a4b122b0f834058a34a4ab38c6"
+  },
+  {
+   "name": "returns.tsv.gz",
+   "table": "returns",
+   "rows": 4848,
+   "sha256_tsv": "b8161a0af77548b716e35a3d1e181b68820148866cc487a65496e0b98743cd78",
+   "sha256_gz_reference": "2e6815fcc75faaf6a5efbcb905d99d69cbcb0f73a3cfea863cf09f942766217c"
+  },
+  {
+   "name": "reviews.tsv.gz",
+   "table": "reviews",
+   "rows": 16364,
+   "sha256_tsv": "ee62b0fe3f71a1dec5b0f0298d0dd1459a81ba48b34be1a8f54a4ea9647909b6",
+   "sha256_gz_reference": "06ddb0e212f1214e1d7ba15e8f6dccd4144e47bd54ac24288c60ef332549981c"
+  },
+  {
+   "name": "sessions.tsv.gz",
+   "table": "sessions",
+   "rows": 60613,
+   "sha256_tsv": "45533609efc0cb9b9b88ae3606fad044e9d790ae9c315d17d62124cf2a858595",
+   "sha256_gz_reference": "1c882e8b0f930843d718eab27837f959918a7a23551be88286706114345d65fe"
+  },
+  {
+   "name": "session_events.tsv.gz",
+   "table": "session_events",
+   "rows": 127613,
+   "sha256_tsv": "98997c1cb9102423a9bc3c0eed02072fd40227e2a701a8dec362c35293b0f8bb",
+   "sha256_gz_reference": "64aade680654aca865d16d160ca4c161ca72870f93806d807275422b9096c70a"
+  }
+ ],
+ "texts": [
+  {
+   "name": "LICENSE",
+   "sha256": "7bb9e8b7ae091e1d33433b9b8a1f2834ded4aba8169355153cf287a08d2f8d98"
+  },
+  {
+   "name": "schema-tables.sql",
+   "sha256": "313ca2e2f340fb9c03056c937756b85e8f01964f18e9c53edb22fa8c82fb29d6"
+  },
+  {
+   "name": "schema-constraints.sql",
+   "sha256": "3c2ed36718a9be7cfdd83debd7a8a6bbb9d785ccdde498b8a23928679f2d2247"
+  },
+  {
+   "name": "schema.mmd",
+   "sha256": "b33b6774d906dc8884f1648bdea7727c4158db2d7f10f99b887e174bbb1df731"
+  },
+  {
+   "name": "load-postgres.psql",
+   "sha256": "454e53a6b756fa6f4f840e024bb60dcb26bf6cc0eafef6407e0a6a72cc888970"
+  }
+ ],
+ "reference_only": [
+  "manifest.json",
+  "SOURCE.md"
+ ],
+ "aggregates": [
+  {
+   "table": "categories",
+   "op": "nulls",
+   "column": "parent_id",
+   "value": 1
+  },
+  {
+   "table": "categories",
+   "op": "count_eq",
+   "column": "level",
+   "arg": "1",
+   "value": 1
+  },
+  {
+   "table": "categories",
+   "op": "max",
+   "column": "level",
+   "scale": 0,
+   "value": "6"
+  },
+  {
+   "table": "spec_keys",
+   "op": "nulls",
+   "column": "unit",
+   "value": 56
+  },
+  {
+   "table": "brands",
+   "op": "count_eq",
+   "column": "is_private_label",
+   "arg": "t",
+   "value": 2
+  },
+  {
+   "table": "brands",
+   "op": "distinct",
+   "column": "origin_country",
+   "value": 16
+  },
+  {
+   "table": "brands",
+   "op": "count_eq",
+   "column": "tier",
+   "arg": "premium",
+   "value": 26
+  },
+  {
+   "table": "products",
+   "op": "nulls",
+   "column": "discontinued_on",
+   "value": 26724
+  },
+  {
+   "table": "products",
+   "op": "count_eq",
+   "column": "is_bundle",
+   "arg": "t",
+   "value": 2842
+  },
+  {
+   "table": "products",
+   "op": "distinct",
+   "column": "brand_id",
+   "value": 150
+  },
+  {
+   "table": "products",
+   "op": "distinct",
+   "column": "category_id",
+   "value": 428
+  },
+  {
+   "table": "products",
+   "op": "min",
+   "column": "launched_on",
+   "value": "2019-05-01"
+  },
+  {
+   "table": "products",
+   "op": "max",
+   "column": "launched_on",
+   "value": "2027-10-30"
+  },
+  {
+   "table": "products",
+   "op": "sum",
+   "column": "weight_g",
+   "scale": 0,
+   "value": "316076154"
+  },
+  {
+   "table": "products",
+   "op": "max",
+   "column": "generation",
+   "scale": 0,
+   "value": "10"
+  },
+  {
+   "table": "product_specs",
+   "op": "nulls",
+   "column": "value_text",
+   "value": 183338
+  },
+  {
+   "table": "product_specs",
+   "op": "nulls",
+   "column": "value_num",
+   "value": 207450
+  },
+  {
+   "table": "product_specs",
+   "op": "nulls",
+   "column": "unit",
+   "value": 268250
+  },
+  {
+   "table": "product_specs",
+   "op": "distinct",
+   "column": "key",
+   "value": 110
+  },
+  {
+   "table": "product_specs",
+   "op": "sum",
+   "column": "value_num",
+   "scale": 3,
+   "value": "376809311.900"
+  },
+  {
+   "table": "bundle_items",
+   "op": "sum",
+   "column": "qty",
+   "scale": 0,
+   "value": "8453"
+  },
+  {
+   "table": "bundle_items",
+   "op": "distinct",
+   "column": "bundle_id",
+   "value": 2842
+  },
+  {
+   "table": "prices",
+   "op": "nulls",
+   "column": "valid_to",
+   "value": 26724
+  },
+  {
+   "table": "prices",
+   "op": "sum",
+   "column": "price",
+   "scale": 2,
+   "value": "27242842684.20"
+  },
+  {
+   "table": "prices",
+   "op": "min",
+   "column": "price",
+   "scale": 2,
+   "value": "38.90"
+  },
+  {
+   "table": "prices",
+   "op": "max",
+   "column": "price",
+   "scale": 2,
+   "value": "1074990.00"
+  },
+  {
+   "table": "prices",
+   "op": "min",
+   "column": "valid_from",
+   "scale": 0,
+   "value": "1759276800"
+  },
+  {
+   "table": "prices",
+   "op": "max",
+   "column": "valid_from",
+   "scale": 0,
+   "value": "1824930000"
+  },
+  {
+   "table": "prices",
+   "op": "distinct",
+   "column": "product_id",
+   "value": 50332
+  },
+  {
+   "table": "promotions",
+   "op": "nulls",
+   "column": "event",
+   "value": 2230
+  },
+  {
+   "table": "promotions",
+   "op": "nulls",
+   "column": "discount_pct",
+   "value": 377
+  },
+  {
+   "table": "promotions",
+   "op": "sum",
+   "column": "discount_amount",
+   "scale": 2,
+   "value": "524200.00"
+  },
+  {
+   "table": "promotions",
+   "op": "nulls",
+   "column": "discount_amount",
+   "value": 2207
+  },
+  {
+   "table": "promotions",
+   "op": "nulls",
+   "column": "buy_qty",
+   "value": 2548
+  },
+  {
+   "table": "promotions",
+   "op": "nulls",
+   "column": "free_qty",
+   "value": 2548
+  },
+  {
+   "table": "promotions",
+   "op": "nulls",
+   "column": "promo_code",
+   "value": 2041
+  },
+  {
+   "table": "promotions",
+   "op": "sum",
+   "column": "min_order_amount",
+   "scale": 2,
+   "value": "5499200.00"
+  },
+  {
+   "table": "promotions",
+   "op": "nulls",
+   "column": "min_order_amount",
+   "value": 2241
+  },
+  {
+   "table": "promotions",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "promocode",
+   "value": 525
+  },
+  {
+   "table": "promotions",
+   "op": "count_eq",
+   "column": "stackable",
+   "arg": "t",
+   "value": 721
+  },
+  {
+   "table": "promotions",
+   "op": "sum",
+   "column": "discount_pct",
+   "scale": 2,
+   "value": "35897.00"
+  },
+  {
+   "table": "promotions",
+   "op": "min",
+   "column": "valid_from",
+   "scale": 0,
+   "value": "1759352400"
+  },
+  {
+   "table": "promotions",
+   "op": "max",
+   "column": "valid_to",
+   "scale": 0,
+   "value": "1824940800"
+  },
+  {
+   "table": "promotion_targets",
+   "op": "nulls",
+   "column": "product_id",
+   "value": 480
+  },
+  {
+   "table": "promotion_targets",
+   "op": "nulls",
+   "column": "category_id",
+   "value": 180751
+  },
+  {
+   "table": "promotion_targets",
+   "op": "distinct",
+   "column": "promo_id",
+   "value": 2241
+  },
+  {
+   "table": "cities",
+   "op": "sum",
+   "column": "population",
+   "scale": 0,
+   "value": "61157500"
+  },
+  {
+   "table": "cities",
+   "op": "distinct",
+   "column": "timezone",
+   "value": 19
+  },
+  {
+   "table": "cities",
+   "op": "distinct",
+   "column": "federal_district",
+   "value": 8
+  },
+  {
+   "table": "warehouses",
+   "op": "nulls",
+   "column": "parent_id",
+   "value": 1
+  },
+  {
+   "table": "warehouses",
+   "op": "nulls",
+   "column": "closed_on",
+   "value": 2965
+  },
+  {
+   "table": "warehouses",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "dc",
+   "value": 8
+  },
+  {
+   "table": "warehouses",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "pickup_point",
+   "value": 3039
+  },
+  {
+   "table": "warehouses",
+   "op": "max",
+   "column": "opened_on",
+   "value": "2027-10-30"
+  },
+  {
+   "table": "storage_cells",
+   "op": "sum",
+   "column": "max_weight_kg",
+   "scale": 0,
+   "value": "124926690"
+  },
+  {
+   "table": "storage_cells",
+   "op": "sum",
+   "column": "max_volume_l",
+   "scale": 0,
+   "value": "284088750"
+  },
+  {
+   "table": "storage_cells",
+   "op": "distinct",
+   "column": "warehouse_id",
+   "value": 39
+  },
+  {
+   "table": "carriers",
+   "op": "distinct",
+   "column": "kind",
+   "value": 7
+  },
+  {
+   "table": "delivery_zones",
+   "op": "sum",
+   "column": "base_days",
+   "scale": 0,
+   "value": "6106"
+  },
+  {
+   "table": "delivery_zones",
+   "op": "max",
+   "column": "ring",
+   "scale": 0,
+   "value": "3"
+  },
+  {
+   "table": "delivery_zones",
+   "op": "distinct",
+   "column": "warehouse_id",
+   "value": 38
+  },
+  {
+   "table": "suppliers",
+   "op": "sum",
+   "column": "reliability",
+   "scale": 3,
+   "value": "281.284"
+  },
+  {
+   "table": "suppliers",
+   "op": "sum",
+   "column": "lead_time_days",
+   "scale": 0,
+   "value": "4285"
+  },
+  {
+   "table": "suppliers",
+   "op": "distinct",
+   "column": "city_id",
+   "value": 41
+  },
+  {
+   "table": "purchase_orders",
+   "op": "nulls",
+   "column": "received_at",
+   "value": 701
+  },
+  {
+   "table": "batches",
+   "op": "nulls",
+   "column": "po_id",
+   "value": 41046
+  },
+  {
+   "table": "batches",
+   "op": "nulls",
+   "column": "seller_id",
+   "value": 114976
+  },
+  {
+   "table": "batches",
+   "op": "sum",
+   "column": "unit_cost",
+   "scale": 2,
+   "value": "2040889814.13"
+  },
+  {
+   "table": "batches",
+   "op": "nulls",
+   "column": "received_at",
+   "value": 1801
+  },
+  {
+   "table": "stock_movements",
+   "op": "nulls",
+   "column": "cell_id",
+   "value": 260649
+  },
+  {
+   "table": "stock_movements",
+   "op": "nulls",
+   "column": "batch_id",
+   "value": 0
+  },
+  {
+   "table": "stock_movements",
+   "op": "nulls",
+   "column": "ref_type",
+   "value": 122005
+  },
+  {
+   "table": "stock_movements",
+   "op": "nulls",
+   "column": "ref_id",
+   "value": 122005
+  },
+  {
+   "table": "sellers",
+   "op": "nulls",
+   "column": "left_at",
+   "value": 2141
+  },
+  {
+   "table": "offers",
+   "op": "nulls",
+   "column": "valid_to",
+   "value": 12011
+  },
+  {
+   "table": "offers",
+   "op": "sum",
+   "column": "price",
+   "scale": 2,
+   "value": "1312122916.60"
+  },
+  {
+   "table": "customers",
+   "op": "nulls",
+   "column": "company_name",
+   "value": 20267
+  },
+  {
+   "table": "orders",
+   "op": "nulls",
+   "column": "address_id",
+   "value": 28271
+  },
+  {
+   "table": "orders",
+   "op": "nulls",
+   "column": "pickup_point_id",
+   "value": 21958
+  },
+  {
+   "table": "orders",
+   "op": "nulls",
+   "column": "session_id",
+   "value": 41248
+  },
+  {
+   "table": "orders",
+   "op": "nulls",
+   "column": "paid_at",
+   "value": 1200
+  },
+  {
+   "table": "orders",
+   "op": "nulls",
+   "column": "assembled_at",
+   "value": 2292
+  },
+  {
+   "table": "orders",
+   "op": "nulls",
+   "column": "shipped_at",
+   "value": 2513
+  },
+  {
+   "table": "orders",
+   "op": "nulls",
+   "column": "delivered_at",
+   "value": 4028
+  },
+  {
+   "table": "orders",
+   "op": "nulls",
+   "column": "cancelled_at",
+   "value": 46886
+  },
+  {
+   "table": "orders",
+   "op": "nulls",
+   "column": "estimated_at",
+   "value": 0
+  },
+  {
+   "table": "orders",
+   "op": "nulls",
+   "column": "promo_code",
+   "value": 44318
+  },
+  {
+   "table": "orders",
+   "op": "sum",
+   "column": "items_amount",
+   "scale": 2,
+   "value": "1649553338.00"
+  },
+  {
+   "table": "orders",
+   "op": "sum",
+   "column": "discount_amount",
+   "scale": 2,
+   "value": "49003152.49"
+  },
+  {
+   "table": "orders",
+   "op": "sum",
+   "column": "delivery_amount",
+   "scale": 2,
+   "value": "1711665.00"
+  },
+  {
+   "table": "orders",
+   "op": "sum",
+   "column": "vat_amount",
+   "scale": 2,
+   "value": "261902958.75"
+  },
+  {
+   "table": "orders",
+   "op": "sum",
+   "column": "total_amount",
+   "scale": 2,
+   "value": "1602261850.51"
+  },
+  {
+   "table": "orders",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "delivered",
+   "value": 45435
+  },
+  {
+   "table": "orders",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "cancelled",
+   "value": 3343
+  },
+  {
+   "table": "orders",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "returned",
+   "value": 766
+  },
+  {
+   "table": "orders",
+   "op": "count_eq",
+   "column": "channel",
+   "arg": "phone",
+   "value": 1398
+  },
+  {
+   "table": "orders",
+   "op": "count_eq",
+   "column": "channel",
+   "arg": "app",
+   "value": 20402
+  },
+  {
+   "table": "orders",
+   "op": "count_eq",
+   "column": "delivery_method",
+   "arg": "pickup",
+   "value": 28271
+  },
+  {
+   "table": "orders",
+   "op": "count_eq",
+   "column": "delivery_method",
+   "arg": "post",
+   "value": 5104
+  },
+  {
+   "table": "orders",
+   "op": "min",
+   "column": "created_at",
+   "scale": 0,
+   "value": "1759282093"
+  },
+  {
+   "table": "orders",
+   "op": "max",
+   "column": "created_at",
+   "scale": 0,
+   "value": "1819752484"
+  },
+  {
+   "table": "order_items",
+   "op": "nulls",
+   "column": "seller_id",
+   "value": 84031
+  },
+  {
+   "table": "order_items",
+   "op": "nulls",
+   "column": "offer_id",
+   "value": 84031
+  },
+  {
+   "table": "order_items",
+   "op": "sum",
+   "column": "unit_price",
+   "scale": 2,
+   "value": "1589432394.00"
+  },
+  {
+   "table": "order_items",
+   "op": "sum",
+   "column": "discount",
+   "scale": 2,
+   "value": "49003152.49"
+  },
+  {
+   "table": "order_items",
+   "op": "sum",
+   "column": "vat_amount",
+   "scale": 2,
+   "value": "261597572.54"
+  },
+  {
+   "table": "order_items",
+   "op": "nulls",
+   "column": "warehouse_id",
+   "value": 13754
+  },
+  {
+   "table": "order_items",
+   "op": "nulls",
+   "column": "promo_id",
+   "value": 93882
+  },
+  {
+   "table": "order_items",
+   "op": "sum",
+   "column": "qty",
+   "scale": 0,
+   "value": "125841"
+  },
+  {
+   "table": "order_items",
+   "op": "count_eq",
+   "column": "vat_rate",
+   "arg": "20",
+   "value": 13190
+  },
+  {
+   "table": "order_items",
+   "op": "count_eq",
+   "column": "vat_rate",
+   "arg": "22",
+   "value": 83317
+  },
+  {
+   "table": "order_items",
+   "op": "count_eq",
+   "column": "vat_rate",
+   "arg": "0",
+   "value": 9692
+  },
+  {
+   "table": "order_items",
+   "op": "max",
+   "column": "line_no",
+   "scale": 0,
+   "value": "13"
+  },
+  {
+   "table": "order_status_log",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "assembling",
+   "value": 48224
+  },
+  {
+   "table": "order_status_log",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "ready_for_pickup",
+   "value": 26785
+  },
+  {
+   "table": "order_status_log",
+   "op": "max",
+   "column": "seq",
+   "scale": 0,
+   "value": "11"
+  },
+  {
+   "table": "payments",
+   "op": "nulls",
+   "column": "installments",
+   "value": 56745
+  },
+  {
+   "table": "payments",
+   "op": "sum",
+   "column": "amount",
+   "scale": 2,
+   "value": "1540997676.00"
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "method",
+   "arg": "installment",
+   "value": 5007
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "method",
+   "arg": "cash_on_delivery",
+   "value": 4822
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "failed",
+   "value": 2673
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "refunded",
+   "value": 6184
+  },
+  {
+   "table": "payments",
+   "op": "sum",
+   "column": "installments",
+   "scale": 0,
+   "value": "34780"
+  },
+  {
+   "table": "shipments",
+   "op": "nulls",
+   "column": "zone_id",
+   "value": 127
+  },
+  {
+   "table": "shipments",
+   "op": "nulls",
+   "column": "shipped_at",
+   "value": 237
+  },
+  {
+   "table": "shipments",
+   "op": "nulls",
+   "column": "delivered_at",
+   "value": 631
+  },
+  {
+   "table": "shipments",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "delivered",
+   "value": 56410
+  },
+  {
+   "table": "shipments",
+   "op": "count_eq",
+   "column": "carrier_id",
+   "arg": "6",
+   "value": 15983
+  },
+  {
+   "table": "shipments",
+   "op": "sum",
+   "column": "weight_g",
+   "scale": 0,
+   "value": "803988397"
+  },
+  {
+   "table": "shipments",
+   "op": "sum",
+   "column": "boxes",
+   "scale": 0,
+   "value": "78665"
+  },
+  {
+   "table": "returns",
+   "op": "nulls",
+   "column": "received_at",
+   "value": 36
+  },
+  {
+   "table": "returns",
+   "op": "nulls",
+   "column": "condition",
+   "value": 36
+  },
+  {
+   "table": "returns",
+   "op": "nulls",
+   "column": "decision",
+   "value": 52
+  },
+  {
+   "table": "returns",
+   "op": "sum",
+   "column": "refund",
+   "scale": 2,
+   "value": "52204603.46"
+  },
+  {
+   "table": "returns",
+   "op": "nulls",
+   "column": "refund",
+   "value": 52
+  },
+  {
+   "table": "returns",
+   "op": "count_eq",
+   "column": "reason",
+   "arg": "defect",
+   "value": 1396
+  },
+  {
+   "table": "returns",
+   "op": "count_eq",
+   "column": "decision",
+   "arg": "refund",
+   "value": 3796
+  },
+  {
+   "table": "returns",
+   "op": "sum",
+   "column": "qty",
+   "scale": 0,
+   "value": "5218"
+  },
+  {
+   "table": "reviews",
+   "op": "nulls",
+   "column": "answered_at",
+   "value": 9150
+  },
+  {
+   "table": "reviews",
+   "op": "nulls",
+   "column": "text",
+   "value": 4649
+  },
+  {
+   "table": "reviews",
+   "op": "sum",
+   "column": "score",
+   "scale": 0,
+   "value": "66711"
+  },
+  {
+   "table": "reviews",
+   "op": "count_eq",
+   "column": "score",
+   "arg": "1",
+   "value": 881
+  },
+  {
+   "table": "reviews",
+   "op": "count_eq",
+   "column": "score",
+   "arg": "5",
+   "value": 7332
+  },
+  {
+   "table": "sessions",
+   "op": "nulls",
+   "column": "customer_id",
+   "value": 29687
+  },
+  {
+   "table": "sessions",
+   "op": "nulls",
+   "column": "city_id",
+   "value": 3542
+  },
+  {
+   "table": "sessions",
+   "op": "count_eq",
+   "column": "device",
+   "arg": "app",
+   "value": 21771
+  },
+  {
+   "table": "sessions",
+   "op": "count_eq",
+   "column": "source",
+   "arg": "search",
+   "value": 15087
+  },
+  {
+   "table": "sessions",
+   "op": "min",
+   "column": "started_at",
+   "scale": 0,
+   "value": "1759285074"
+  },
+  {
+   "table": "sessions",
+   "op": "max",
+   "column": "ended_at",
+   "scale": 0,
+   "value": "1819753138"
+  },
+  {
+   "table": "session_events",
+   "op": "nulls",
+   "column": "product_id",
+   "value": 34420
+  },
+  {
+   "table": "session_events",
+   "op": "nulls",
+   "column": "query",
+   "value": 112196
+  },
+  {
+   "table": "session_events",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "view",
+   "value": 63271
+  },
+  {
+   "table": "session_events",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "add_to_cart",
+   "value": 27562
+  },
+  {
+   "table": "session_events",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "payment",
+   "value": 8991
+  },
+  {
+   "table": "session_events",
+   "op": "max",
+   "column": "seq",
+   "scale": 0,
+   "value": "25"
+  }
+ ]
+}

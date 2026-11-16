@@ -1,0 +1,272 @@
+# Виды товаров. Колонки: code ¦ name_ru ¦ name_en ¦ группа брендов ¦ цена, ₽ (медиана, средний уровень) ¦ разброс линейки (σ) ¦ вес, г ¦ упаковка ДxШxВ, мм ¦ гарантия, мес. (по уровням) ¦ смена поколения, мес. ¦ SKU в окне ¦ сезон ¦ флаги ¦ характеристики
+# Характеристика: ключ[@уровень]=значения[#от-до][*эластичность][!][~]; уровень: l — линейка, g — поколение (по умолчанию), v — вариант, p — товар.
+# Значения: a..b/шаг | {1|2|3} | [рус=англ|…] | yn:доля | $ПАЛИТРА | &ключ:множитель. # — сколько значений у вариантов; * — цена ~ (значение/первое)^e
+# (для текста — ×(1+e) за каждую позицию); ! — размер (габариты ~ значение, вес ~ значение²); ~ — коррелирует с уровнем бренда.
+$PHONE	[чёрный=black|белый=white|синий=blue|зелёный=green|графитовый=graphite|серебристый=silver|фиолетовый=purple|золотистый=gold|розовый=pink]
+$BASIC	[чёрный=black|белый=white|серый=grey]
+$APPL	[белый=white|серебристый=silver|чёрный=black|бежевый=beige|нержавеющая сталь=stainless steel]
+$SMALL	[белый=white|чёрный=black|серебристый=silver|красный=red|бежевый=beige|мятный=mint]
+$AUDIO	[чёрный=black|белый=white|синий=blue|бежевый=beige|зелёный=green]
+$CASE	[чёрный=black|прозрачный=clear|синий=blue|красный=red|зелёный=green|розовый=pink|бежевый=beige]
+$TOOL	[зелёный=green|синий=blue|оранжевый=orange|жёлтый=yellow|красный=red]
+$FURN	[чёрный=black|серый=grey|красный=red|синий=blue|белый=white]
+$CONN	[проводное=wired|беспроводное=wireless]
+smartphone	Смартфон	smartphone	phones	22000	0.45	380	175x95x60	12,12,24	12	2700	GIFTS	fee=smartphone,p3=0.25	screen_diagonal=6.1..6.9/0.1;ram_gb={4|6|8|12|16}~;storage_gb@v={64|128|256|512|1024}#2-3*0.35~;color@v=$PHONE#2-4;battery_mah=4000..6000/100;camera_mp={48|50|64|108|200}~;nfc=yn:0.85~;network_5g=yn:0.6~;sim_count={1|2}
+smartphone_fold	Складной смартфон	foldable smartphone	phones	110000	0.25	520	185x110x65	12,24	12	160	GIFTS	fee=smartphone,p3=0.1,tiers=mid;premium	screen_diagonal=7.6..8.0/0.1;ram_gb={12|16};storage_gb@v={256|512|1024}#2-3*0.3;color@v=$PHONE#2-3;battery_mah=4400..5000/100;camera_mp={50|64|200};nfc=yn:1;network_5g=yn:1
+smartphone_rugged	Защищённый смартфон	rugged smartphone	phones	19000	0.35	520	185x100x70	12,24	18	240	BASE	fee=smartphone,p3=0.5	screen_diagonal=6.0..6.8/0.1;ram_gb={4|6|8|12}~;storage_gb@v={64|128|256}#1-2*0.3;color@v=[чёрный=black|оранжевый=orange|оливковый=olive]#1-2;battery_mah=6000..12000/500;waterproof=[IP68|IP69K];nfc=yn:0.8
+feature_phone	Кнопочный телефон	feature phone	phones	1800	0.4	220	140x80x40	12	24	260	BASE	p3=0.4	screen_diagonal=1.8..2.8/0.1;battery_mah=800..2500/100;sim_count={1|2};color@v=$BASIC#1-3
+senior_phone	Телефон для пожилых	senior phone	phones	2900	0.3	260	150x85x45	12	30	90	GIFTS	p3=0.3	screen_diagonal=2.2..2.8/0.1;battery_mah=1000..2000/100;color@v=$BASIC#1-2
+dect_phone	Радиотелефон	cordless phone	phones	3500	0.35	600	210x150x80	12	36	80	BASE	p3=0.3	handsets@v={1|2|3}#1-2*0.45;color@v=[чёрный=black|белый=white]#1-2
+tablet	Планшет	tablet	phones	26000	0.5	800	270x190x50	12,12,24	12	950	SCHOOL	p3=0.25	screen_diagonal=8..13/0.1;ram_gb={3|4|6|8|12}~;storage_gb@v={32|64|128|256|512}#2-3*0.3~;color@v=$BASIC#1-3;battery_mah=5000..10000/500;network_5g=yn:0.3~
+tablet_kids	Детский планшет	kids tablet	phones	7500	0.35	700	260x180x50	12	18	150	GIFTS	p3=0.4	screen_diagonal=7..10/0.1;storage_gb@v={16|32|64}#1-2*0.2;color@v=[синий=blue|розовый=pink|зелёный=green|жёлтый=yellow]#2-3;battery_mah=3000..6000/500
+graphics_tablet	Графический планшет	graphics tablet	computers	9000	0.6	900	350x250x50	12,24	30	110	SCHOOL	p3=0.3	type=[без экрана=screenless|с экраном=with display];connection=$CONN
+ereader	Электронная книга	e-reader	phones	12000	0.3	400	200x150x30	12	24	120	GIFTS	p3=0.3	screen_diagonal={6|7|7.8|10.3};storage_gb@v={8|16|32}#1-2*0.15;backlight=yn:0.8;color@v=$BASIC#1-2
+smartwatch	Умные часы	smartwatch	phones	14000	0.6	300	120x100x80	12	12	900	GIFTS	p3=0.3	case_mm@v={40|41|42|44|45|46|47|49}#1-2*0.15;color@v=$BASIC#2-3;battery_days=1..14/1;nfc=yn:0.6~;gps=yn:0.6~;waterproof=[IP67|5 ATM|10 ATM]
+smartwatch_kids	Детские умные часы	kids smartwatch	phones	4500	0.35	200	110x90x60	12	18	180	GIFTS	p3=0.5	color@v=[синий=blue|розовый=pink|чёрный=black|зелёный=green]#2-3;gps=yn:0.9;battery_days=1..4/1
+fitness_band	Фитнес-браслет	fitness band	phones	3500	0.45	120	110x70x40	12	12	300	GIFTS	p3=0.3	screen_diagonal=1.0..1.7/0.1;battery_days=7..21/1;color@v=$BASIC#1-3;waterproof=[5 ATM|IP68]
+watch_strap	Ремешок для часов	watch strap	accessories	1200	0.5	60	120x60x20	3,6	18	450	GIFTS	p3=0.7	material=[силикон=silicone|кожа=leather|нейлон=nylon|металл=metal];color@v=$CASE#2-4;case_mm={20|22|40|44|45}
+case	Чехол-накладка	back cover	accessories	990	0.5	80	190x100x20	1,3	0	0	BASE	compat=smartphone;smartphone_fold;smartphone_rugged,cpm=1-3,p3=0.75	material=[силикон=silicone|пластик=plastic|кожа=leather|ткань=fabric];color@v=$CASE#2-5
+case_folio	Чехол-книжка	folio case	accessories	1290	0.45	110	190x100x25	1,3	0	0	BASE	compat=smartphone,cpm=0-2,p3=0.75	material=[экокожа=faux leather|кожа=leather];color@v=$CASE#1-3
+case_rugged	Противоударный чехол	rugged case	accessories	1590	0.4	130	190x100x30	1,3	0	0	BASE	compat=smartphone;smartphone_rugged,cpm=0-1,p3=0.75	material=[поликарбонат=polycarbonate|термополиуретан=TPU];color@v=$BASIC#1-2
+glass	Защитное стекло	tempered glass	accessories	690	0.5	60	190x100x15	1	0	0	BASE	compat=smartphone;smartphone_rugged,cpm=1-2,p3=0.8	type=[2.5D|3D|матовое=matte]
+film	Защитная плёнка	protective film	accessories	390	0.4	40	190x100x10	1	0	0	BASE	compat=smartphone;smartphone_fold,cpm=0-1,p3=0.8	type=[глянцевая=glossy|матовая=matte|гидрогелевая=hydrogel]
+charger	Сетевое зарядное устройство	wall charger	accessories	1490	0.5	150	110x70x40	6,12	18	620	BASE	p3=0.6	power_w@v={20|25|30|33|45|65|100|140}#1-2*0.5~;ports={1|2|3};color@v=[белый=white|чёрный=black]#1-2
+charger_wireless	Беспроводное зарядное устройство	wireless charger	accessories	2490	0.45	200	120x120x40	12	18	220	GIFTS	p3=0.6	power_w={10|15|20|30};color@v=[белый=white|чёрный=black]#1-2
+charger_car	Автомобильное зарядное устройство	car charger	accessories	990	0.4	100	100x60x40	6,12	24	220	BASE	p3=0.7	power_w={18|30|45|65};ports={1|2|3};color@v=$BASIC#1-1
+cable_usbc	Кабель USB-C	USB-C cable	accessories	690	0.5	80	150x100x20	6,12	24	720	BASE	p3=0.7	connector=[USB-C — USB-C=USB-C to USB-C|USB-A — USB-C=USB-A to USB-C];length_m@v={0.25|0.5|1|1.5|2|3}#1-3*0.25;power_w={60|100|240};color@v=$BASIC#1-2
+cable_micro	Кабель micro-USB	micro-USB cable	accessories	390	0.4	70	150x100x20	6,12	24	250	BASE	p3=0.8	connector=[USB-A — micro-USB=USB-A to micro-USB];length_m@v={0.5|1|1.5|2}#1-2*0.2;color@v=$BASIC#1-2
+adapter	Переходник	adapter	accessories	690	0.5	50	100x70x20	6,12	36	250	BASE	p3=0.7	connector=[USB-C — USB-A=USB-C to USB-A|USB-C — HDMI=USB-C to HDMI|USB-C — 3,5 мм=USB-C to 3.5 mm|USB-C — Ethernet=USB-C to Ethernet];color@v=$BASIC#1-1
+powerbank	Внешний аккумулятор	power bank	accessories	2490	0.45	350	160x100x40	6,12	18	650	BASE	p3=0.5	battery_mah@v={5000|10000|20000|30000|40000}#1-2*0.45;power_w={18|22.5|30|65|100}~;ports={1|2|3};color@v=$BASIC#1-3
+holder	Держатель для смартфона	phone holder	accessories	890	0.5	150	150x100x60	6,12	30	300	BASE	p3=0.8	type=[магнитный=magnetic|на присоске=suction cup|в дефлектор=vent clip|настольный=desk];color@v=$BASIC#1-1
+memory_card	Карта памяти	memory card	computers	1290	0.35	30	90x60x10	12,36,60	30	380	BASE	p3=0.5	capacity_gb@v={32|64|128|256|512|1024}#2-4*0.75;read_mbs={100|130|160|170|200}~;interface=[microSDXC]
+gimbal	Стабилизатор для смартфона	smartphone gimbal	accessories	6990	0.5	600	220x130x70	12	30	140	GIFTS	p3=0.4	battery_h=6..15/1;type=[монопод=selfie stick|стабилизатор=gimbal];color@v=$BASIC#1-2
+case_tablet	Чехол для планшета	tablet case	accessories	1990	0.45	250	290x210x30	3,6	0	0	BASE	compat=tablet;tablet_kids,cpm=1-2,p3=0.7	material=[экокожа=faux leather|силикон=silicone|ткань=fabric];color@v=$CASE#1-3
+stylus	Стилус	stylus	accessories	2490	0.6	60	200x60x20	12	30	160	SCHOOL	p3=0.6	connection=[беспроводное=wireless|пассивный=passive];color@v=[белый=white|чёрный=black]#1-2
+tablet_keyboard	Клавиатура для планшета	tablet keyboard	accessories	4990	0.5	450	300x200x30	12	30	150	SCHOOL	p3=0.4	connection=[беспроводное=wireless];color@v=$BASIC#1-2
+laptop	Ноутбук	laptop	computers	62000	0.45	2600	450x320x80	12,12,24	12	1450	SCHOOL	fee=laptop,p3=0.2	screen_diagonal@l={13.3|14|15.6|16|17.3};ram_gb@v={8|16|32}#1-2*0.25~;ssd_gb@v={256|512|1024}#1-2*0.2~;cpu_cores={4|6|8|10|12|14}~;cpu_ghz=2.0..4.5/0.1;gpu=[встроенная=integrated|дискретная=discrete];battery_wh=40..90/1;os_preinstalled=[предустановлена=preinstalled|нет=none];color@v=[серый=grey|серебристый=silver|чёрный=black]#1-1
+laptop_gaming	Игровой ноутбук	gaming laptop	computers	115000	0.4	3400	470x340x90	12,24	12	700	GIFTS	fee=laptop,p3=0.15	screen_diagonal@l={15.6|16|17.3|18};ram_gb@v={16|32|64}#1-2*0.25~;ssd_gb@v={512|1024|2048}#1-2*0.2;cpu_cores={8|12|14|16|24}~;gpu=[дискретная=discrete];refresh_hz={144|165|240};battery_wh=60..99/1;color@v=[чёрный=black|серый=grey]#1-1
+ultrabook	Ультрабук	ultrabook	computers	98000	0.35	1700	400x290x60	12,24	12	600	BASE	fee=laptop,p3=0.15	screen_diagonal@l={13.3|13.6|14|15.3|16};ram_gb@v={16|32}#1-2*0.25;ssd_gb@v={512|1024|2048}#1-2*0.2;cpu_cores={8|10|12|14};battery_wh=50..80/1;color@v=[серебристый=silver|серый=grey|синий=blue]#1-2
+laptop_convertible	Ноутбук-трансформер	convertible laptop	computers	78000	0.35	1900	420x300x70	12,24	12	200	BASE	fee=laptop,p3=0.2	screen_diagonal@l={13.3|14|16};ram_gb@v={8|16|32}#1-2*0.25;ssd_gb@v={256|512|1024}#1-2*0.2;color@v=[серебристый=silver|серый=grey]#1-1
+laptop_bag	Сумка для ноутбука	laptop bag	accessories	2990	0.5	700	450x330x80	6,12	30	450	SCHOOL	p3=0.6	type=[сумка=bag|рюкзак=backpack|чехол=sleeve];max_diagonal={13.3|14|15.6|16|17.3};material=[полиэстер=polyester|нейлон=nylon|кожа=leather];color@v=$FURN#1-3
+laptop_stand	Подставка для ноутбука	laptop stand	accessories	1990	0.5	900	300x250x60	12	36	200	BASE	p3=0.7	material=[алюминий=aluminium|пластик=plastic];max_diagonal={15.6|17.3};color@v=[серебристый=silver|чёрный=black]#1-2
+laptop_charger	Блок питания для ноутбука	laptop power adapter	accessories	2990	0.4	400	160x100x50	12	36	250	BASE	p3=0.7	power_w@v={45|65|90|100|140}#1-2*0.4;connector=[USB-C|штекер=barrel]
+dock	Док-станция	docking station	computers	7990	0.5	400	200x120x50	12,24	30	150	BASE	p3=0.4	ports={5|7|9|11|13};power_w={60|85|100}
+desktop	Системный блок	desktop PC	computers	52000	0.5	9000	500x480x250	12,24,36	12	500	BASE	p3=0.2	ram_gb@v={8|16|32}#1-2*0.25;ssd_gb@v={256|512|1024}#1-2*0.2;cpu_cores={4|6|8|12|16}~;gpu=[встроенная=integrated|дискретная=discrete];os_preinstalled=[предустановлена=preinstalled|нет=none]
+desktop_gaming	Игровой компьютер	gaming PC	computers	135000	0.4	14000	600x560x300	12,24	12	300	GIFTS	p3=0.15	ram_gb@v={16|32|64}#1-2*0.25;ssd_gb@v={1024|2048}#1-2*0.15;cpu_cores={8|12|16|24}~;gpu=[дискретная=discrete]
+aio	Моноблок	all-in-one PC	computers	72000	0.4	8500	650x500x200	12,24	12	260	BASE	p3=0.2	screen_diagonal@l={23.8|27|31.5};ram_gb@v={8|16|32}#1-2*0.25;ssd_gb@v={512|1024}#1-2*0.2;color@v=[белый=white|чёрный=black|серебристый=silver]#1-2
+mini_pc	Мини-компьютер	mini PC	computers	32000	0.5	1200	220x200x100	12,24	12	200	BASE	p3=0.3	ram_gb@v={8|16|32}#1-2*0.25;ssd_gb@v={256|512|1024}#1-2*0.2;cpu_cores={4|6|8|12}
+monitor	Монитор	monitor	computers	17000	0.45	5000	600x420x140	12,24,36	18	900	BASE	p3=0.25	screen_diagonal@v={21.5|23.8|27|31.5|34}#1-3*1.5!~;resolution=[1920×1080|2560×1440|3840×2160]~;refresh_hz={60|75|100};panel=[IPS|VA];color@v=[чёрный=black|белый=white]#1-1
+monitor_gaming	Игровой монитор	gaming monitor	computers	32000	0.4	6000	650x450x160	12,24,36	18	600	GIFTS	p3=0.2	screen_diagonal@v={24.5|27|31.5|34}#1-2*1.4!~;resolution=[1920×1080|2560×1440|3840×2160]~;refresh_hz={144|165|180|240|360}~;panel=[IPS|VA|OLED]
+monitor_arm	Кронштейн для монитора	monitor arm	accessories	3990	0.5	3000	500x200x120	12,24	36	200	BASE	p3=0.6	max_diagonal={27|32|35};max_load_kg={8|9|10|12};vesa=[75×75, 100×100];type=[для одного монитора=single|для двух мониторов=dual]
+keyboard_mech	Механическая клавиатура	mechanical keyboard	computers	7990	0.55	1300	480x180x60	12,24	18	450	GIFTS	p3=0.4	switch_type=[линейные=linear|тактильные=tactile|кликающие=clicky];connection=$CONN;type=[полноразмерная=full size|без цифрового блока=tenkeyless|компактная=compact];color@v=$BASIC#1-2
+keyboard	Мембранная клавиатура	membrane keyboard	computers	1690	0.5	800	470x170x40	12	24	350	BASE	p3=0.5	connection=$CONN;color@v=$BASIC#1-2
+mouse_gaming	Игровая мышь	gaming mouse	computers	4490	0.55	250	180x120x60	12,24	18	400	GIFTS	p3=0.4	dpi={12000|16000|26000|30000}~;connection=$CONN;color@v=$BASIC#1-2
+mouse	Офисная мышь	office mouse	computers	990	0.5	150	160x100x50	12	24	450	BASE	p3=0.5	dpi={1000|1200|1600|2400};connection=$CONN;color@v=$BASIC#1-3
+kb_mouse_set	Комплект клавиатура и мышь	keyboard and mouse set	computers	2490	0.5	1100	480x200x60	12	30	200	BASE	p3=0.5	connection=$CONN;color@v=$BASIC#1-2
+mousepad	Коврик для мыши	mouse pad	accessories	690	0.6	300	400x300x20	3,6	36	300	BASE	p3=0.8	type=[обычный=standard|игровой=gaming|XXL];color@v=$BASIC#1-2
+webcam	Веб-камера	webcam	computers	3490	0.5	300	150x100x80	12	30	180	BASE	p3=0.4	resolution=[1280×720|1920×1080|2560×1440|3840×2160]~
+pc_headset	Компьютерная гарнитура	PC headset	computers	2490	0.5	400	220x200x100	12	24	250	BASE	p3=0.4	connection=$CONN;type=[полноразмерная=over-ear|накладная=on-ear]
+microphone	Микрофон	microphone	audio	5490	0.6	700	250x150x100	12,24	36	200	BASE	p3=0.4	interface=[USB|XLR|USB и XLR=USB and XLR];type=[конденсаторный=condenser|динамический=dynamic]
+pc_speakers	Компьютерная акустика	PC speakers	audio	3490	0.55	2500	300x250x200	12	30	220	BASE	p3=0.4	power_w={6|10|20|40|60|80}~;channels=[2.0|2.1]
+ssd_m2	SSD-накопитель M.2	M.2 SSD	computers	6990	0.35	80	150x100x20	36,60	24	650	BASE	p3=0.3	capacity_gb@v={256|512|1024|2048|4096}#2-3*0.8;read_mbs={2400|3500|5000|7000|7400}~;interface=[PCIe 3.0|PCIe 4.0|PCIe 5.0]~
+ssd_sata	SSD-накопитель 2,5"	2.5" SSD	computers	4990	0.3	120	150x100x20	36	24	320	BASE	p3=0.3	capacity_gb@v={240|480|960|1920}#2-3*0.8;read_mbs={520|550|560};interface=[SATA III]
+hdd	Жёсткий диск	hard drive	computers	8990	0.35	800	200x150x60	24,36	30	200	BASE	p3=0.3	capacity_gb@v={1000|2000|4000|8000|12000|16000}#2-3*0.65;interface=[SATA III]
+ram	Модуль памяти	memory module	computers	4490	0.35	80	150x50x20	36,60	24	450	BASE	p3=0.3	capacity_gb@v={8|16|32|64}#2-3*0.8;memory_type=[DDR4|DDR5]~;frequency_mhz={3200|3600|4800|5600|6000|6400}~
+psu	Блок питания	power supply	computers	7490	0.4	2000	250x200x120	24,36,60	36	250	BASE	p3=0.3	power_w@v={500|550|650|750|850|1000|1200}#1-3*0.7;form_factor=[ATX|SFX]
+pc_case	Корпус для компьютера	PC case	computers	6490	0.45	7000	520x480x260	12	36	300	BASE	p3=0.4	form_factor=[Full Tower|Midi Tower|Mini Tower];color@v=[чёрный=black|белый=white]#1-2
+cooler	Система охлаждения	CPU cooler	computers	3490	0.55	900	200x160x140	12,24,36	36	300	BASE	p3=0.4	tdp_w={120|150|180|220|250|300}~;type=[башенный=tower|жидкостный=liquid]
+router	Wi-Fi роутер	Wi-Fi router	computers	4990	0.6	700	260x180x60	12,24	24	400	BASE	p3=0.3	wifi_standard=[Wi-Fi 5|Wi-Fi 6|Wi-Fi 6E|Wi-Fi 7]~;speed_mbps={1200|1800|3000|5400|9300}~;ports={3|4|5}
+mesh	Mesh-система	mesh system	computers	14990	0.4	1500	300x200x150	24	24	120	BASE	p3=0.2	wifi_standard=[Wi-Fi 6|Wi-Fi 6E|Wi-Fi 7]~;type=[2 модуля=2 nodes|3 модуля=3 nodes]
+switch	Коммутатор	network switch	computers	3490	0.6	700	250x150x50	24,36	48	150	BASE	p3=0.4	ports={5|8|16|24};speed_mbps={1000|2500}
+net_adapter	Сетевой адаптер	network adapter	computers	1490	0.5	100	150x100x30	12	36	120	BASE	p3=0.5	interface=[USB|PCIe];wifi_standard=[Wi-Fi 5|Wi-Fi 6|Wi-Fi 6E]
+printer_laser	Лазерный принтер	laser printer	office	14990	0.45	8000	450x400x300	12	36	180	BASE	p3=0.2	color_print=yn:0.3;ppm={20|25|30|35|40};duplex=yn:0.6~
+printer_inkjet	Струйный принтер	inkjet printer	office	9990	0.5	6000	450x350x250	12	36	120	BASE	p3=0.2	color_print=yn:1;ppm={8|10|15|20};duplex=yn:0.3
+mfp_laser	Лазерное МФУ	laser MFP	office	24990	0.4	12000	500x450x400	12	36	200	BASE	p3=0.2	color_print=yn:0.3;ppm={20|30|40};duplex=yn:0.7~
+mfp_inkjet	Струйное МФУ	inkjet MFP	office	14990	0.45	8000	480x400x300	12	36	180	SCHOOL	p3=0.2	color_print=yn:1;ppm={8|10|15|20};duplex=yn:0.4
+cartridge	Картридж	cartridge	office	2990	0.6	300	200x80x80	6	0	0	BASE	compat=printer_laser;printer_inkjet;mfp_laser;mfp_inkjet,cpm=1-3,p3=0.6	yield_pages={500|1000|1500|2500|3000};color@v=[чёрный=black|голубой=cyan|пурпурный=magenta|жёлтый=yellow]#1-4
+scanner	Сканер	scanner	office	11990	0.5	4000	500x350x120	12	48	80	BASE	p3=0.3	resolution=[1200 dpi|2400 dpi|4800 dpi];type=[планшетный=flatbed|протяжной=sheet-fed]
+shredder	Шредер	paper shredder	office	6990	0.5	6000	400x300x450	12	48	80	BASE	p3=0.3	volume_l={12|18|23|30};type=[полосы=strip-cut|частицы=cross-cut]
+paper	Бумага для печати	printing paper	office	590	0.3	2500	300x210x55	0	60	60	SCHOOL	p3=0.4	format=[A4|A3];sheets@v={100|250|500}#1-2*0.85
+flash	USB-флешка	USB flash drive	computers	890	0.4	40	120x60x15	12,60	30	420	SCHOOL	p3=0.5	capacity_gb@v={16|32|64|128|256|512}#2-4*0.6;interface=[USB 2.0|USB 3.2|USB-C]~
+ext_hdd	Внешний жёсткий диск	external hard drive	computers	7990	0.3	300	150x110x40	24,36	30	180	BASE	p3=0.3	capacity_gb@v={1000|2000|4000|5000}#2-3*0.55;color@v=$BASIC#1-2
+ext_ssd	Внешний SSD	external SSD	computers	9990	0.35	150	130x90x30	36,60	24	180	BASE	p3=0.3	capacity_gb@v={500|1000|2000|4000}#2-3*0.7;read_mbs={540|1050|2000}~
+tv	Телевизор	TV	tv	18000	0.35	5000	830x530x130	12,24	12	1350	GIFTS	p3=0.2	screen_diagonal@v={32|43|50|55|65|75|85}#2-4*1.7!~;resolution=[3840×2160];refresh_hz={60|120}~;smart_tv=yn:0.95;hdr=yn:0.85~;panel=[LED|MiniLED]~
+tv_oled	Телевизор OLED	OLED TV	tv	95000	0.3	14000	1180x720x150	24	12	300	GIFTS	p3=0.1,tiers=mid;premium	screen_diagonal@v={48|55|65|77|83}#2-3*1.6!;resolution=[3840×2160];refresh_hz={100|120|144};smart_tv=yn:1;hdr=yn:1;panel=[OLED]
+tv_small	Телевизор для кухни и дачи	compact TV	tv	9990	0.35	3000	550x370x110	12	18	160	GARDEN	p3=0.4	screen_diagonal@v={20|22|24|28|32}#1-2*1.3!;resolution=[1366×768|1920×1080];smart_tv=yn:0.5
+tv_mount	Кронштейн для телевизора	TV mount	accessories	1990	0.6	2000	450x300x80	12,24	36	300	BASE	p3=0.7	max_diagonal={43|55|65|75|90};max_load_kg={25|35|45|60};type=[фиксированный=fixed|наклонный=tilt|поворотный=full-motion];vesa=[200×200|400×400|600×400]
+remote	Пульт ДУ	remote control	accessories	790	0.5	100	200x60x30	3,6	36	150	BASE	p3=0.8	type=[универсальный=universal|оригинальный=original]
+tv_box	ТВ-приставка	TV box	tv	4990	0.5	400	150x150x60	12	18	160	BASE	p3=0.4	resolution=[1920×1080|3840×2160]~;ram_gb={2|4};storage_gb={16|32|64}
+antenna	Антенна	TV antenna	tv	1490	0.5	600	350x200x80	12	48	100	GARDEN	p3=0.6	type=[комнатная=indoor|наружная=outdoor]
+cable_hdmi	Кабель HDMI	HDMI cable	accessories	790	0.5	150	200x150x30	12	36	300	BASE	p3=0.6	length_m@v={1|1.5|2|3|5|10}#2-3*0.35;type=[HDMI 2.0|HDMI 2.1]
+tws	Беспроводные наушники	true wireless earbuds	audio	5990	0.65	150	110x90x45	12	12	1250	GIFTS	p3=0.4	anc=yn:0.5~;battery_h=4..10/1;bt_version={5.0|5.2|5.3|5.4};waterproof=[IPX4|IPX5|IP54];color@v=$AUDIO#1-3
+headphones_onear	Накладные наушники	on-ear headphones	audio	3990	0.55	350	200x180x80	12	18	300	GIFTS	p3=0.4	connection=$CONN;battery_h=20..60/5;driver_mm={30|32|40};color@v=$AUDIO#1-3
+headphones_over	Полноразмерные наушники	over-ear headphones	audio	12990	0.6	500	240x200x100	12,24	18	450	GIFTS	p3=0.3	anc=yn:0.6~;battery_h=20..70/5;driver_mm={40|45|50};connection=$CONN;color@v=$AUDIO#1-3
+earphones_wired	Проводные наушники	wired earphones	audio	990	0.6	80	120x80x30	6,12	24	250	BASE	p3=0.6	connector=[3,5 мм=3.5 mm|USB-C];driver_mm={8|10|12};color@v=$BASIC#1-2
+headphones_sport	Спортивные наушники	sport headphones	audio	4990	0.5	120	150x100x50	12	18	200	GARDEN	p3=0.4	type=[с заушиной=ear-hook|костная проводимость=bone conduction|шейный ободок=neckband];waterproof=[IPX5|IP67];battery_h=6..12/1;color@v=$AUDIO#1-2
+speaker_portable	Портативная колонка	portable speaker	audio	5990	0.65	700	220x120x110	12	18	650	GIFTS	p3=0.4	power_w={5|10|16|20|30|40|60|100}~;battery_h=8..24/1;waterproof=[IPX7|IP67|нет=none];color@v=$AUDIO#1-4
+smart_speaker	Умная колонка	smart speaker	audio	7990	0.5	900	150x150x200	12	24	120	GIFTS	p3=0.2	power_w={5|10|20|40};protocol=[Wi-Fi и Bluetooth=Wi-Fi and Bluetooth|Wi-Fi, Bluetooth и Zigbee=Wi-Fi, Bluetooth and Zigbee];color@v=$AUDIO#1-3
+soundbar	Саундбар	soundbar	audio	14990	0.6	5000	1000x200x150	12,24	18	300	GIFTS	p3=0.2	channels=[2.0|2.1|3.1|5.1|7.1.4]~;power_w={80|120|200|300|500}~
+music_center	Музыкальный центр	music system	audio	15990	0.5	8000	500x350x300	12	36	100	BASE	p3=0.3	power_w={50|100|200|500}
+amplifier	Усилитель	amplifier	audio	29990	0.6	9000	500x450x200	24,36	48	100	BASE	p3=0.2	power_w={50|80|100|150}~;channels=[2.0]
+loudspeakers	Акустическая система	loudspeakers	audio	34990	0.65	15000	450x350x600	24,36	48	150	BASE	p3=0.2	power_w={40|60|100|150|200};type=[полочная=bookshelf|напольная=floorstanding];color@v=[чёрный=black|орех=walnut|белый=white]#1-2
+turntable	Проигрыватель винила	turntable	audio	22990	0.5	6000	500x420x180	12,24	48	80	GIFTS	p3=0.3	type=[ременной привод=belt drive|прямой привод=direct drive];color@v=[чёрный=black|орех=walnut]#1-2
+karaoke	Караоке-система	karaoke system	audio	12990	0.5	6000	450x400x350	12	36	60	GIFTS	p3=0.4	power_w={40|100|200}
+radio	Радиоприёмник	radio	audio	2490	0.5	600	250x150x100	12	48	80	GARDEN	p3=0.5	type=[FM|FM и DAB+=FM and DAB+];battery_h=10..30/2
+projector	Проектор	projector	tv	39990	0.6	3500	400x330x200	12,24	24	220	GIFTS	p3=0.3	lumen={1500|2500|3500|4000}~;resolution=[1920×1080|3840×2160]~;smart_tv=yn:0.6
+projector_screen	Экран для проектора	projector screen	tv	6990	0.5	7000	1900x150x150	12	60	80	BASE	p3=0.5	max_diagonal@v={80|100|120|150}#1-3*0.8!;type=[настенный=wall|на треноге=tripod|моторизованный=motorised]
+home_theater	Домашний кинотеатр	home theatre system	audio	39990	0.5	18000	700x500x450	12,24	36	60	GIFTS	p3=0.2	channels=[5.1|7.1];power_w={500|800|1000|1200}
+camera_mirrorless	Беззеркальная камера	mirrorless camera	photo	95000	0.5	1300	250x200x180	12,24	24	160	GIFTS	p3=0.15	camera_mp={24|26|33|45|61}~;sensor=[APS-C|полнокадровая=full frame]~;video=[4K|6K|8K]~;type@v=[корпус=body|с объективом=kit]#1-2*0.15
+camera_dslr	Зеркальный фотоаппарат	DSLR camera	photo	65000	0.45	1500	250x200x180	12,24	36	70	GIFTS	p3=0.15	camera_mp={24|26|30|45};sensor=[APS-C|полнокадровая=full frame];type@v=[корпус=body|с объективом=kit]#1-2*0.15
+camera_compact	Компактная камера	compact camera	photo	32000	0.5	500	180x130x90	12	30	60	GIFTS	p3=0.2	camera_mp={16|20|24};zoom_x={3|5|10|30};color@v=$BASIC#1-2
+camera_instant	Камера моментальной печати	instant camera	photo	9990	0.35	700	200x150x120	12	36	70	GIFTS	p3=0.3	color@v=[белый=white|розовый=pink|синий=blue|зелёный=green|чёрный=black]#2-4
+lens	Объектив	lens	photo	49000	0.7	800	150x110x110	12,24	48	220	BASE	p3=0.2	focal_mm={16|24|35|50|85|135|200};aperture=[f/4|f/2.8|f/1.8|f/1.4]~
+action_cam	Экшн-камера	action camera	photo	24990	0.5	400	160x120x80	12	12	120	GARDEN	p3=0.3	camera_mp={12|20|27};video=[4K|5.3K];waterproof=[10 м=10 m|IP68]
+action_mount	Крепление для экшн-камеры	action camera mount	accessories	990	0.6	100	150x100x50	6	36	150	GARDEN	p3=0.8	type=[на шлем=helmet|на грудь=chest|на руль=handlebar|присоска=suction cup]
+drone	Квадрокоптер	drone	photo	59990	0.7	1500	300x250x150	12	18	120	GIFTS	p3=0.3	flight_min={20|30|34|40|46}~;camera_mp={12|20|48}~;range_km={4|10|15|20}~
+camcorder	Видеокамера	camcorder	photo	39990	0.4	900	250x150x150	12	36	50	BASE	p3=0.2	video=[Full HD|4K];zoom_x={10|20|30}
+tripod	Штатив	tripod	photo	3990	0.7	1500	600x120x120	12,24	48	180	BASE	p3=0.6	max_load_kg={2|4|8|12};height_cm={120|150|170|190};material=[алюминий=aluminium|карбон=carbon]~
+camera_bag	Сумка для фототехники	camera bag	accessories	3990	0.5	700	350x250x200	6,12	48	120	BASE	p3=0.6	type=[сумка=bag|рюкзак=backpack];color@v=$BASIC#1-2
+flash_light	Вспышка	flash	photo	9990	0.6	500	200x150x100	12	48	100	BASE	p3=0.4	type=[накамерная вспышка=speedlite|кольцевая лампа=ring light|LED-панель=LED panel]
+camera_battery	Аккумулятор для камеры	camera battery	photo	2990	0.4	100	100x70x30	6,12	48	150	BASE	p3=0.7	battery_mah={1000|1200|1600|2000|2280}
+console	Игровая консоль	game console	gaming	52000	0.35	5000	450x400x150	12	48	80	GIFTS	p3=0.2	storage_gb@v={512|825|1000|2000}#1-2*0.2;resolution=[3840×2160];color@v=[белый=white|чёрный=black]#1-2
+console_handheld	Портативная консоль	handheld console	gaming	39990	0.4	900	320x150x100	12	36	70	GIFTS	p3=0.2	storage_gb@v={64|256|512|1024}#1-2*0.2;screen_diagonal={7|7.4|8}
+gamepad	Геймпад	gamepad	gaming	4990	0.5	400	200x150x80	12	24	260	GIFTS	p3=0.5	connection=$CONN;color@v=$CASE#1-4
+wheel	Игровой руль	racing wheel	gaming	19990	0.7	6000	450x400x350	12	48	80	GIFTS	p3=0.3	type=[руль=wheel|джойстик=joystick]
+gaming_headset	Игровая гарнитура	gaming headset	gaming	5990	0.55	500	250x220x110	12	18	300	GIFTS	p3=0.4	connection=$CONN;driver_mm={40|50|53};color@v=$BASIC#1-2
+vr	VR-шлем	VR headset	gaming	49990	0.4	1200	300x250x200	12	24	40	GIFTS	p3=0.2	storage_gb@v={128|256|512}#1-2*0.2
+gaming_chair	Игровое кресло	gaming chair	furniture	17990	0.5	22000	900x700x350	12,24	36	300	GIFTS	p3=0.6	max_load_kg={120|150|180};material=[экокожа=faux leather|ткань=fabric];color@v=$FURN#2-4
+gaming_desk	Игровой стол	gaming desk	furniture	14990	0.5	30000	1300x700x150	12	48	120	BASE	p3=0.6	width_cm={100|120|140|160};color@v=[чёрный=black|белый=white]#1-2
+escooter	Электросамокат	e-scooter	emobility	34990	0.5	16000	1150x250x550	12	18	220	GARDEN	p3=0.3	range_km={20|30|40|60|80}~;max_speed_kmh={20|25};battery_wh={250|360|480|600|800};max_load_kg={100|120|150}
+ebike	Электровелосипед	e-bike	emobility	79990	0.45	25000	1600x300x900	12,24	24	100	GARDEN	p3=0.3	range_km={40|60|80|100};max_speed_kmh={25};battery_wh={360|500|720}
+hoverboard	Гироскутер	hoverboard	emobility	14990	0.4	10000	700x250x250	12	24	80	GIFTS	p3=0.4	max_speed_kmh={10|12|15};range_km={10|15|20};color@v=$CASE#2-4
+fridge	Двухкамерный холодильник	two-door refrigerator	appliances_large	54990	0.4	65000	700x680x1900	12,24,36	30	950	BASE	p3=0.15	height_cm@l={150|170|185|200|207};volume_l=220..420/5;freezer_l=60..140/5;no_frost=yn:0.7~;energy_class=[A|A+|A++]~;noise_db=36..43/1;color@v=$APPL#1-3
+fridge_single	Однокамерный холодильник	single-door refrigerator	appliances_large	24990	0.4	35000	600x600x1300	12,24	36	250	COOLING	p3=0.2	height_cm@l={85|120|145|185};volume_l=90..350/5;energy_class=[A|A+]~;color@v=$APPL#1-2
+fridge_sbs	Холодильник Side-by-Side	side-by-side refrigerator	appliances_large	129990	0.35	120000	950x750x1850	24,36	36	140	BASE	p3=0.1	volume_l=500..700/10;no_frost=yn:1;energy_class=[A+|A++]~;color@v=[чёрный=black|нержавеющая сталь=stainless steel|серебристый=silver]#1-2
+fridge_builtin	Встраиваемый холодильник	built-in refrigerator	appliances_large	64990	0.35	60000	600x580x1800	24	36	150	BASE	p3=0.1	height_cm@l={82|122|177|194};volume_l=120..300/5;no_frost=yn:0.5~
+freezer	Морозильная камера	upright freezer	appliances_large	32990	0.35	50000	600x600x1700	12,24	36	140	BASE	p3=0.15	volume_l=80..300/10;no_frost=yn:0.6~;color@v=$APPL#1-2
+freezer_chest	Морозильный ларь	chest freezer	appliances_large	26990	0.35	40000	1100x650x850	12,24	48	100	GARDEN	p3=0.2	volume_l=100..400/10
+wine_cooler	Винный шкаф	wine cooler	appliances_large	34990	0.5	30000	600x580x850	12	48	70	GIFTS	p3=0.2	volume_l=20..150/5
+washer	Фронтальная стиральная машина	front-load washing machine	appliances_large	34990	0.4	65000	650x600x880	12,24,36	30	550	BASE	p3=0.15	load_kg@l={6|7|8|9|10|11}~;spin_rpm={1000|1200|1400}~;depth_cm={45|55|60};energy_class=[B|A|A+++]~;color@v=[белый=white|чёрный=black|серебристый=silver]#1-2
+washer_slim	Узкая стиральная машина	slim washing machine	appliances_large	27990	0.35	55000	600x400x860	12,24	30	380	BASE	p3=0.15	load_kg@l={5|6|7|8}~;depth_cm={33|36|40|42};spin_rpm={800|1000|1200}
+washer_top	Стиральная машина с вертикальной загрузкой	top-load washing machine	appliances_large	32990	0.3	60000	450x600x900	12,24	36	120	BASE	p3=0.15	load_kg={5|6|7};spin_rpm={800|1000|1200}
+washer_builtin	Встраиваемая стиральная машина	built-in washing machine	appliances_large	52990	0.3	70000	600x580x820	24	36	70	BASE	p3=0.1	load_kg={7|8|9}
+washer_dryer	Стирально-сушильная машина	washer-dryer	appliances_large	59990	0.35	75000	650x620x880	24	30	150	BASE	p3=0.1	load_kg={7|8|9|10};spin_rpm={1200|1400}
+dryer	Сушильная машина	tumble dryer	appliances_large	54990	0.35	50000	650x620x880	24	36	120	HEATING	p3=0.1	load_kg={7|8|9};type=[конденсационная=condenser|с тепловым насосом=heat pump]~
+dishwasher	Отдельностоящая посудомоечная машина	freestanding dishwasher	appliances_large	32990	0.35	45000	650x650x900	12,24	30	230	BASE	p3=0.15	width_cm@l={45|60};place_settings={9|10|12|13|14};energy_class=[A|A+|A++]~;color@v=[белый=white|серебристый=silver]#1-2
+dishwasher_builtin	Встраиваемая посудомоечная машина	built-in dishwasher	appliances_large	36990	0.35	40000	650x620x880	24	30	300	BASE	p3=0.1	width_cm@l={45|60};place_settings={9|10|12|14};energy_class=[A|A+|A++]~
+dishwasher_compact	Компактная посудомоечная машина	compact dishwasher	appliances_large	22990	0.3	25000	600x550x500	12	36	100	BASE	p3=0.2	place_settings={6|8}
+cooker_electric	Электрическая плита	electric cooker	appliances_large	29990	0.4	45000	600x600x900	12	48	160	BASE	p3=0.15	burners={4};volume_l={50|60|70};width_cm@l={50|60};color@v=[белый=white|чёрный=black]#1-2
+cooker_gas	Газовая плита	gas cooker	appliances_large	24990	0.4	40000	600x600x900	12	48	140	GARDEN	p3=0.15	burners={4};volume_l={45|50|60};width_cm@l={50|60};color@v=[белый=white|бежевый=beige]#1-2
+hob_induction	Индукционная варочная панель	induction hob	appliances_large	32990	0.45	12000	700x600x150	12,24	30	260	BASE	p3=0.15	width_cm@l={30|45|60|75|80};burners={2|3|4|5};color@v=[чёрный=black|белый=white]#1-1
+hob_electric	Электрическая варочная панель	electric hob	appliances_large	19990	0.4	10000	650x580x120	12	36	150	BASE	p3=0.15	width_cm={30|45|60};burners={2|4}
+hob_gas	Газовая варочная панель	gas hob	appliances_large	17990	0.4	12000	650x580x150	12	48	150	BASE	p3=0.15	width_cm@l={30|45|60|75};burners={2|3|4|5};material=[стекло=glass|нержавеющая сталь=stainless steel]
+oven	Духовой шкаф	built-in oven	appliances_large	39990	0.45	32000	650x650x650	12,24	30	400	BASE	p3=0.15	volume_l={56|65|71|76};programs={5|8|10|14}~;type=[электрический=electric|газовый=gas];color@v=[чёрный=black|белый=white|нержавеющая сталь=stainless steel]#1-2
+hood	Купольная вытяжка	chimney hood	appliances_large	17990	0.45	13000	650x550x450	12,24	36	250	BASE	p3=0.15	width_cm@l={50|60|90};power_w={150|200|250};noise_db=45..60/1;color@v=[чёрный=black|белый=white|нержавеющая сталь=stainless steel]#1-2
+hood_builtin	Встраиваемая вытяжка	built-in hood	appliances_large	12990	0.4	8000	650x350x300	12,24	36	200	BASE	p3=0.15	width_cm@l={50|60|90};noise_db=45..58/1
+microwave	Микроволновая печь	microwave oven	appliances_small	9990	0.45	13000	520x420x330	12	30	400	BASE	p3=0.2	volume_l@l={17|20|23|25|28|32};power_w={700|800|900|1000};type=[соло=solo|с грилем=with grill|с конвекцией=with convection]~;color@v=$SMALL#1-2
+multicooker	Мультиварка	multicooker	appliances_small	6990	0.45	4500	380x330x310	12	24	300	BASE	p3=0.2	volume_l={3|4|5|6};power_w={700|860|900|1000};programs={10|16|30|45|50}~;color@v=$SMALL#1-2
+mini_oven	Мини-печь	mini oven	appliances_small	7990	0.4	8000	550x450x400	12	30	150	BASE	p3=0.2	volume_l={20|28|35|45};power_w={1400|1600|1800|2000}
+air_fryer	Аэрогриль	air fryer	appliances_small	8990	0.45	5000	400x350x380	12	18	320	GIFTS	p3=0.3	volume_l={3.5|4.5|5.5|7|9};power_w={1400|1700|2000};color@v=$SMALL#1-2
+grill	Электрогриль	electric grill	appliances_small	8990	0.45	5000	450x380x200	12	30	150	GARDEN	p3=0.3	power_w={1800|2000|2200}
+toaster	Тостер	toaster	appliances_small	2990	0.5	1800	320x220x230	12	36	180	BASE	p3=0.3	power_w={700|850|900|1000};color@v=$SMALL#1-3
+waffle	Вафельница	waffle maker	appliances_small	2990	0.5	1800	300x280x120	12	36	120	GIFTS	p3=0.3	type=[вафельница=waffle maker|сэндвичница=sandwich maker|мультипекарь=multi-baker];power_w={700|800|1000}
+bread_maker	Хлебопечка	bread maker	appliances_small	9990	0.4	7000	400x320x350	12	36	80	BASE	p3=0.2	programs={12|15|19|25};power_w={550|600|860}
+table_cooker	Настольная плита	tabletop cooker	appliances_small	3490	0.5	3500	450x350x120	12	36	120	GARDEN	p3=0.4	type=[электрическая=electric|индукционная=induction|газовая=gas];burners={1|2}
+kettle	Электрочайник	electric kettle	appliances_small	2990	0.55	1500	260x220x200	12	24	680	BASE	p3=0.3	material@l=[стекло=glass|металл=metal|пластик=plastic];volume_l={1.5|1.7|1.8|2.0};power_w={1800|2000|2200};color@v=$SMALL#1-3
+thermopot	Термопот	thermopot	appliances_small	4990	0.4	3000	300x250x350	12	36	100	BASE	p3=0.3	volume_l={3|4|5|6}
+coffee_auto	Автоматическая кофемашина	bean-to-cup coffee machine	appliances_small	49990	0.5	9000	450x350x450	12,24	24	260	GIFTS	p3=0.15	pressure_bar={15|19};power_w={1350|1450|1500};volume_l={1.3|1.8|2.0};color@v=[чёрный=black|серебристый=silver|белый=white]#1-2
+coffee_espresso	Рожковая кофеварка	espresso machine	appliances_small	14990	0.6	5000	400x320x350	12	30	220	GIFTS	p3=0.2	pressure_bar={15|19|20};power_w={850|1100|1350}
+coffee_capsule	Капсульная кофемашина	capsule coffee machine	appliances_small	8990	0.45	3500	400x250x330	12	24	150	GIFTS	p3=0.2	pressure_bar={15|19};color@v=$SMALL#1-3
+coffee_drip	Капельная кофеварка	drip coffee maker	appliances_small	3990	0.45	2500	350x250x300	12	36	120	BASE	p3=0.3	volume_l={0.6|1.25|1.5};power_w={600|800|1000}
+coffee_grinder	Кофемолка	coffee grinder	appliances_small	2990	0.55	1200	250x150x150	12	36	120	GIFTS	p3=0.3	type=[ротационная=blade|жерновая=burr]~;power_w={150|200|250}
+juicer	Соковыжималка	juicer	appliances_small	6990	0.5	4000	400x300x300	12	36	130	BASE	p3=0.3	type=[центробежная=centrifugal|шнековая=slow|для цитрусовых=citrus];power_w={40|150|400|800}
+blender	Стационарный блендер	countertop blender	appliances_small	6990	0.55	4000	300x250x450	12	24	220	BASE	p3=0.3	power_w={600|1000|1200|1500|2000}~;volume_l={1.5|1.75|2.0};color@v=$SMALL#1-2
+blender_hand	Погружной блендер	hand blender	appliances_small	3990	0.5	1500	400x150x120	12	24	260	BASE	p3=0.3	power_w={600|800|1000|1200};color@v=$SMALL#1-2
+mixer	Миксер	mixer	appliances_small	4990	0.6	2500	300x250x200	12	30	200	GIFTS_WOMEN	p3=0.3	type=[ручной=hand|планетарный=stand]~;power_w={300|500|1000|1200};color@v=$SMALL#1-3
+food_processor	Кухонный комбайн	food processor	appliances_small	12990	0.45	6000	450x350x350	12	30	150	BASE	p3=0.2	power_w={600|800|1000|1200};volume_l={2|2.5|3|4}
+meat_grinder	Мясорубка	meat grinder	appliances_small	6990	0.45	4500	400x250x300	12	36	150	BASE	p3=0.3	power_w={1500|1800|2000|2200}
+chopper	Измельчитель	food chopper	appliances_small	2490	0.45	1500	250x200x250	12	36	100	BASE	p3=0.3	power_w={300|400|500};volume_l={0.5|1|1.5}
+kitchen_scale	Кухонные весы	kitchen scale	appliances_small	1290	0.5	600	250x200x50	12	36	150	BASE	p3=0.5	max_load_kg={5|10|15};color@v=$SMALL#1-3
+vacuum_sealer	Вакуумный упаковщик	vacuum sealer	appliances_small	4990	0.5	1800	450x150x100	12	48	80	GARDEN	p3=0.4	power_w={90|110|130}
+dehydrator	Сушилка для овощей и фруктов	food dehydrator	appliances_small	5990	0.45	4000	380x380x300	12	48	80	GARDEN	p3=0.4	power_w={250|400|500}
+yogurt_maker	Йогуртница	yogurt maker	appliances_small	2490	0.4	1500	280x280x150	12	48	50	BASE	p3=0.4	power_w={15|20|40}
+vacuum	Пылесос с контейнером	bagless vacuum cleaner	appliances_small	9990	0.45	7000	450x320x300	12,24	24	350	BASE	p3=0.2	power_w={1600|1800|2000|2200};suction_w={350|400|450|500}~;dust_l={1.5|2|2.5|3};noise_db=72..82/1;color@v=$SMALL#1-2
+vacuum_bag	Пылесос с мешком	bagged vacuum cleaner	appliances_small	7990	0.4	6500	450x320x300	12	30	180	BASE	p3=0.2	power_w={1400|1600|1800|2000};dust_l={2|3|4}
+vacuum_stick	Вертикальный пылесос	stick vacuum cleaner	appliances_small	17990	0.55	4500	750x300x200	12,24	18	360	GIFTS	p3=0.3	suction_w={100|150|200|250}~;battery_min={30|40|45|60|70}~;cordless=yn:0.9;dust_l={0.5|0.6|0.8}
+vacuum_wash	Моющий пылесос	washing vacuum cleaner	appliances_small	24990	0.45	9000	500x380x380	12,24	24	160	BASE	p3=0.2	power_w={1600|2000|2400};volume_l={1.5|3|4}
+vacuum_hand	Ручной пылесос	handheld vacuum cleaner	appliances_small	4990	0.5	1500	400x150x150	12	24	150	BASE	p3=0.4	battery_min={15|20|25|30};cordless=yn:1
+robot_vacuum	Робот-пылесос	robot vacuum	appliances_small	24990	0.6	5000	450x450x150	12,24	12	460	GIFTS	p3=0.25	battery_min={90|120|150|180|200}~;type=[сухая уборка=dry|влажная и сухая=wet and dry]~;color@v=[белый=white|чёрный=black]#1-2
+steam_cleaner	Пароочиститель	steam cleaner	appliances_small	9990	0.5	4000	450x300x300	12	36	100	BASE	p3=0.3	power_w={1200|1500|2000};volume_l={0.35|1|1.5}
+window_robot	Робот-мойщик окон	window cleaning robot	appliances_small	14990	0.4	2500	350x350x150	12	36	60	GARDEN	p3=0.3	power_w={80|100}
+vacuum_acc	Аксессуар для пылесоса	vacuum accessory	appliances_small	990	0.6	300	200x150x80	3,6	0	0	BASE	compat=vacuum;vacuum_bag;vacuum_stick;robot_vacuum,cpm=0-2,p3=0.7	type=[мешки=dust bags|фильтр=filter|щётка=brush|салфетки=wipes]
+iron	Утюг	iron	appliances_small	3990	0.5	1800	320x170x150	12,24	24	300	BASE	p3=0.25	power_w={2000|2200|2400|2600|3000};steam_gmin={30|40|50|60};color@v=$SMALL#1-3
+steam_station	Парогенератор	steam generator iron	appliances_small	14990	0.45	5000	450x300x280	12,24	30	120	BASE	p3=0.2	power_w={2400|2600|3000};pressure_bar={5|6|7}
+steamer	Отпариватель	garment steamer	appliances_small	5990	0.5	2500	400x300x250	12	24	220	GIFTS_WOMEN	p3=0.3	power_w={1500|1800|2000};steam_gmin={20|30|40};type=[ручной=handheld|напольный=standing]
+sewing	Швейная машина	sewing machine	appliances_small	14990	0.5	8000	450x350x250	12,24	48	120	BASE	p3=0.2	programs={12|23|32|60|100}~
+ac_split	Сплит-система	split air conditioner	climate	32990	0.4	35000	900x350x300	12,24,36	24	560	COOLING	p3=0.15	btu@v={7000|9000|12000|18000|24000}#2-4*0.6;area_m2=&btu:0.0029;inverter=yn:0.6~;noise_db=19..28/1;energy_class=[A|A++|A+++]~
+ac_mobile	Мобильный кондиционер	portable air conditioner	climate	24990	0.35	28000	500x450x800	12	24	120	COOLING	p3=0.2	btu={7000|9000|12000};area_m2=&btu:0.0029;noise_db=50..58/1
+fan_floor	Напольный вентилятор	floor fan	climate	2990	0.5	4500	700x400x150	12	24	250	COOLING	p3=0.3	power_w={40|45|50|60};diameter_cm={40|45};color@v=[белый=white|чёрный=black]#1-2
+fan_desk	Настольный вентилятор	desk fan	climate	1990	0.5	2000	350x300x200	12	24	150	COOLING	p3=0.3	power_w={20|25|30|35};diameter_cm={20|23|30}
+fan_tower	Колонный вентилятор	tower fan	climate	5990	0.5	5000	1000x250x250	12	24	150	COOLING	p3=0.3	power_w={45|50|60|90};height_cm={80|100|120}
+heater_oil	Масляный радиатор	oil-filled radiator	climate	4990	0.35	9000	650x450x200	12,24	36	180	HEATING	p3=0.3	power_w@v={1000|1500|2000|2500}#1-3*0.35;modes={2|3};area_m2=&power_w:0.01
+heater_convector	Конвектор	convector heater	climate	5490	0.4	5000	800x450x120	12,24,60	36	200	HEATING	p3=0.3	power_w@v={1000|1500|2000|2500}#1-3*0.3;area_m2=&power_w:0.0125
+heater_fan	Тепловентилятор	fan heater	climate	1990	0.45	1500	250x200x200	12	30	200	HEATING	p3=0.3	power_w={1500|2000};type=[керамический=ceramic|спиральный=spiral]
+heater_ir	Инфракрасный обогреватель	infrared heater	climate	4990	0.45	4000	1000x200x100	12,24	36	100	HEATING	p3=0.3	power_w={800|1000|1500|2000}
+humidifier	Увлажнитель воздуха	humidifier	climate	4990	0.55	2500	350x250x250	12	24	270	HEATING	p3=0.3	volume_l={2.5|3|4|5|6};area_m2={20|30|40|50};type=[ультразвуковой=ultrasonic|традиционный=evaporative|паровой=steam]
+purifier	Очиститель воздуха	air purifier	climate	14990	0.55	6000	400x300x600	12,24	24	160	BASE	p3=0.2	area_m2={20|30|40|50|60}~;noise_db=25..50/1
+weather_station	Метеостанция	weather station	climate	2490	0.5	500	200x150x80	12	48	100	GIFTS	p3=0.4	type=[с внешним датчиком=with outdoor sensor|комнатная=indoor]
+water_heater	Накопительный водонагреватель	storage water heater	climate	14990	0.35	20000	500x500x900	12,24,60	36	260	GARDEN	p3=0.2	volume_l@v={30|50|80|100}#2-3*0.4;power_w={1500|2000|2500};type=[вертикальный=vertical|горизонтальный=horizontal]
+water_heater_instant	Проточный водонагреватель	instant water heater	climate	6990	0.4	3000	400x250x150	12,24	36	100	COOLING	p3=0.3	power_w={3500|5500|6500|8000}
+water_filter	Фильтр для воды	water filter	household	3490	0.6	2500	350x250x250	12	48	150	BASE	p3=0.5	type=[кувшин=pitcher|под мойку=under-sink|насадка на кран=faucet]
+hair_dryer	Фен	hair dryer	beauty	4990	0.6	1000	300x250x110	12,24	24	300	GIFTS_WOMEN	p3=0.3	power_w={1600|1800|2000|2200|2400};modes={2|3|6};color@v=$SMALL#1-3
+styler	Стайлер	hair styler	beauty	8990	0.65	1500	350x250x120	12,24	24	200	GIFTS_WOMEN	p3=0.3	pieces={2|4|5|6|8};power_w={800|1000|1300}
+straightener	Выпрямитель для волос	hair straightener	beauty	3990	0.55	700	350x120x80	12	30	150	GIFTS_WOMEN	p3=0.3	power_w={35|50|65};color@v=$BASIC#1-2
+curler	Плойка	curling iron	beauty	2990	0.5	600	350x120x80	12	36	100	GIFTS_WOMEN	p3=0.3	diameter_cm={1.9|2.5|3.2}
+shaver	Электробритва	electric shaver	beauty	6990	0.65	600	200x150x80	12,24	24	260	GIFTS_MEN	p3=0.3	type=[роторная=rotary|сеточная=foil];battery_min={40|50|60|90}~;waterproof=[IPX7|нет=none]
+trimmer	Триммер	trimmer	beauty	3490	0.5	400	200x120x60	12	24	250	GIFTS_MEN	p3=0.3	battery_min={45|60|90|120};pieces={3|6|9|12}
+clipper	Машинка для стрижки	hair clipper	beauty	2990	0.5	600	220x150x80	12	30	150	GIFTS_MEN	p3=0.3	battery_min={60|90|120};pieces={4|6|8}
+epilator	Эпилятор	epilator	beauty	5990	0.5	500	200x150x80	12,24	30	100	GIFTS_WOMEN	p3=0.3	type=[эпилятор=epilator|фотоэпилятор=IPL]~
+toothbrush	Электрическая зубная щётка	electric toothbrush	beauty	4990	0.6	400	250x100x60	12,24	24	260	GIFTS	p3=0.3	type=[звуковая=sonic|вращательная=oscillating];modes={2|3|5};color@v=$CASE#1-3
+irrigator	Ирригатор	oral irrigator	beauty	5990	0.5	700	250x150x120	12	30	120	BASE	p3=0.3	volume_l={0.15|0.3|0.6};type=[портативный=portable|стационарный=countertop]
+brush_heads	Насадки для зубной щётки	toothbrush heads	beauty	990	0.5	50	150x80x20	0	0	0	BASE	compat=toothbrush,cpm=1-2,p3=0.7	pack_qty@v={2|4|8}#1-2*0.8
+bath_scale	Напольные весы	bathroom scale	beauty	1990	0.6	1800	330x330x50	12	36	200	BASE	p3=0.3	max_load_kg={150|180|200};type=[электронные=electronic|умные=smart]~;color@v=$BASIC#1-2
+tonometer	Тонометр	blood pressure monitor	beauty	3490	0.4	700	200x150x100	12,24,60	36	120	BASE	p3=0.3	type=[плечевой=upper arm|запястный=wrist]
+massager	Массажёр	massager	beauty	4990	0.7	1500	300x250x150	12	30	180	GIFTS	p3=0.4	type=[для шеи=neck|перкуссионный=percussion|для ног=foot]
+thermometer	Термометр	thermometer	beauty	990	0.5	100	150x60x30	12	48	80	HEATING	p3=0.4	type=[электронный=digital|инфракрасный=infrared]
+smart_bulb	Умная лампа	smart bulb	smart	990	0.4	100	120x70x70	12	30	150	BASE	p3=0.5	socket=[E27|E14|GU10];power_w={5|7|9|11};protocol=[Wi-Fi|Zigbee]
+smart_plug	Умная розетка	smart plug	smart	1290	0.4	150	100x70x70	12	30	100	BASE	p3=0.5	protocol=[Wi-Fi|Zigbee];power_w={2300|3500}
+sensor	Датчик	sensor	smart	1490	0.5	100	100x70x40	12	36	160	BASE	p3=0.5	type=[движения=motion|открытия=door|протечки=leak|температуры=temperature|дыма=smoke];protocol=[Wi-Fi|Zigbee]
+security_cam	Камера видеонаблюдения	security camera	smart	3990	0.55	500	150x120x100	12	24	200	BASE	p3=0.4	resolution=[1920×1080|2560×1440|3840×2160]~;type=[внутренняя=indoor|уличная=outdoor]
+doorbell	Видеозвонок	video doorbell	smart	5990	0.5	500	150x100x80	12	36	80	BASE	p3=0.4	resolution=[1920×1080|2560×1440]~;battery_days={60|90|180}
+smart_lock	Умный замок	smart lock	smart	14990	0.5	2500	350x200x120	12,24	48	60	BASE	p3=0.3	type=[накладной=surface|врезной=mortise]
+led_bulb	Светодиодная лампа	LED bulb	lighting	190	0.5	60	110x60x60	12,24,36	48	460	BASE	p3=0.5	socket@l=[E27|E14|GU10];power_w={5|7|9|11|13|15};lumen={450|600|800|1000|1300};color_temp_k={2700|3000|4000|6500};pack_qty@v={1|3|10}#1-2*0.85
+desk_lamp	Настольная лампа	desk lamp	lighting	2490	0.6	1200	450x200x150	12	36	200	SCHOOL	p3=0.4	power_w={5|8|10|12};color_temp_k={3000|4000|5000};color@v=$BASIC#1-3
+ceiling_light	Светильник	ceiling light	lighting	4990	0.7	3000	550x550x150	12,24	48	250	BASE	p3=0.4	power_w={24|36|48|72|96};area_m2={6|10|15|20|30}
+flashlight	Фонарь	flashlight	lighting	1490	0.6	300	200x80x60	12	48	160	GARDEN	p3=0.5	lumen={300|500|1000|2000|3000};type=[ручной=handheld|налобный=headlamp|кемпинговый=lantern]
+garland	Гирлянда	string lights	lighting	990	0.6	400	200x150x100	6,12	24	260	DECOR	p3=0.5	length_m={5|10|15|20|50};type=[нить=string|штора=curtain|бахрома=icicle|сетка=net];color@v=[тёплый белый=warm white|холодный белый=cool white|разноцветная=multicolour]#1-3
+extension	Удлинитель	extension cord	lighting	990	0.5	600	300x150x80	12,24	48	250	BASE	p3=0.6	outlets={3|4|5|6|8};length_m={1.5|3|5|10};type=[сетевой фильтр=surge protector|удлинитель=extension cord];color@v=[белый=white|чёрный=black]#1-2
+battery	Батарейка	battery	lighting	290	0.4	100	100x70x20	0	60	220	BASE	p3=0.4	cell_type@l=[AA|AAA|CR2032|9V|C|D];pack_qty@v={2|4|8|12|24}#2-3*0.85;type=[щелочная=alkaline|литиевая=lithium|солевая=zinc-carbon]~
+battery_rech	Аккумулятор AA/AAA	rechargeable battery	lighting	790	0.4	120	100x70x20	12	48	120	BASE	p3=0.4	cell_type=[AA|AAA];battery_mah={800|1000|2000|2500|2800};pack_qty@v={2|4}#1-2*0.85
+drill_cordless	Аккумуляторная дрель-шуруповёрт	cordless drill driver	tools	7990	0.55	2500	380x320x100	12,24,36	30	460	GIFTS_MEN	p3=0.3	voltage_v@l={12|14.4|18|20};battery_ah={1.5|2|4|5}~;torque_nm={30|45|60|90|130}~;color@v=$TOOL#1-1
+drill_hammer	Ударная дрель	hammer drill	tools	4990	0.5	2800	380x300x100	12,24,36	36	200	GARDEN	p3=0.3	power_w={600|750|850|1000|1100}
+rotary_hammer	Перфоратор	rotary hammer	tools	9990	0.5	5000	450x350x120	12,24,36	36	200	GARDEN	p3=0.3	power_w={800|900|1100|1500};type=[SDS-plus|SDS-max]~
+grinder	Угловая шлифмашина	angle grinder	tools	4990	0.5	3000	400x150x150	12,24	36	200	BASE	p3=0.3	disc_mm={115|125|150|230};power_w={750|900|1200|2200}
+saw	Электропила	power saw	tools	5990	0.5	3000	400x300x150	12,24	36	200	GARDEN	p3=0.3	power_w={500|650|800};type=[лобзик=jigsaw|циркулярная пила=circular saw|сабельная пила=reciprocating saw]
+tool_battery	Аккумулятор для инструмента	tool battery	tools	3990	0.4	600	150x100x80	6,12	0	0	BASE	compat=drill_cordless,cpm=0-1,p3=0.5	battery_ah@v={2|4|5}#1-2*0.6
+tool_set	Набор инструментов	tool set	tools	4990	0.7	5000	450x350x100	12	48	220	GIFTS_MEN	p3=0.5	pieces={24|46|82|108|150}~
+measuring	Лазерный дальномер	laser distance meter	tools	3990	0.6	400	180x100x60	12	48	120	BASE	p3=0.4	length_m={30|40|60|100}~
+mower	Газонокосилка	lawn mower	tools	14990	0.5	15000	800x450x450	12,24	36	150	GARDEN	p3=0.3	cutting_width_cm={32|36|40|46};power_w={1200|1600|1800};type=[электрическая=electric|аккумуляторная=cordless|бензиновая=petrol]
+grass_trimmer	Садовый триммер	grass trimmer	tools	5990	0.5	4000	900x250x200	12,24	36	150	GARDEN	p3=0.3	power_w={500|800|1000|1400};cutting_width_cm={25|30|38}
+pressure_washer	Мойка высокого давления	pressure washer	tools	12990	0.5	9000	500x400x350	12,24	36	150	GARDEN	p3=0.3	pressure_bar={110|130|150|170};power_w={1500|1800|2100}
+pan	Сковорода	frying pan	household	2490	0.6	1200	450x300x80	12,24,60	48	460	BASE	p3=0.4	diameter_cm@l={20|22|24|26|28|30|32};material=[алюминий с антипригарным покрытием=non-stick aluminium|чугун=cast iron|нержавеющая сталь=stainless steel];induction=yn:0.6
+pot	Кастрюля	pot	household	2990	0.5	1500	300x300x200	12,24	48	250	BASE	p3=0.4	volume_l={1.5|2|3|4|5|7};material=[нержавеющая сталь=stainless steel|эмаль=enamel|алюминий=aluminium];induction=yn:0.7
+cookware_set	Набор посуды	cookware set	household	7990	0.55	6000	450x350x300	12,24	48	150	GIFTS	p3=0.4	pieces={3|5|6|8|10|12};material=[нержавеющая сталь=stainless steel|эмаль=enamel|алюминий=aluminium];induction=yn:0.7
+knife	Нож	knife	household	1990	0.7	300	350x80x30	12,24	60	300	GIFTS	p3=0.5	type=[поварской=chef's|сантоку=santoku|универсальный=utility|набор ножей=knife set];material=[нержавеющая сталь=stainless steel|дамасская сталь=Damascus steel|керамика=ceramic]~
+thermos	Термос	thermos	household	1990	0.55	500	300x100x100	12	48	250	HEATING	p3=0.5	volume_l={0.35|0.5|0.75|1|1.5};type=[термос=vacuum flask|термокружка=travel mug];color@v=$CASE#1-3
+container	Контейнер для еды	food container	household	690	0.5	300	200x150x100	0	60	250	SCHOOL	p3=0.6	volume_l={0.5|0.8|1|1.5};pieces={1|3|5};material=[пластик=plastic|стекло=glass]
+storage_box	Система хранения	storage box	household	1490	0.6	2000	500x350x300	0	60	200	BASE	p3=0.6	volume_l={10|20|30|45|60};material=[пластик=plastic|ткань=fabric]
+dashcam	Видеорегистратор	dash cam	car	4990	0.55	400	150x120x80	12	24	250	BASE	p3=0.4	resolution=[1920×1080|2560×1440|3840×2160]~;gps=yn:0.4~
+car_stereo	Автомагнитола	car stereo	car	6990	0.5	1200	250x200x120	12	36	150	BASE	p3=0.4	type=[1 DIN|2 DIN];power_w={50|200}
+car_vacuum	Автомобильный пылесос	car vacuum cleaner	car	2990	0.5	1500	400x150x150	12	36	100	BASE	p3=0.4	power_w={60|100|120};cordless=yn:0.5
+jump_starter	Пуско-зарядное устройство	jump starter	car	6990	0.5	1200	250x150x100	12	36	100	HEATING	p3=0.4	battery_mah={8000|12000|16000|20000}
+compressor	Автомобильный компрессор	tyre inflator	car	2990	0.5	1500	250x200x150	12	36	100	BASE	p3=0.4	pressure_bar={7|10}

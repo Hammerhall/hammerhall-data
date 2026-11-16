@@ -4,11 +4,13 @@
 или папка с уже нарезанными TSV (см. --tsv). Выход — папка с таблицами .tsv.gz, LICENSE,
 SOURCE.md и manifest.json.
 
-Значения не меняются. Делается три вещи:
+Значения не меняются. Делается четыре вещи:
   1. моменты времени — в секундах Unix (UTC), доли секунды отброшены;
   2. брони отбираются целиком (со всеми билетами, сегментами, посадочными талонами) —
      сезонность по региону, празднику и дню недели первого вылета брони (модель ниже);
-  3. строки упорядочены, файлы сжаты gzip без отметки времени — сборка повторяема.
+  3. справочник аэропортов — без нескольких аэропортов источника (EXCLUDED_AIRPORTS; в сеть маршрутов
+     они не входят — рейсы и брони не меняются);
+  4. строки упорядочены, файлы сжаты gzip без отметки времени — сборка повторяема.
 
 Запуск:  python build_air_data.py --sql demo-20250901-2y.sql --out air-data-v1
          python build_air_data.py --tsv нарезанные-tsv --out air-data-v1
@@ -22,6 +24,7 @@ if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
 VERSION = 'air-data-v1'
+EXCLUDED_AIRPORTS = ('KHC', 'SIP', 'UKS')
 
 # ---------------------------------------------------------------- модель сезонности
 REGION = {
@@ -132,7 +135,8 @@ def main():
             json_extract_string(city,'$.en') city_en, json_extract_string(city,'$.ru') city_ru,
             json_extract_string(country,'$.en') country_en, json_extract_string(country,'$.ru') country_ru,
             split_part(trim(coordinates,'()'),',',1) longitude, split_part(trim(coordinates,'()'),',',2) latitude,
-            timezone from {raw(src,'airports_data')}""")
+            timezone from {raw(src,'airports_data')}
+            where airport_code not in {EXCLUDED_AIRPORTS}""")
         con.execute(f"""create table airplanes as select airplane_code, json_extract_string(model,'$.en') model_en,
             json_extract_string(model,'$.ru') model_ru, range range_km, speed speed_kmh from {raw(src,'airplanes_data')}""")
         con.execute(f"create table seats as select airplane_code, seat_no, fare_conditions from {raw(src,'seats')}")
@@ -223,7 +227,8 @@ def main():
                        'time': 'Unix seconds, UTC (fractions dropped)', 'compression': 'gzip, mtime=0'},
             'files': files,
         }
-        (out / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding='utf-8')
+        (out / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding='utf-8',
+                                           newline='\n')
         print('готово:', out, flush=True)
     finally:
         shutil.rmtree(work, ignore_errors=True)
