@@ -1,6 +1,9 @@
 package io.hammerhall.data.core.check;
 
 import io.hammerhall.data.core.io.GzipTsvFile;
+import io.hammerhall.data.core.schema.ColType;
+import io.hammerhall.data.core.schema.Schema;
+import io.hammerhall.data.core.schema.Table;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -8,6 +11,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -67,5 +71,57 @@ class PublicNamesTest {
         assertEquals(4, s.files(), "target/ и work/ не читаются");
         assertFalse(s.clean());
         assertTrue(PublicNames.scan(dir.resolve("clean.txt"), LAT, CYR).clean());
+    }
+
+    /**
+     * Поля «как есть» из внешнего источника: подставное слово в их значениях пропускается, а то же слово в
+     * непомеченном поле, в заголовке файла (имя помеченного поля) и в SOURCE.md — находится. Без пометок — как раньше.
+     */
+    @Test
+    void verbatimColumnsSkipOnlyTheirValues(@TempDir Path dir) throws IOException {
+        Schema schema = new Schema("t", "t-data-v1").group("g", "Группа")
+                .add(Table.of("places", "g", "Места").col("code", ColType.TEXT, "Код").source("ext").verbatimSource()
+                        .col("name", ColType.TEXT, "Название").source("ext").verbatimSource()
+                        .col("note", ColType.TEXT, "Своё поле").pk("code"))
+                .add(Table.of("labels", "g", "Подписи").col("code", ColType.TEXT, "Код").source("ext").verbatimSource()
+                        .col("qwex_name", ColType.TEXT, "Поле с подставным словом в имени").source("ext").verbatimSource()
+                        .pk("code"));
+        assertEquals(List.of(), schema.validate());
+        Map<String, Set<String>> verbatim = PublicNames.verbatimColumns(schema);
+        assertEquals(Map.of("places.tsv.gz", Set.of("code", "name"), "labels.tsv.gz", Set.of("code", "qwex_name")), verbatim);
+
+        try (GzipTsvFile f = new GzipTsvFile(dir.resolve("places.tsv.gz"), 6)) {
+            f.line("code\tname\tnote");
+            f.line("A1\tQwex Field\tобычная заметка");
+            f.line("ZORBIX\tНовый Пробник\tобычная заметка");
+        }
+        Files.writeString(dir.resolve("SOURCE.md"), "# Набор\nобычные слова\n", StandardCharsets.UTF_8);
+        PublicNames.Scan s = PublicNames.scan(dir, verbatim, LAT, CYR);
+        assertEquals(Map.of(), s.hits(), "слова в значениях помеченных полей — мимо");
+        assertEquals(Map.of("places.tsv.gz", List.of("code", "name")), s.skipped());
+        assertTrue(s.skippedSummary().contains("2 полей в 1 таблицах") && s.skippedSummary().contains("places.tsv.gz: code, name"),
+                s.skippedSummary());
+        assertEquals(Map.of("places.tsv.gz", 3), PublicNames.scan(dir, LAT, CYR).hits(), "без пометок — находятся");
+
+        // то же слово в непомеченном поле
+        try (GzipTsvFile f = new GzipTsvFile(dir.resolve("places.tsv.gz"), 6)) {
+            f.line("code\tname\tnote");
+            f.line("A1\tQwex Field\tзаметка про qwex");
+        }
+        assertEquals(Map.of("places.tsv.gz", 1), PublicNames.scan(dir, verbatim, LAT, CYR).hits(), "непомеченное поле");
+        Files.delete(dir.resolve("places.tsv.gz"));
+
+        // в заголовке (имя помеченного поля) и в SOURCE.md
+        try (GzipTsvFile f = new GzipTsvFile(dir.resolve("labels.tsv.gz"), 6)) {
+            f.line("code\tqwex_name");
+            f.line("A1\tобычно");
+        }
+        Files.writeString(dir.resolve("SOURCE.md"), "# Набор\nQwex — и здесь\n", StandardCharsets.UTF_8);
+        assertEquals(Map.of("labels.tsv.gz", 1, "SOURCE.md", 1), PublicNames.scan(dir, verbatim, LAT, CYR).hits(),
+                "заголовок и тексты выпуска проверяются всегда");
+
+        Schema bad = new Schema("t", "t-data-v1").group("g", "Группа")
+                .add(Table.of("x", "g", "X").col("code", ColType.TEXT, "Код").verbatimSource().pk("code"));
+        assertTrue(bad.validate().getFirst().contains("verbatimSource без source"), bad.validate().toString());
     }
 }

@@ -1,0 +1,733 @@
+{
+ "version": "air-data-v1",
+ "profile": "small",
+ "identity": "manifest (без files) + rows и sha256_tsv каждой таблицы + sha256 texts + aggregates; sha256 и bytes файлов .tsv.gz, manifest.json и SOURCE.md — справочно (зависят от сборки zlib)",
+ "manifest": {
+  "version": "air-data-v1",
+  "generator": "air-gen 0.1.0",
+  "seed": 20250901,
+  "profile": "small",
+  "scale": "0.01",
+  "period": {
+   "from": "2025-09-01",
+   "to": "2027-10-30",
+   "now": "2027-09-01T00:00:00Z",
+   "business_timezone": "UTC"
+  },
+  "modules": [
+   "network",
+   "sales"
+  ],
+  "inputs": [
+   {
+    "name": "demo-20250901-2y.sql.gz",
+    "release": "air-source-20250901",
+    "license": "MIT, Copyright (c) 2025 Postgres Professional",
+    "sha256": "6aa9ca6313768b6b9ee8a6f1e13e902249c9d40fbad59938c7b6cc3dd90af471"
+   }
+  ],
+  "source": "Postgres Pro demo database «Airlines» 2.0, demo-20250901-2y (730 days), MIT © 2025 Postgres Professional",
+  "now": "2027-09-01T00:00:00Z",
+  "last_booking": "2027-08-31 23:59:58.579152+00",
+  "bookings_total": 9706657,
+  "bookings_kept": 8470438,
+  "selection": {
+   "unit": "booking",
+   "key": "md5_number(book_ref) % 2^32 / 2^32 < share",
+   "share": "holiday ? 1.0 : month[region][month] * weekday[isodow]",
+   "by": "country, local date and weekday of the first departure of the booking",
+   "region": {
+    "Germany": "EU",
+    "Italy": "EU",
+    "France": "EU",
+    "United Kingdom": "EU",
+    "Sweden": "EU",
+    "Finland": "EU",
+    "Czech Republic": "EU",
+    "Austria": "EU",
+    "United States": "NA",
+    "Canada": "NA",
+    "China": "CN",
+    "Japan": "JP",
+    "India": "IN",
+    "Nepal": "IN",
+    "Russia": "RU",
+    "Chile": "SH",
+    "New Zealand": "SH"
+   },
+   "month": {
+    "EU": [
+     0.84,
+     0.84,
+     0.88,
+     0.92,
+     0.94,
+     0.97,
+     1.0,
+     1.0,
+     0.95,
+     0.92,
+     0.85,
+     0.92
+    ],
+    "NA": [
+     0.84,
+     0.85,
+     0.95,
+     0.92,
+     0.95,
+     1.0,
+     1.0,
+     0.97,
+     0.88,
+     0.92,
+     0.9,
+     0.94
+    ],
+    "CN": [
+     0.92,
+     0.95,
+     0.86,
+     0.9,
+     0.93,
+     0.9,
+     1.0,
+     1.0,
+     0.88,
+     0.93,
+     0.86,
+     0.88
+    ],
+    "JP": [
+     0.9,
+     0.85,
+     0.95,
+     0.92,
+     0.92,
+     0.85,
+     0.95,
+     1.0,
+     0.9,
+     0.92,
+     0.9,
+     0.93
+    ],
+    "IN": [
+     0.93,
+     0.9,
+     0.9,
+     0.95,
+     1.0,
+     0.98,
+     0.85,
+     0.84,
+     0.86,
+     0.95,
+     0.97,
+     0.97
+    ],
+    "RU": [
+     0.9,
+     0.86,
+     0.85,
+     0.88,
+     0.94,
+     0.98,
+     1.0,
+     1.0,
+     0.93,
+     0.88,
+     0.84,
+     0.92
+    ],
+    "SH": [
+     1.0,
+     1.0,
+     0.92,
+     0.88,
+     0.84,
+     0.84,
+     0.95,
+     0.86,
+     0.9,
+     0.9,
+     0.93,
+     1.0
+    ]
+   },
+   "weekday": {
+    "1": 0.95,
+    "2": 0.86,
+    "3": 0.88,
+    "4": 0.94,
+    "5": 0.98,
+    "6": 0.9,
+    "7": 1.0
+   },
+   "holidays": [
+    {
+     "who": "CN",
+     "from": "2025-09-30",
+     "to": "2025-10-07",
+     "name": "Золотая неделя"
+    },
+    {
+     "who": "CN",
+     "from": "2026-02-02",
+     "to": "2026-03-13",
+     "name": "Чуньюнь (Новый год 17.02.2026)"
+    },
+    {
+     "who": "CN",
+     "from": "2026-04-30",
+     "to": "2026-05-05",
+     "name": "праздник труда"
+    },
+    {
+     "who": "CN",
+     "from": "2026-09-30",
+     "to": "2026-10-07",
+     "name": "Золотая неделя"
+    },
+    {
+     "who": "CN",
+     "from": "2027-01-22",
+     "to": "2027-03-02",
+     "name": "Чуньюнь (Новый год 06.02.2027)"
+    },
+    {
+     "who": "CN",
+     "from": "2027-04-30",
+     "to": "2027-05-05",
+     "name": "праздник труда"
+    },
+    {
+     "who": "CN",
+     "from": "2027-09-30",
+     "to": "2027-10-07",
+     "name": "Золотая неделя"
+    },
+    {
+     "who": "JP",
+     "from": "2025-12-27",
+     "to": "2026-01-04",
+     "name": "новогодние"
+    },
+    {
+     "who": "JP",
+     "from": "2026-04-29",
+     "to": "2026-05-06",
+     "name": "Золотая неделя"
+    },
+    {
+     "who": "JP",
+     "from": "2026-08-11",
+     "to": "2026-08-17",
+     "name": "Обон"
+    },
+    {
+     "who": "JP",
+     "from": "2026-12-27",
+     "to": "2027-01-04",
+     "name": "новогодние"
+    },
+    {
+     "who": "JP",
+     "from": "2027-04-29",
+     "to": "2027-05-05",
+     "name": "Золотая неделя"
+    },
+    {
+     "who": "JP",
+     "from": "2027-08-11",
+     "to": "2027-08-17",
+     "name": "Обон"
+    },
+    {
+     "who": "IN",
+     "from": "2025-10-17",
+     "to": "2025-10-26",
+     "name": "Дивали (20.10.2025)"
+    },
+    {
+     "who": "IN",
+     "from": "2025-12-20",
+     "to": "2026-01-03",
+     "name": "новогодние"
+    },
+    {
+     "who": "IN",
+     "from": "2026-11-05",
+     "to": "2026-11-14",
+     "name": "Дивали (08.11.2026)"
+    },
+    {
+     "who": "IN",
+     "from": "2026-12-20",
+     "to": "2027-01-03",
+     "name": "новогодние"
+    },
+    {
+     "who": "IN",
+     "from": "2027-10-26",
+     "to": "2027-11-04",
+     "name": "Дивали (29.10.2027)"
+    },
+    {
+     "who": "United States",
+     "from": "2025-11-22",
+     "to": "2025-12-01",
+     "name": "День благодарения (27.11.2025)"
+    },
+    {
+     "who": "United States",
+     "from": "2026-11-21",
+     "to": "2026-11-30",
+     "name": "День благодарения (26.11.2026)"
+    },
+    {
+     "who": "United States",
+     "from": "2026-07-01",
+     "to": "2026-07-06",
+     "name": "День независимости"
+    },
+    {
+     "who": "United States",
+     "from": "2027-07-01",
+     "to": "2027-07-06",
+     "name": "День независимости"
+    },
+    {
+     "who": "Canada",
+     "from": "2025-10-10",
+     "to": "2025-10-13",
+     "name": "День благодарения (13.10.2025)"
+    },
+    {
+     "who": "Canada",
+     "from": "2026-10-09",
+     "to": "2026-10-12",
+     "name": "День благодарения (12.10.2026)"
+    },
+    {
+     "who": "Canada",
+     "from": "2027-10-08",
+     "to": "2027-10-11",
+     "name": "День благодарения (11.10.2027)"
+    },
+    {
+     "who": "NA",
+     "from": "2025-12-18",
+     "to": "2026-01-04",
+     "name": "Рождество"
+    },
+    {
+     "who": "NA",
+     "from": "2026-03-07",
+     "to": "2026-03-29",
+     "name": "весенние каникулы"
+    },
+    {
+     "who": "NA",
+     "from": "2026-12-18",
+     "to": "2027-01-04",
+     "name": "Рождество"
+    },
+    {
+     "who": "NA",
+     "from": "2027-03-06",
+     "to": "2027-03-28",
+     "name": "весенние каникулы"
+    },
+    {
+     "who": "EU",
+     "from": "2025-12-19",
+     "to": "2026-01-04",
+     "name": "Рождество"
+    },
+    {
+     "who": "EU",
+     "from": "2026-03-28",
+     "to": "2026-04-12",
+     "name": "Пасха (05.04.2026)"
+    },
+    {
+     "who": "EU",
+     "from": "2026-12-19",
+     "to": "2027-01-04",
+     "name": "Рождество"
+    },
+    {
+     "who": "EU",
+     "from": "2027-03-20",
+     "to": "2027-04-04",
+     "name": "Пасха (28.03.2027)"
+    },
+    {
+     "who": "RU",
+     "from": "2025-12-28",
+     "to": "2026-01-11",
+     "name": "новогодние каникулы"
+    },
+    {
+     "who": "RU",
+     "from": "2026-05-01",
+     "to": "2026-05-11",
+     "name": "майские"
+    },
+    {
+     "who": "RU",
+     "from": "2026-12-28",
+     "to": "2027-01-10",
+     "name": "новогодние каникулы"
+    },
+    {
+     "who": "RU",
+     "from": "2027-05-01",
+     "to": "2027-05-10",
+     "name": "майские"
+    },
+    {
+     "who": "Chile",
+     "from": "2026-09-16",
+     "to": "2026-09-21",
+     "name": "Фьестас Патриас"
+    },
+    {
+     "who": "Chile",
+     "from": "2027-09-16",
+     "to": "2027-09-21",
+     "name": "Фьестас Патриас"
+    },
+    {
+     "who": "SH",
+     "from": "2025-12-15",
+     "to": "2026-01-31",
+     "name": "южное лето, праздники"
+    },
+    {
+     "who": "SH",
+     "from": "2026-12-15",
+     "to": "2027-01-31",
+     "name": "южное лето, праздники"
+    }
+   ]
+  },
+  "profile_sample": {
+   "unit": "booking",
+   "key": "unit(seed, 'air.small', fnv64(book_ref)) < scale, among bookings kept by selection",
+   "scale": "0.01",
+   "bookings": 84385
+  },
+  "format": {
+   "encoding": "UTF-8",
+   "delimiter": "TAB",
+   "header": true,
+   "null": "empty field",
+   "time": "Unix seconds, UTC (fractions rounded to the nearest second, half to even)",
+   "boolean": "t / f",
+   "money": "decimal string, 2 digits, as in the source",
+   "compression": "gzip, mtime=0"
+  }
+ },
+ "files": [
+  {
+   "name": "airports.tsv.gz",
+   "table": "airports",
+   "rows": 5498,
+   "sha256_tsv": "7473494a65e9af17527beebb9d8c632739b079c4b26eb377b65cd5bbde16f62e",
+   "sha256_gz_reference": "be3702f4d3d6565d925c917ac2dd5620d6e3750440b53e58d3555b5a0b4edb66"
+  },
+  {
+   "name": "airplanes.tsv.gz",
+   "table": "airplanes",
+   "rows": 10,
+   "sha256_tsv": "f916848f2178174824f55c06426aa2d2479efa9df24ffec57e2d807cd5e836bb",
+   "sha256_gz_reference": "c5a5c82a1e2986d29837a0fe54a565cc00720610eb1fdc0e9aa9f5f6852f0365"
+  },
+  {
+   "name": "seats.tsv.gz",
+   "table": "seats",
+   "rows": 1741,
+   "sha256_tsv": "21e3481b3ace9301a6b390ff36b6e06e4adb64eee0c3713e056ad3ed93d28059",
+   "sha256_gz_reference": "bb0cad2507c7709e11bd1ab6d3f498fd26105fb7aeab54765dec33af15d820d5"
+  },
+  {
+   "name": "routes.tsv.gz",
+   "table": "routes",
+   "rows": 7242,
+   "sha256_tsv": "a4f851b459e0288f76b2eda7e8079ca2652b1f78c589db89df43ff7b1c24d28a",
+   "sha256_gz_reference": "87cf0f6a7e211e8b72fc9fb1fda4b203fc7f6363d9833231565e66bc37d0ed93"
+  },
+  {
+   "name": "flights.tsv.gz",
+   "table": "flights",
+   "rows": 135571,
+   "sha256_tsv": "f411f4a4d1d2f8e9d7434f9b132cd1ebc8424c89337ae1970c1bebfa98c61d17",
+   "sha256_gz_reference": "5e4bee17d8de49530178df9446e9d797ce57555aef3fc303e8f91f1e25dd7726"
+  },
+  {
+   "name": "bookings.tsv.gz",
+   "table": "bookings",
+   "rows": 84385,
+   "sha256_tsv": "4fd73713984f3ad8483a4a1dec288e30705ce38f5238b307e60543f685bcc2eb",
+   "sha256_gz_reference": "e62e52d2a0e616a31839fef168e6e3da06a946247903ee4ef0109779b97a5729"
+  },
+  {
+   "name": "tickets.tsv.gz",
+   "table": "tickets",
+   "rows": 183901,
+   "sha256_tsv": "afa95c169d51c177b3b39f973adf06db5a5a434ed01ccc545ff3cf1ffead50f6",
+   "sha256_gz_reference": "70a168755b074bb88d5ba8be6f00b987d1bd7aeae47b6403f9935fba83bdcefb"
+  },
+  {
+   "name": "segments.tsv.gz",
+   "table": "segments",
+   "rows": 240229,
+   "sha256_tsv": "0cdec4375493371a684861cdd3e932515317db48fba0aae65e938b82677f6bd3",
+   "sha256_gz_reference": "5cef9cc5ccf17a992a74315fe33673a9f071cbbf07d4f5fbc48c1e0a51378de0"
+  },
+  {
+   "name": "boarding_passes.tsv.gz",
+   "table": "boarding_passes",
+   "rows": 229254,
+   "sha256_tsv": "02f4acf4e0cb8c82e3fd5d645040a5e230dba791de4fd303a007d6b90c8abc1a",
+   "sha256_gz_reference": "42e967789c59b826d1813ddfc89efc4c5b8776d79dd9775b552c701b4f650954"
+  }
+ ],
+ "texts": [
+  {
+   "name": "LICENSE",
+   "sha256": "2fd240f31aa9f8f52310195ebe7f271cd8925753ed75551a2cda34677854f298"
+  },
+  {
+   "name": "schema-tables.sql",
+   "sha256": "777f430b12d37a9377c03ee10994de88e8b611a6b11d88db4623f2701f018c4e"
+  },
+  {
+   "name": "schema-constraints.sql",
+   "sha256": "b6155dde0fb92e013857b0e1ab0baa79e6cf9749c6f532ba346d2d4c26d2b8f1"
+  },
+  {
+   "name": "schema.mmd",
+   "sha256": "ec528029d25e656e3419eb8ab6dc4fb3bc4877e6467c844f538fa75567abd86e"
+  },
+  {
+   "name": "load-postgres.psql",
+   "sha256": "77f72017ec62269a36857f397aade6b705f80a63c8c84bf42021febba2f2a330"
+  }
+ ],
+ "reference_only": [
+  "manifest.json",
+  "SOURCE.md"
+ ],
+ "aggregates": [
+  {
+   "table": "airports",
+   "op": "distinct",
+   "column": "country_en",
+   "value": 230
+  },
+  {
+   "table": "airports",
+   "op": "distinct",
+   "column": "timezone",
+   "value": 310
+  },
+  {
+   "table": "seats",
+   "op": "count_eq",
+   "column": "fare_conditions",
+   "arg": "Business",
+   "value": 207
+  },
+  {
+   "table": "routes",
+   "op": "distinct",
+   "column": "route_no",
+   "value": 1798
+  },
+  {
+   "table": "routes",
+   "op": "distinct",
+   "column": "departure_airport",
+   "value": 73
+  },
+  {
+   "table": "routes",
+   "op": "min",
+   "column": "valid_from",
+   "scale": 0,
+   "value": "1759276800"
+  },
+  {
+   "table": "routes",
+   "op": "max",
+   "column": "valid_to",
+   "scale": 0,
+   "value": "1825027200"
+  },
+  {
+   "table": "routes",
+   "op": "sum",
+   "column": "duration_min",
+   "scale": 0,
+   "value": "1425590"
+  },
+  {
+   "table": "flights",
+   "op": "nulls",
+   "column": "actual_departure",
+   "value": 11455
+  },
+  {
+   "table": "flights",
+   "op": "nulls",
+   "column": "actual_arrival",
+   "value": 11476
+  },
+  {
+   "table": "flights",
+   "op": "min",
+   "column": "scheduled_departure",
+   "scale": 0,
+   "value": "1759276800"
+  },
+  {
+   "table": "flights",
+   "op": "max",
+   "column": "scheduled_departure",
+   "scale": 0,
+   "value": "1824940500"
+  },
+  {
+   "table": "flights",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "Arrived",
+   "value": 124095
+  },
+  {
+   "table": "flights",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "Cancelled",
+   "value": 702
+  },
+  {
+   "table": "flights",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "Scheduled",
+   "value": 10565
+  },
+  {
+   "table": "flights",
+   "op": "sum",
+   "column": "actual_arrival",
+   "scale": 0,
+   "value": "222081569632763"
+  },
+  {
+   "table": "bookings",
+   "op": "sum",
+   "column": "total_amount",
+   "scale": 2,
+   "value": "1479500925.00"
+  },
+  {
+   "table": "bookings",
+   "op": "min",
+   "column": "book_date",
+   "scale": 0,
+   "value": "1756685328"
+  },
+  {
+   "table": "bookings",
+   "op": "max",
+   "column": "book_date",
+   "scale": 0,
+   "value": "1819755772"
+  },
+  {
+   "table": "bookings",
+   "op": "sum",
+   "column": "book_date",
+   "scale": 0,
+   "value": "150891379263332"
+  },
+  {
+   "table": "tickets",
+   "op": "count_eq",
+   "column": "outbound",
+   "arg": "t",
+   "value": 118235
+  },
+  {
+   "table": "tickets",
+   "op": "min",
+   "column": "ticket_no",
+   "value": "0005432000241"
+  },
+  {
+   "table": "tickets",
+   "op": "max",
+   "column": "ticket_no",
+   "value": "0005453207373"
+  },
+  {
+   "table": "segments",
+   "op": "sum",
+   "column": "price",
+   "scale": 2,
+   "value": "1479500925.00"
+  },
+  {
+   "table": "segments",
+   "op": "count_eq",
+   "column": "fare_conditions",
+   "arg": "Business",
+   "value": 25693
+  },
+  {
+   "table": "segments",
+   "op": "count_eq",
+   "column": "fare_conditions",
+   "arg": "Comfort",
+   "value": 18853
+  },
+  {
+   "table": "segments",
+   "op": "sum",
+   "column": "flight_id",
+   "scale": 0,
+   "value": "15578078960"
+  },
+  {
+   "table": "boarding_passes",
+   "op": "nulls",
+   "column": "boarding_no",
+   "value": 587
+  },
+  {
+   "table": "boarding_passes",
+   "op": "nulls",
+   "column": "boarding_time",
+   "value": 587
+  },
+  {
+   "table": "boarding_passes",
+   "op": "sum",
+   "column": "boarding_no",
+   "scale": 0,
+   "value": "32610699"
+  },
+  {
+   "table": "boarding_passes",
+   "op": "sum",
+   "column": "boarding_time",
+   "scale": 0,
+   "value": "409145878914828"
+  }
+ ]
+}

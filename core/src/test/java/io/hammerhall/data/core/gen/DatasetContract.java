@@ -200,11 +200,16 @@ public abstract class DatasetContract {
         assertTrue(ok, bo.toString(StandardCharsets.UTF_8));
     }
 
-    /** Публичные имена не пересекаются с внутренними: во всём выпуске нет ни одного внутреннего имени платформы. */
+    /**
+     * Публичные имена не пересекаются с внутренними: во всём выпуске нет ни одного внутреннего имени платформы. Значения
+     * полей, помеченных в схеме «как есть из внешнего источника» ({@code verbatimSource}), не проверяются — что пропущено,
+     * печатается; заголовки, тексты и прочие поля — проверяются.
+     */
     @Test
     void releaseHasNoInternalNames() throws IOException {
         Path dir = small(dataset()).dir();
-        PublicNames.Scan scan = PublicNames.scan(dir);
+        PublicNames.Scan scan = PublicNames.scan(dir, Cli.verbatimFor(dataset(), dir));
+        if (!scan.skipped().isEmpty()) System.out.println(dataset().code() + ": " + scan.skippedSummary());
         assertEquals(Map.of(), scan.hits(), "внутренние имена в выпуске (файл → число слов)");
         // сканер читал таблицы разжатыми: слов в файле больше, чем в его имени (заголовок — уже слова)
         List<Path> tables;

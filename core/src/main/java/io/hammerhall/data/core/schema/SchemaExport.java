@@ -193,7 +193,11 @@ public final class SchemaExport {
             }
             sb.append("\n#### `").append(t.name()).append("` — ").append(t.descRu()).append("\n\n");
             sb.append("Ключ — `").append(String.join(", ", t.primaryKey())).append("`; строки упорядочены по `")
-                    .append(String.join(", ", t.orderBy())).append("`.\n\n");
+                    .append(String.join(", ", t.orderBy())).append('`');
+            if (!t.nullsLast().isEmpty()) {
+                sb.append(" (NULL в `").append(String.join("`, `", t.nullsLast())).append("` — в конце)");
+            }
+            sb.append(".\n\n");
             sb.append("| поле | тип | NULL | что | откуда |\n|---|---|---|---|---|\n");
             for (Column c : t.columns()) {
                 String type = c.type().shortName(c);
@@ -202,7 +206,7 @@ public final class SchemaExport {
                 if (c.isEnum()) what += ": " + String.join(", ", c.values().stream().map(v -> "`" + v + "`").toList());
                 sb.append("| `").append(c.name()).append("` | ").append(type).append(" | ")
                         .append(c.nullable() ? "да" : "").append(" | ").append(what.replace("|", "\\|")).append(" | ")
-                        .append(c.source() == null ? "генератор" : c.source()).append(" |\n");
+                        .append(c.source() == null ? "генератор" : c.source() + (c.verbatim() ? ", как есть" : "")).append(" |\n");
             }
             for (Table.ForeignKey f : t.foreignKeys(s)) {
                 if (f.columns().size() > 1) {

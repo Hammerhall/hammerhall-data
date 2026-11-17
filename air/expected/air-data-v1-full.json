@@ -1,9 +1,31 @@
 {
  "version": "air-data-v1",
  "profile": "full",
- "identity": "manifest (без files) + rows и sha256_tsv каждой таблицы + sha256 texts; sha256 файлов .tsv.gz, manifest.json и SOURCE.md — справочно; собрано из manifest.json выпуска (агрегатов нет: набор ещё без генератора)",
+ "identity": "manifest (без files) + rows и sha256_tsv каждой таблицы + sha256 texts + aggregates; sha256 и bytes файлов .tsv.gz, manifest.json и SOURCE.md — справочно (зависят от сборки zlib)",
  "manifest": {
   "version": "air-data-v1",
+  "generator": "air-gen 0.1.0",
+  "seed": 20250901,
+  "profile": "full",
+  "scale": "1.0",
+  "period": {
+   "from": "2025-09-01",
+   "to": "2027-10-30",
+   "now": "2027-09-01T00:00:00Z",
+   "business_timezone": "UTC"
+  },
+  "modules": [
+   "network",
+   "sales"
+  ],
+  "inputs": [
+   {
+    "name": "demo-20250901-2y.sql.gz",
+    "release": "air-source-20250901",
+    "license": "MIT, Copyright (c) 2025 Postgres Professional",
+    "sha256": "6aa9ca6313768b6b9ee8a6f1e13e902249c9d40fbad59938c7b6cc3dd90af471"
+   }
+  ],
   "source": "Postgres Pro demo database «Airlines» 2.0, demo-20250901-2y (730 days), MIT © 2025 Postgres Professional",
   "now": "2027-09-01T00:00:00Z",
   "last_booking": "2027-08-31 23:59:58.579152+00",
@@ -396,7 +418,9 @@
    "delimiter": "TAB",
    "header": true,
    "null": "empty field",
-   "time": "Unix seconds, UTC (fractions dropped)",
+   "time": "Unix seconds, UTC (fractions rounded to the nearest second, half to even)",
+   "boolean": "t / f",
+   "money": "decimal string, 2 digits, as in the source",
    "compression": "gzip, mtime=0"
   }
  },
@@ -469,10 +493,235 @@
   {
    "name": "LICENSE",
    "sha256": "2fd240f31aa9f8f52310195ebe7f271cd8925753ed75551a2cda34677854f298"
+  },
+  {
+   "name": "schema-tables.sql",
+   "sha256": "777f430b12d37a9377c03ee10994de88e8b611a6b11d88db4623f2701f018c4e"
+  },
+  {
+   "name": "schema-constraints.sql",
+   "sha256": "b6155dde0fb92e013857b0e1ab0baa79e6cf9749c6f532ba346d2d4c26d2b8f1"
+  },
+  {
+   "name": "schema.mmd",
+   "sha256": "ec528029d25e656e3419eb8ab6dc4fb3bc4877e6467c844f538fa75567abd86e"
+  },
+  {
+   "name": "load-postgres.psql",
+   "sha256": "77f72017ec62269a36857f397aade6b705f80a63c8c84bf42021febba2f2a330"
   }
  ],
  "reference_only": [
   "manifest.json",
   "SOURCE.md"
+ ],
+ "aggregates": [
+  {
+   "table": "airports",
+   "op": "distinct",
+   "column": "country_en",
+   "value": 230
+  },
+  {
+   "table": "airports",
+   "op": "distinct",
+   "column": "timezone",
+   "value": 310
+  },
+  {
+   "table": "seats",
+   "op": "count_eq",
+   "column": "fare_conditions",
+   "arg": "Business",
+   "value": 207
+  },
+  {
+   "table": "routes",
+   "op": "distinct",
+   "column": "route_no",
+   "value": 1798
+  },
+  {
+   "table": "routes",
+   "op": "distinct",
+   "column": "departure_airport",
+   "value": 73
+  },
+  {
+   "table": "routes",
+   "op": "min",
+   "column": "valid_from",
+   "scale": 0,
+   "value": "1759276800"
+  },
+  {
+   "table": "routes",
+   "op": "max",
+   "column": "valid_to",
+   "scale": 0,
+   "value": "1825027200"
+  },
+  {
+   "table": "routes",
+   "op": "sum",
+   "column": "duration_min",
+   "scale": 0,
+   "value": "1425590"
+  },
+  {
+   "table": "flights",
+   "op": "nulls",
+   "column": "actual_departure",
+   "value": 11455
+  },
+  {
+   "table": "flights",
+   "op": "nulls",
+   "column": "actual_arrival",
+   "value": 11476
+  },
+  {
+   "table": "flights",
+   "op": "min",
+   "column": "scheduled_departure",
+   "scale": 0,
+   "value": "1759276800"
+  },
+  {
+   "table": "flights",
+   "op": "max",
+   "column": "scheduled_departure",
+   "scale": 0,
+   "value": "1824940500"
+  },
+  {
+   "table": "flights",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "Arrived",
+   "value": 124095
+  },
+  {
+   "table": "flights",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "Cancelled",
+   "value": 702
+  },
+  {
+   "table": "flights",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "Scheduled",
+   "value": 10565
+  },
+  {
+   "table": "flights",
+   "op": "sum",
+   "column": "actual_arrival",
+   "scale": 0,
+   "value": "222081569632763"
+  },
+  {
+   "table": "bookings",
+   "op": "sum",
+   "column": "total_amount",
+   "scale": 2,
+   "value": "148457837225.00"
+  },
+  {
+   "table": "bookings",
+   "op": "min",
+   "column": "book_date",
+   "scale": 0,
+   "value": "1756684806"
+  },
+  {
+   "table": "bookings",
+   "op": "max",
+   "column": "book_date",
+   "scale": 0,
+   "value": "1819756799"
+  },
+  {
+   "table": "bookings",
+   "op": "sum",
+   "column": "book_date",
+   "scale": 0,
+   "value": "15145037638322266"
+  },
+  {
+   "table": "tickets",
+   "op": "count_eq",
+   "column": "outbound",
+   "arg": "t",
+   "value": 11831927
+  },
+  {
+   "table": "tickets",
+   "op": "min",
+   "column": "ticket_no",
+   "value": "0005432000000"
+  },
+  {
+   "table": "tickets",
+   "op": "max",
+   "column": "ticket_no",
+   "value": "0005453207646"
+  },
+  {
+   "table": "segments",
+   "op": "sum",
+   "column": "price",
+   "scale": 2,
+   "value": "148457837225.00"
+  },
+  {
+   "table": "segments",
+   "op": "count_eq",
+   "column": "fare_conditions",
+   "arg": "Business",
+   "value": 2588614
+  },
+  {
+   "table": "segments",
+   "op": "count_eq",
+   "column": "fare_conditions",
+   "arg": "Comfort",
+   "value": 1865417
+  },
+  {
+   "table": "segments",
+   "op": "sum",
+   "column": "flight_id",
+   "scale": 0,
+   "value": "1555993739935"
+  },
+  {
+   "table": "boarding_passes",
+   "op": "nulls",
+   "column": "boarding_no",
+   "value": 51176
+  },
+  {
+   "table": "boarding_passes",
+   "op": "nulls",
+   "column": "boarding_time",
+   "value": 51176
+  },
+  {
+   "table": "boarding_passes",
+   "op": "sum",
+   "column": "boarding_no",
+   "scale": 0,
+   "value": "3259216288"
+  },
+  {
+   "table": "boarding_passes",
+   "op": "sum",
+   "column": "boarding_time",
+   "scale": 0,
+   "value": "40984256914874799"
+  }
  ]
 }

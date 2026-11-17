@@ -31,12 +31,13 @@ import java.util.zip.GZIPInputStream;
  *
  * <pre>
  *   generate --profile small|medium|full --seed N --out DIR [--ВХОД ПУТЬ …]
- *            [--modules a,b] [--to YYYY-MM-DD] [--gzip 1..9, по умолчанию 6] [--inputs strict]
+ *            [--modules a,b] [--to YYYY-MM-DD] [--gzip 1..9, по умолчанию — у набора, обычно 6] [--inputs strict]
  *   schema   [--out DIR]               DDL (две части), ER-диаграмма Mermaid, поля — без данных (по умолчанию — &lt;код&gt;/schema)
  *   verify   DIR                       сверить файлы выпуска с manifest.json (строки, sha256 сжатого и разжатого)
  *   freeze   DIR [--out FILE]          файл ожиданий из готового выпуска (по умолчанию &lt;код&gt;/expected/ВЕРСИЯ-ПРОФИЛЬ.json)
  *   check    DIR [--expected FILE] [--aggregates no]   проверить выпуск против ожиданий (как tools/check_data.py)
- *   names    ПУТЬ                      нет ли в файлах (выпуск, исходники) внутренних имён платформы
+ *   names    ПУТЬ                      нет ли в файлах (выпуск, исходники) внутренних имён платформы; в выпуске этого
+ *                                      набора значения полей «как есть» из внешнего источника не проверяются
  * </pre>
  * {@code --inputs strict} — входы обязаны совпасть с эталоном ({@link Dataset#readInputs}); без него расхождение —
  * предупреждение. Путь ко входу — {@link #inputPath}; папка набора (паспорт, схема, ожидания) — {@link #dataDir}.
@@ -88,7 +89,7 @@ public final class Cli {
                 return check(d, need(dir), opt.get("expected"), !"no".equals(opt.get("aggregates"))) ? 0 : 1;
             }
             case "names" -> {
-                return names(need(dir)) ? 0 : 1;
+                return names(d, need(dir)) ? 0 : 1;
             }
             default -> {
                 usage(d);
@@ -107,7 +108,7 @@ public final class Cli {
         for (Dataset.Input i : d.inputs()) in.append(" --").append(i.name()).append(" ПУТЬ");
         System.err.println(d.generatorVersion() + " — генератор набора " + d.version() + " (" + d.title() + ")\n"
                 + "  generate --profile small|medium|full --seed N --out DIR" + in
-                + " [--modules a,b] [--to YYYY-MM-DD] [--gzip 1..9, по умолчанию 6] [--inputs strict]\n"
+                + " [--modules a,b] [--to YYYY-MM-DD] [--gzip 1..9, по умолчанию " + d.gzipLevel() + "] [--inputs strict]\n"
                 + "  schema   [--out DIR]\n"
                 + "  verify   DIR\n"
                 + "  freeze   DIR [--out FILE]\n"
@@ -163,7 +164,8 @@ public final class Cli {
         return new Config(Long.parseLong(opt.getOrDefault("seed", Long.toString(d.defaultSeed()))),
                 Profile.parse(opt.getOrDefault("profile", "small")), period,
                 Path.of(opt.getOrDefault("out", d.version())), inputs,
-                Integer.parseInt(opt.getOrDefault("gzip", "6")), modules, d.version(), d.generatorVersion());
+                Integer.parseInt(opt.getOrDefault("gzip", Integer.toString(d.gzipLevel()))), modules, d.version(),
+                d.generatorVersion());
     }
 
     /** Прогон с проверкой входов «предупреждением» (тесты, локальные прогоны). */
@@ -229,11 +231,28 @@ public final class Cli {
         System.out.println("схема: " + s.tables().size() + " таблиц → " + out);
     }
 
-    static boolean names(Path path) throws IOException {
-        PublicNames.Scan s = PublicNames.scan(path);
+    /**
+     * Поля «как есть» для проверки имён: папка — выпуск этого набора ({@code manifest.json} с его версией) — по схеме
+     * набора ({@link PublicNames#verbatimColumns}); иначе (исходники, чужой выпуск, отдельный файл) — нет.
+     */
+    @SuppressWarnings("unchecked")
+    public static Map<String, java.util.Set<String>> verbatimFor(Dataset d, Path path) {
+        Path m = path.resolve("manifest.json");
+        if (!Files.isDirectory(path) || !Files.isRegularFile(m)) return Map.of();
+        try {
+            Object v = ((Map<String, Object>) Json.parse(Files.readString(m, StandardCharsets.UTF_8))).get("version");
+            return d.version().equals(v) ? PublicNames.verbatimColumns(d.schema()) : Map.of();
+        } catch (IOException | RuntimeException e) {
+            return Map.of();
+        }
+    }
+
+    static boolean names(Dataset d, Path path) throws IOException {
+        PublicNames.Scan s = PublicNames.scan(path, verbatimFor(d, path));
         for (Map.Entry<String, Integer> h : s.hits().entrySet()) {
             System.out.println("НЕТ  " + h.getKey() + " — внутренних имён платформы: " + h.getValue());
         }
+        if (!s.skipped().isEmpty()) System.out.println(s.skippedSummary());
         System.out.println(s.clean()
                 ? "внутренних имён нет: " + s.files() + " файлов, " + s.words() + " разных слов"
                 : "ЕСТЬ ВНУТРЕННИЕ ИМЕНА: " + s.hits().size() + " файлов из " + s.files());

@@ -66,6 +66,9 @@ public final class Schema {
                 if (!c.name().matches("[a-z][a-z0-9_]*")) errors.add(t.name() + "." + c.name() + ": имя не snake_case");
                 if (c.isEnum() && c.type() != ColType.TEXT) errors.add(t.name() + "." + c.name() + ": перечисление не TEXT");
                 if (c.descRu() == null || c.descRu().isBlank()) errors.add(t.name() + "." + c.name() + ": нет описания");
+                if (c.verbatim() && (c.source() == null || c.source().isBlank())) {
+                    errors.add(t.name() + "." + c.name() + ": verbatimSource без source — откуда значения как есть?");
+                }
                 if (c.refTable() != null) {
                     if (!tables.containsKey(c.refTable())) {
                         errors.add(t.name() + "." + c.name() + ": ссылка на неизвестную таблицу " + c.refTable());
@@ -86,6 +89,7 @@ public final class Schema {
                 else if (t.column(k).nullable()) errors.add(t.name() + ": поле ключа " + k + " допускает NULL");
             }
             for (String k : t.orderBy()) if (!seen.contains(k)) errors.add(t.name() + ": поле порядка " + k + " не описано");
+            for (String k : t.nullsLast()) if (!t.orderBy().contains(k)) errors.add(t.name() + ": NULLS LAST по " + k + " — не поле порядка");
             for (List<String> u : t.uniques()) for (String k : u) if (!seen.contains(k)) errors.add(t.name() + ": уникальность по " + k);
             for (List<String> u : t.indexes()) for (String k : u) if (!seen.contains(k)) errors.add(t.name() + ": индекс по " + k);
             try {

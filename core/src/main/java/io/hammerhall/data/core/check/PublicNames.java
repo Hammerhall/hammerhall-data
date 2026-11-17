@@ -33,6 +33,11 @@ import java.util.zip.GZIPInputStream;
  *
  * <p>{@link #scan} — проверка папки целиком (выпуск любого набора, исходники, репозиторий): команда {@code names} у
  * {@code Cli} и общие тесты набора ({@code DatasetContract}).
+ *
+ * <p><b>Значения внешнего источника как есть</b> (поля схемы с {@code Table.verbatimSource()}: названия мест, номера,
+ * имена из чужой выгрузки) — не наши слова, совпадения в них случайны. Проверка выпуска ({@link #scan(Path, Map)} с
+ * {@link #verbatimColumns}) пропускает <i>только значения</i> таких полей в {@code .tsv.gz}; заголовок файла, тексты
+ * выпуска и прочие поля проверяются как обычно, а что пропущено — в {@link Scan#skipped()} (и строкой в отчёте).
  */
 public final class PublicNames {
     private PublicNames() {
@@ -86,10 +91,37 @@ public final class PublicNames {
      * Итог {@link #scan}: сколько файлов прочитано, сколько в них разных слов и в каких файлах (путь от папки) нашлись
      * внутренние имена — сколько разных слов. Сами слова не возвращаются: их нельзя печатать (журналы CI открыты).
      */
-    public record Scan(int files, int words, Map<String, Integer> hits) {
+    public record Scan(int files, int words, Map<String, Integer> hits, Map<String, List<String>> skipped) {
         public boolean clean() {
             return hits.isEmpty();
         }
+
+        /** Строка для отчёта: значения каких полей не проверялись (пусто — пропусков нет). */
+        public String skippedSummary() {
+            if (skipped.isEmpty()) return "";
+            int n = 0;
+            StringBuilder sb = new StringBuilder();
+            for (Map.Entry<String, List<String>> e : skipped.entrySet()) {
+                n += e.getValue().size();
+                sb.append(sb.isEmpty() ? "" : "; ").append(e.getKey()).append(": ").append(String.join(", ", e.getValue()));
+            }
+            return "значения внешнего источника как есть не проверялись: " + n + " полей в " + skipped.size()
+                    + " таблицах (" + sb + ")";
+        }
+    }
+
+    /**
+     * Поля «как есть» ({@code Column.verbatim()}) по файлам выпуска схемы: {@code <таблица>.tsv.gz} → имена полей.
+     * Для {@link #scan(Path, Map)} по папке выпуска этой схемы.
+     */
+    public static Map<String, Set<String>> verbatimColumns(io.hammerhall.data.core.schema.Schema schema) {
+        Map<String, Set<String>> out = new TreeMap<>();
+        for (io.hammerhall.data.core.schema.Table t : schema.tables()) {
+            Set<String> cols = new java.util.LinkedHashSet<>();
+            for (io.hammerhall.data.core.schema.Column c : t.columns()) if (c.verbatim()) cols.add(c.name());
+            if (!cols.isEmpty()) out.put(t.name() + ".tsv.gz", cols);
+        }
+        return out;
     }
 
     /** Папки, в которые {@link #scan} не заходит: сборка, рабочие прогоны, служебные папки git, IDE и Python. */
@@ -104,10 +136,22 @@ public final class PublicNames {
      * только имя файла. Слово — подряд идущие буквы, как в {@link #isInternal}.
      */
     public static Scan scan(Path root) throws IOException {
-        return scan(root, LATIN, CYRILLIC);
+        return scan(root, Map.of(), LATIN, CYRILLIC);
+    }
+
+    /**
+     * То же, но в файлах {@code .tsv.gz} из {@code verbatim} (путь от папки → имена полей) значения этих полей не
+     * проверяются — только для папки выпуска, чья схема их так пометила ({@link #verbatimColumns}).
+     */
+    public static Scan scan(Path root, Map<String, Set<String>> verbatim) throws IOException {
+        return scan(root, verbatim, LATIN, CYRILLIC);
     }
 
     static Scan scan(Path root, Set<String> latin, Set<String> cyrillic) throws IOException {
+        return scan(root, Map.of(), latin, cyrillic);
+    }
+
+    static Scan scan(Path root, Map<String, Set<String>> verbatim, Set<String> latin, Set<String> cyrillic) throws IOException {
         List<Path> files = new ArrayList<>();
         if (Files.isDirectory(root)) {
             Files.walkFileTree(root, new SimpleFileVisitor<>() {
@@ -129,25 +173,49 @@ public final class PublicNames {
         files.sort(null);
         Map<String, Boolean> verdict = new HashMap<>();
         Map<String, Integer> hits = new TreeMap<>();
+        Map<String, List<String>> skipped = new TreeMap<>();
         for (Path f : files) {
             String name = String.valueOf(f.getFileName());
             String lower = name.toLowerCase(Locale.ROOT);
+            String rel = f.equals(root) ? name : root.relativize(f).toString().replace('\\', '/');
             Set<String> words = new HashSet<>();
             words(name, words);
             if (lower.endsWith(".tsv.gz")) {
+                Set<String> skipCols = verbatim.getOrDefault(rel, Set.of());
                 try (BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(Files.newInputStream(f), 1 << 16),
                         StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPLACE)
                                 .onUnmappableCharacter(CodingErrorAction.REPLACE)), 1 << 16)) {
-                    for (String line; (line = r.readLine()) != null; ) words(line, words);
+                    // заголовок — всегда целиком; значения полей «как есть» — мимо
+                    String header = r.readLine();
+                    boolean[] skip = null;
+                    if (header != null) {
+                        words(header, words);
+                        String[] h = header.split("\t", -1);
+                        List<String> used = new ArrayList<>();
+                        for (String c : h) if (skipCols.contains(c)) used.add(c);
+                        if (!used.isEmpty()) {
+                            skip = new boolean[h.length];
+                            for (int i = 0; i < h.length; i++) skip[i] = skipCols.contains(h[i]);
+                            skipped.put(rel, used);
+                        }
+                    }
+                    for (String line; (line = r.readLine()) != null; ) {
+                        if (skip == null) {
+                            words(line, words);
+                            continue;
+                        }
+                        String[] v = line.split("\t", -1);
+                        for (int i = 0; i < v.length; i++) if (i >= skip.length || !skip[i]) words(v[i], words);
+                    }
                 }
             } else if (BINARY.stream().noneMatch(lower::endsWith)) {
                 words(new String(Files.readAllBytes(f), StandardCharsets.UTF_8), words);
             }
             int n = 0;
             for (String w : words) if (verdict.computeIfAbsent(w, x -> contains(x, latin, cyrillic))) n++;
-            if (n > 0) hits.put(f.equals(root) ? name : root.relativize(f).toString().replace('\\', '/'), n);
+            if (n > 0) hits.put(rel, n);
         }
-        return new Scan(files.size(), verdict.size(), hits);
+        return new Scan(files.size(), verdict.size(), hits, skipped);
     }
 
     /** Слова текста — подряд идущие буквы. */

@@ -87,16 +87,17 @@ public final class Release {
         for (String f : Expected.TEXTS) Files.deleteIfExists(cfg.out().resolve(f));
         Files.deleteIfExists(cfg.out().resolve("SOURCE.md"));
 
-        GenContext ctx = new GenContext(cfg, schema);
+        GenContext ctx = new GenContext(cfg, schema, dataset.gzipHeader());
         try {
-            return run(cfg, schema, inputs, dataset.docs(), dataset.format(), ctx, plan(dataset.modules(), cfg));
+            return run(dataset, cfg, schema, inputs, ctx, plan(dataset.modules(), cfg));
         } finally {
             ctx.integrity().close();
         }
     }
 
-    private static Result run(Config cfg, Schema schema, List<Map<String, Object>> inputs, Docs docs,
-                              Map<String, Object> format, GenContext ctx, List<Module> plan) throws IOException {
+    private static Result run(Dataset dataset, Config cfg, Schema schema, List<Map<String, Object>> inputs,
+                              GenContext ctx, List<Module> plan) throws IOException {
+        Docs docs = dataset.docs();
         ctx.log("выпуск " + cfg.datasetVersion() + ", профиль " + cfg.profile().code() + ", seed " + cfg.seed()
                 + ", модули " + plan.stream().map(Module::name).toList());
         List<String> planned = new ArrayList<>();
@@ -141,7 +142,7 @@ public final class Release {
         if (!planted.isEmpty()) ctx.log("заложенные нарушения (в выпуск не пишутся): " + planted);
         if (!report.allOk()) return new Result(false, files, report, planted, ctx);
 
-        Map<String, Object> manifest = manifest(cfg, plan, inputs, format, files);
+        Map<String, Object> manifest = manifest(cfg, plan, inputs, dataset.manifestFields(ctx), dataset.format(), files);
         write(cfg.out().resolve("manifest.json"), Json.write(manifest));
         write(cfg.out().resolve("schema-tables.sql"), SchemaExport.tablesSql(schema));
         write(cfg.out().resolve("schema-constraints.sql"), SchemaExport.constraintsSql(schema));
@@ -155,8 +156,13 @@ public final class Release {
         return new Result(true, files, report, planted, ctx);
     }
 
+    /**
+     * Манифест: поля ядра (версия … входы), затем поля домена ({@link Dataset#manifestFields}), формат и файлы.
+     * Поле домена не может заменить поле ядра.
+     */
     static Map<String, Object> manifest(Config cfg, List<Module> plan, List<Map<String, Object>> inputs,
-                                        Map<String, Object> format, List<GzipTsvFile.Info> files) {
+                                        Map<String, Object> domain, Map<String, Object> format,
+                                        List<GzipTsvFile.Info> files) {
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("version", cfg.datasetVersion());
         m.put("generator", cfg.generatorVersion());
@@ -171,6 +177,12 @@ public final class Release {
         m.put("period", period);
         m.put("modules", plan.stream().map(Module::name).toList());
         m.put("inputs", inputs);
+        for (Map.Entry<String, Object> e : domain.entrySet()) {
+            if (m.containsKey(e.getKey()) || e.getKey().equals("format") || e.getKey().equals("files")) {
+                throw new IllegalStateException("поле манифеста «" + e.getKey() + "» — поле ядра, домен его не задаёт");
+            }
+            m.put(e.getKey(), e.getValue());
+        }
         m.put("format", new LinkedHashMap<>(format));
         List<Object> fl = new ArrayList<>();
         for (GzipTsvFile.Info f : files) {

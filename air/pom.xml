@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Генератор набора «Авиаперевозки» (air-data-v*) — место под перенос сборки на Java: исходники — air/src/…,
-         сборка без Maven — ./build.sh air из корня репозитория. Пока исходников нет, модуль пуст (выпуск air-data-v1
-         собран скриптами air/*.py). Вход — дамп демобазы: путь — -Dair.<вход>=…, AIR_<ВХОД> или air/work/<файл>. -->
+    <!-- Генератор набора «Авиаперевозки» (air-data-v*): импорт из выгрузки демобазы, исходники — air/src/…,
+         сборка без Maven — ./build.sh air из корня репозитория. Вход — выгрузка: путь — -Dair.dump=…, AIR_DUMP или
+         air/work/demo-20250901-2y.sql.gz; без неё тесты берут крошечную выгрузку, которую пишут сами. -->
     <parent>
         <groupId>io.hammerhall</groupId>
         <artifactId>hammerhall-data</artifactId>

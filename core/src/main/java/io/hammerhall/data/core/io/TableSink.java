@@ -39,11 +39,16 @@ public final class TableSink {
     private GzipTsvFile.Info info;
 
     public TableSink(Table table, Mode mode, Path dir, int gzipLevel, Integrity integrity) throws IOException {
+        this(table, mode, dir, gzipLevel, GzipTsvFile.Header.JDK, integrity);
+    }
+
+    public TableSink(Table table, Mode mode, Path dir, int gzipLevel, GzipTsvFile.Header header, Integrity integrity)
+            throws IOException {
         this.table = table;
         this.mode = mode;
         this.integrity = integrity;
         this.order = RowFormat.comparator(table);
-        this.file = new GzipTsvFile(dir.resolve(table.name() + ".tsv.gz"), gzipLevel);
+        this.file = new GzipTsvFile(dir.resolve(table.name() + ".tsv.gz"), gzipLevel, header);
         this.file.line(table.header());
         integrity.begin(table);
     }

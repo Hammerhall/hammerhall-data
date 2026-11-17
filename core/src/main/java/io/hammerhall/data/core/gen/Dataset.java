@@ -1,6 +1,7 @@
 package io.hammerhall.data.core.gen;
 
 import io.hammerhall.data.core.check.Aggregate;
+import io.hammerhall.data.core.io.GzipTsvFile;
 import io.hammerhall.data.core.schema.Schema;
 import io.hammerhall.data.core.time.Period;
 
@@ -81,6 +82,32 @@ public interface Dataset {
         f.put("boolean", "t / f");
         f.put("compression", "gzip, mtime=0");
         return f;
+    }
+
+    /**
+     * Поля манифеста от домена — после полей ядра (версия, генератор, seed, профиль, период, модули, входы), перед
+     * {@code format} и {@code files}: итоги прогона, известные только после генерации (например, сколько записей
+     * источника взято), описание модели отбора. Входят в тождество выпуска, как и прочие поля манифеста. Модули кладут
+     * нужное в мир ({@code ctx.put}), набор забирает отсюда. По умолчанию — нет.
+     */
+    default Map<String, Object> manifestFields(GenContext ctx) {
+        return Map.of();
+    }
+
+    /**
+     * Уровень gzip по умолчанию, если {@code generate --gzip} не задан. На содержимое не влияет; по умолчанию — 6
+     * ({@link Config#gzipLevel()}).
+     */
+    default int gzipLevel() {
+        return 6;
+    }
+
+    /**
+     * Заголовок gzip таблиц выпуска. По умолчанию — как у JDK; набор, чей выпуск собран на CPython, берёт
+     * {@code CPYTHON}: при том же уровне совпадут и байты файлов, не только содержимое.
+     */
+    default GzipTsvFile.Header gzipHeader() {
+        return GzipTsvFile.Header.JDK;
     }
 
     /**

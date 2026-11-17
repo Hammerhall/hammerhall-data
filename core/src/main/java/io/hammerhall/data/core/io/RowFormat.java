@@ -126,14 +126,19 @@ public final class RowFormat {
         return ((Comparable) a).compareTo(b);
     }
 
-    /** Сравнение строк по полям порядка таблицы. */
+    /** Сравнение строк по полям порядка таблицы; NULL — первым, в полях {@link Table#nullsLast()} — последним. */
     public static Comparator<Object[]> comparator(Table t) {
         List<String> order = t.orderBy();
         int[] idx = new int[order.size()];
-        for (int i = 0; i < idx.length; i++) idx[i] = t.indexOf(order.get(i));
+        boolean[] last = new boolean[order.size()];
+        for (int i = 0; i < idx.length; i++) {
+            idx[i] = t.indexOf(order.get(i));
+            last[i] = t.nullsLast().contains(order.get(i));
+        }
         return (r1, r2) -> {
-            for (int i : idx) {
-                int c = compareValues(r1[i], r2[i]);
+            for (int k = 0; k < idx.length; k++) {
+                Object a = r1[idx[k]], b = r2[idx[k]];
+                int c = last[k] && (a == null) != (b == null) ? (a == null ? 1 : -1) : compareValues(a, b);
                 if (c != 0) return c;
             }
             return 0;

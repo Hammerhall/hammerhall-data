@@ -17,8 +17,9 @@ import java.util.List;
  *     .col("kind", TEXT, "Вид").values("a", "b")
  *     .pk("id").unique("sku");
  * }</pre>
- * Модификаторы ({@code nullable}, {@code ref}, {@code values}, {@code scale}, {@code source}) относятся к последнему
- * полю. Порядок строк в TSV — {@link #orderBy()}, по умолчанию — первичный ключ.
+ * Модификаторы ({@code nullable}, {@code ref}, {@code values}, {@code scale}, {@code source}, {@code verbatimSource})
+ * относятся к последнему полю. Порядок строк в TSV — {@link #orderBy()}, по умолчанию — первичный ключ. NULL в поле порядка идёт первым
+ * ({@code NULLS FIRST}), в полях из {@link #nullsLast(String...)} — последним ({@code NULLS LAST}).
  */
 public final class Table {
     public record ForeignKey(List<String> columns, String refTable, List<String> refColumns) {
@@ -37,6 +38,7 @@ public final class Table {
     private final List<ForeignKey> compositeFks = new ArrayList<>();
     private final List<Check> checks = new ArrayList<>();
     private List<String> orderBy = null;
+    private List<String> nullsLast = List.of();
     private String rowsHint = "";
 
     private Table(String name, String group, String descRu) {
@@ -53,7 +55,7 @@ public final class Table {
 
     public Table col(String name, ColType type, String descRu) {
         int prec = type == ColType.DECIMAL ? 12 : 0, sc = type == ColType.DOUBLE ? 6 : (type == ColType.DECIMAL ? 2 : 0);
-        columns.add(new Column(name, type, false, prec, sc, List.of(), null, descRu, null));
+        columns.add(new Column(name, type, false, prec, sc, List.of(), null, descRu, null, false));
         return this;
     }
 
@@ -84,6 +86,15 @@ public final class Table {
         return mod(c -> c.withSource(s));
     }
 
+    /**
+     * Значения поля — из внешнего источника ({@link #source}) как есть, без изменений по содержанию (названия мест,
+     * номера, имена из выгрузки): это не наши слова, и проверка внутренних имён выпуска значения такого поля пропускает
+     * (имя поля, тексты выпуска, прочие поля и репозиторий — проверяются). Задаётся явно; по умолчанию — нет.
+     */
+    public Table verbatimSource() {
+        return mod(Column::withVerbatim);
+    }
+
     public Table pk(String... cols) {
         primaryKey = List.of(cols);
         return this;
@@ -112,6 +123,12 @@ public final class Table {
 
     public Table orderBy(String... cols) {
         orderBy = List.of(cols);
+        return this;
+    }
+
+    /** Поля порядка строк, в которых NULL идёт последним ({@code ORDER BY … NULLS LAST}); по умолчанию — первым. */
+    public Table nullsLast(String... cols) {
+        nullsLast = List.of(cols);
         return this;
     }
 
@@ -174,6 +191,11 @@ public final class Table {
 
     public List<String> orderBy() {
         return orderBy != null ? orderBy : primaryKey;
+    }
+
+    /** Поля порядка, в которых NULL — последним (см. {@link #nullsLast(String...)}). */
+    public List<String> nullsLast() {
+        return nullsLast;
     }
 
     /** Все внешние ключи: одиночные (из {@code ref}) и составные, в порядке описания. */

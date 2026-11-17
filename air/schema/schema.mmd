@@ -1,0 +1,79 @@
+%% air-data-v1 — ER-диаграмма; сгенерировано из описания схемы
+erDiagram
+    airports {
+        text airport_code PK "Код аэропорта ИАТА"
+        text name_en "Название по-английски"
+        text name_ru "Название по-русски"
+        text city_en "Город по-английски"
+        text city_ru "Город по-русски"
+        text country_en "Страна по-английски"
+        text country_ru "Страна по-русски"
+        decimal longitude "Долгота, градусы"
+        decimal latitude "Широта, градусы"
+        text timezone "Часовой пояс (IANA)"
+    }
+    airplanes {
+        text airplane_code PK "Код модели ИАТА"
+        text model_en "Модель по-английски"
+        text model_ru "Модель по-русски"
+        int range_km "Дальность, км"
+        int speed_kmh "Крейсерская скорость, км/ч"
+    }
+    seats {
+        text airplane_code PK, FK "Модель самолёта"
+        text seat_no PK "Номер места"
+        text fare_conditions "Класс обслуживания"
+    }
+    routes {
+        text route_no PK "Номер маршрута (рейса)"
+        moment valid_from PK "Начало периода действия версии"
+        moment valid_to "Конец периода действия (не включая)"
+        text departure_airport FK "Аэропорт вылета"
+        text arrival_airport FK "Аэропорт прилёта"
+        text airplane_code FK "Модель самолёта"
+        text days_of_week "Дни недели вылета через запятую: 1 — пн … 7 — вс"
+        text scheduled_time "Местное время вылета, ЧЧ:ММ:СС"
+        int duration_min "Время в пути, минуты"
+    }
+    flights {
+        int flight_id PK "Рейс"
+        text route_no "Номер маршрута; версия — та, чей период содержит плановый вылет"
+        text status "Состояние рейса на «сейчас» выгрузки"
+        moment scheduled_departure "Вылет по расписанию"
+        moment scheduled_arrival "Прилёт по расписанию"
+        moment actual_departure "Фактический вылет; NULL — ещё не вылетел или отменён"
+        moment actual_arrival "Фактический прилёт; NULL — ещё не прилетел или отменён"
+    }
+    bookings {
+        text book_ref PK "Номер брони"
+        moment book_date "Момент бронирования"
+        money total_amount "Сумма брони — сумма цен её перелётов"
+    }
+    tickets {
+        text ticket_no PK "Номер билета"
+        text book_ref FK "Бронь"
+        text passenger_id "Документ пассажира"
+        text passenger_name "Имя пассажира"
+        bool outbound "Туда (t) или обратно (f)"
+    }
+    segments {
+        text ticket_no PK, FK "Билет"
+        int flight_id PK, FK "Рейс"
+        text fare_conditions "Класс обслуживания"
+        money price "Цена перелёта"
+    }
+    boarding_passes {
+        text ticket_no PK, FK "Билет"
+        int flight_id PK, FK "Рейс"
+        text seat_no "Место"
+        int boarding_no "Номер посадки по порядку; NULL — посадки ещё не было"
+        moment boarding_time "Момент посадки; NULL — посадки ещё не было"
+    }
+    airplanes ||--o{ seats : "airplane_code"
+    airports ||--o{ routes : "departure_airport"
+    airports ||--o{ routes : "arrival_airport"
+    airplanes ||--o{ routes : "airplane_code"
+    bookings ||--o{ tickets : "book_ref"
+    tickets ||--o{ segments : "ticket_no"
+    flights ||--o{ segments : "flight_id"
+    segments ||--o{ boarding_passes : "ticket_no, flight_id"

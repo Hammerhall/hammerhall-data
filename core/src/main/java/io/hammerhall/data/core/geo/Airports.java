@@ -21,7 +21,7 @@ import java.util.zip.GZIPInputStream;
  * Для повторяемости — sha256 разжатого содержимого (он же {@code sha256_tsv} в манифесте авиа).
  */
 public final class Airports {
-    /** sha256 содержимого {@code airports.tsv.gz} выпуска {@code air-data-v1} (из {@code check_air_data.py}). */
+    /** sha256 содержимого {@code airports.tsv.gz} выпуска {@code air-data-v1} (как в его манифесте). */
     public static final String AIR_DATA_V1_SHA256_TSV = "7473494a65e9af17527beebb9d8c632739b079c4b26eb377b65cd5bbde16f62e";
 
     public record Airport(String code, String nameEn, String nameRu, String cityEn, String cityRu, String countryEn,

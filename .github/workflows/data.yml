@@ -310,7 +310,15 @@ jobs:
       - name: Создать выпуск и выложить файлы
         env:
           GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
+        # Выпуск уже есть (в бете данные переписываются на месте) — сначала файлы, потом название и заметки: название
+        # выпуска — всегда его тег, заметки — от этой сборки.
         run: |
-          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 \
-            || gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --verify-tag --title "$TAG" --notes-file work/notes.md
-          gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber work/full/* "work/$TAG-small.tar"
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber work/full/* "work/$TAG-small.tar"
+            gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --title "$TAG" --notes-file work/notes.md
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --verify-tag --title "$TAG" --notes-file work/notes.md
+            gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber work/full/* "work/$TAG-small.tar"
+          fi
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json name,assets \
+            --jq '"выпуск «\(.name)»: файлов \(.assets | length)"'

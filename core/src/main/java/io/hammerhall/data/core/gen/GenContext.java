@@ -20,6 +20,7 @@ import java.util.Map;
 public final class GenContext {
     private final Config config;
     private final Schema schema;
+    private final io.hammerhall.data.core.io.GzipTsvFile.Header gzipHeader;
     private final RuCalendar calendar = new RuCalendar();
     private final RandomStreams streams;
     private final Ids ids = new Ids();
@@ -32,8 +33,13 @@ public final class GenContext {
     private final long t0 = System.nanoTime();
 
     GenContext(Config config, Schema schema) {
+        this(config, schema, io.hammerhall.data.core.io.GzipTsvFile.Header.JDK);
+    }
+
+    GenContext(Config config, Schema schema, io.hammerhall.data.core.io.GzipTsvFile.Header gzipHeader) {
         this.config = config;
         this.schema = schema;
+        this.gzipHeader = gzipHeader;
         this.streams = new RandomStreams(config.seed());
         this.integrity = new Integrity(schema, Integrity.Limits.fromSystem());
     }
@@ -109,7 +115,7 @@ public final class GenContext {
             throw new IllegalStateException("модуль " + currentModule + " не объявил таблицу " + table);
         }
         if (sinks.containsKey(table)) throw new IllegalStateException("таблица " + table + " уже открыта");
-        TableSink s = new TableSink(schema.table(table), mode, config.out(), config.gzipLevel(), integrity);
+        TableSink s = new TableSink(schema.table(table), mode, config.out(), config.gzipLevel(), gzipHeader, integrity);
         sinks.put(table, s);
         return s;
     }
