@@ -1,0 +1,352 @@
+# Живопись, графика, эстамп, фотография, малая скульптура. Части названий — парами «по-русски = in English».
+[land.base]
+Пейзаж = Landscape | Летний пейзаж = Summer Landscape | Зимний пейзаж = Winter Landscape | Осенний пейзаж = Autumn Landscape |
+Весенний пейзаж = Spring Landscape | Сельский пейзаж = Rural Landscape | Речной пейзаж = River Landscape |
+Горный пейзаж = Mountain Landscape | Лесной пейзаж = Forest Landscape | Северный пейзаж = Northern Landscape |
+Вечерний пейзаж = Evening Landscape | Южный пейзаж = Southern Landscape
+[land.with]
+мельницей = a Mill | мостом = a Bridge | стогами = Haystacks | берёзами = Birches | соснами = Pines | дорогой = a Road |
+озером = a Lake | усадьбой = a Manor House | водопадом = a Waterfall | пастухом = a Shepherd | стадом = a Herd |
+рыбаком = a Fisherman | лодкой = a Boat | избой = a Log Hut | ветряной мельницей = a Windmill | прудом = a Pond |
+радугой = a Rainbow | замком = a Castle | руинами = Ruins | фигурами = Figures | путником = a Traveller |
+парусником = a Sailing Boat | маяком = a Lighthouse | старым дубом = an Old Oak | копнами = Hay Stooks | плотиной = a Dam |
+косарями = Mowers | девушкой = a Girl | коровами = Cows | овцами = Sheep | гусями = Geese | телегой = a Cart |
+санями = a Sledge | домиком = a Cottage | садом = a Garden | колодцем = a Well | рекой = a River | ручьём = a Stream |
+облаками = Clouds | ивами = Willows
+[land.time]
+Утро = Morning | Вечер = Evening | Полдень = Noon | Сумерки = Twilight | Зима = Winter | Весна = Spring | Осень = Autumn |
+Лето = Summer | Оттепель = Thaw | Половодье = Spring Flood | Туман = Mist | Закат = Sunset | Рассвет = Dawn | Ночь = Night |
+Гроза = Thunderstorm | Март = March | Апрель = April | Октябрь = October | Иней = Hoarfrost | Первый снег = First Snow |
+Тишина = Stillness | Ненастье = Bad Weather | Сенокос = Haymaking | Листопад = Falling Leaves | Ледоход = Ice Drift |
+Июльский день = A July Day | Ранняя весна = Early Spring | Поздняя осень = Late Autumn
+[land.place]
+в деревне = in the Village | на реке = on the River | на озере = on the Lake | в лесу = in the Forest | в парке = in the Park |
+в горах = in the Mountains | у моря = by the Sea | на берегу = on the Shore | в поле = in the Field | в саду = in the Garden |
+на опушке = at the Edge of the Forest | у мельницы = by the Mill | на пруду = on the Pond | в усадьбе = at the Manor |
+у переправы = at the Ferry | в бору = in the Pine Wood | в долине = in the Valley | у старого моста = by the Old Bridge
+[land.place.ru]
+за околицей = beyond the Village | на просёлке = on a Country Road | в окрестностях Звенигорода = near Zvenigorod |
+на Волге = on the Volga | на Оке = on the Oka | на Неве = on the Neva | в Карелии = in Karelia | в Подмосковье = near Moscow |
+на Урале = in the Urals | на Енисее = on the Yenisei | в Плёсе = in Plyos | на Ладоге = on Lake Ladoga |
+под Костромой = near Kostroma
+[land.place.abroad]
+в окрестностях Парижа = near Paris | в Нормандии = in Normandy | в Бретани = in Brittany | в Провансе = in Provence |
+в Тоскане = in Tuscany | в Альпах = in the Alps | на Рейне = on the Rhine | на Луаре = on the Loire | на Сене = on the Seine |
+в Голландии = in Holland | в Тироле = in the Tyrol | на Капри = on Capri | в Венеции = in Venice | в Шотландии = in Scotland |
+в Баварии = in Bavaria | во Фландрии = in Flanders | среди фьордов = among the Fjords
+[land.alone]
+Старая мельница = The Old Mill | Берёзовая роща = Birch Grove | Сосны у залива = Pines by the Bay |
+Дорога через поле = Road through the Field | Туман над рекой = Mist over the River | Лунная ночь = Moonlit Night |
+Последний луч = The Last Ray | Деревенская улица = Village Street | Цветущий сад = Garden in Bloom | Зимняя дорога = Winter Road |
+Весенний ручей = Spring Stream | У околицы = At the Village Edge | Мостик через ручей = Footbridge over a Stream |
+Лесная тропа = Forest Path | Заброшенная усадьба = Abandoned Manor | Перед грозой = Before the Storm | После дождя = After the Rain |
+Тихая заводь = Quiet Backwater | Стога в поле = Haystacks in a Field | Сосновый бор = Pine Forest | Горная речка = Mountain Stream |
+Ветреный день = A Windy Day | Овраг = The Ravine | Излучина реки = River Bend | Луг в цвету = Meadow in Bloom | Холмы = Hills |
+Пасмурный день = An Overcast Day | Старый парк = The Old Park | Мельничная запруда = Mill Pond
+[marine]
+Морской пейзаж = Seascape | Марина = Marine | Парусник в открытом море = Sailing Ship on the Open Sea |
+Шторм у скалистого берега = Storm off a Rocky Coast | Штиль = Calm | Лунная ночь на море = Moonlit Night at Sea |
+Рыбацкие лодки в бухте = Fishing Boats in a Bay | Маяк = The Lighthouse | Вид на гавань = View of the Harbour | Прибой = Surf |
+Корабли на рейде = Ships in the Roads | Возвращение рыбаков = Return of the Fishermen | Закат на море = Sunset at Sea |
+Буря = The Tempest | Берег в тумане = Coast in Mist | Яхты на взморье = Yachts off the Coast |
+Парусники у причала = Sailing Boats at the Pier | Отлив = Low Tide | Утро в порту = Morning in the Port |
+Скалы у моря = Rocks by the Sea | Волна = The Wave | Рыбацкая деревня на берегу = Fishing Village on the Shore |
+Северное море = The North Sea
+[marine.place]
+на море = at Sea | в гавани = in the Harbour | у причала = at the Pier | в бухте = in the Bay | на взморье = on the Seashore
+[still.with]
+сиренью = Lilac | яблоками = Apples | самоваром = a Samovar | фруктами = Fruit | цветами = Flowers | рыбой = Fish |
+кувшином = a Jug | книгами = Books | раковиной = a Seashell | лимонами = Lemons | розами = Roses |
+полевыми цветами = Wild Flowers | гранатами = Pomegranates | арбузом = a Watermelon | тыквой = a Pumpkin |
+грибами = Mushrooms | хлебом = Bread | чайником = a Teapot | вазой = a Vase | пионами = Peonies | ромашками = Daisies |
+астрами = Asters | георгинами = Dahlias | подсолнухами = Sunflowers | вишнями = Cherries | клубникой = Strawberries |
+грушами = Pears | айвой = Quinces | глиняной посудой = Earthenware | медным тазом = a Copper Basin |
+кофейником = a Coffee Pot | веером = a Fan | нотами = Sheet Music | глобусом = a Globe | часами = a Clock | кружевом = Lace |
+скрипкой = a Violin | мандолиной = a Mandolin | бабочками = Butterflies | корзиной = a Basket |
+фарфоровой статуэткой = a Porcelain Figurine | свечой = a Candle | зеркалом = a Mirror | апельсинами = Oranges |
+сливами = Plums | овощами = Vegetables | луком = Onions | рябиной = Rowan Berries | калиной = Guelder Rose | орехами = Nuts
+[flowers]
+Сирень = Lilac | Пионы = Peonies | Розы = Roses | Букет = Bouquet | Ромашки = Daisies | Астры = Asters | Маки = Poppies |
+Тюльпаны = Tulips | Подсолнухи = Sunflowers | Ирисы = Irises | Флоксы = Phlox | Георгины = Dahlias |
+Полевые цветы = Wild Flowers | Хризантемы = Chrysanthemums | Анемоны = Anemones | Лилии = Lilies | Гортензии = Hydrangeas |
+Ландыши = Lilies of the Valley | Васильки = Cornflowers | Черёмуха = Bird Cherry | Незабудки = Forget-me-nots
+[flowers.where]
+в кувшине = in a Jug | в вазе = in a Vase | в стеклянной вазе = in a Glass Vase | в корзине = in a Basket |
+в крынке = in an Earthenware Pot | на столе = on a Table | у окна = by the Window | на подоконнике = on a Windowsill |
+на террасе = on the Terrace | в синей вазе = in a Blue Vase | в саду = in the Garden
+[still.alone]
+Завтрак = Breakfast | Натюрморт = Still Life | Кухонный натюрморт = Kitchen Still Life | Осенний натюрморт = Autumn Still Life |
+Натюрморт на фоне окна = Still Life by a Window | Утренний чай = Morning Tea | Дары осени = Autumn Harvest |
+Натюрморт с драпировкой = Still Life with Drapery | Летний натюрморт = Summer Still Life |
+Зимний натюрморт = Winter Still Life | Натюрморт в мастерской = Still Life in the Studio
+[portrait.f]
+дамы = a Lady | молодой женщины = a Young Woman | девушки = a Girl | старушки = an Old Woman | актрисы = an Actress |
+крестьянки = a Peasant Woman | жены художника = the Artist's Wife | матери художника = the Artist's Mother |
+сестры художника = the Artist's Sister | пожилой дамы = an Elderly Lady | дочери художника = the Artist's Daughter |
+пианистки = a Pianist | купчихи = a Merchant's Wife
+[portrait.m]
+мужчины = a Man | старика = an Old Man | юноши = a Youth | музыканта = a Musician | художника = an Artist |
+рыбака = a Fisherman | учёного = a Scholar | молодого человека = a Young Man | господина = a Gentleman |
+брата художника = the Artist's Brother | сына художника = the Artist's Son | отца художника = the Artist's Father |
+писателя = a Writer | архитектора = an Architect
+[portrait.c]
+мальчика = a Boy | девочки = a Girl | ребёнка = a Child | детей художника = the Artist's Children
+[attr.f]
+в голубом = in Blue | в белом платье = in a White Dress | в чёрном = in Black | с веером = with a Fan | с книгой = with a Book |
+в шляпке = in a Bonnet | у окна = by a Window | в интерьере = in an Interior | с собакой = with a Dog |
+с цветами = with Flowers | в кресле = in an Armchair | в красном = in Red | в саду = in a Garden | за роялем = at the Piano |
+в меховой накидке = in a Fur Cape | с письмом = with a Letter | в платке = in a Shawl |
+с жемчужным ожерельем = with a Pearl Necklace | в кружевном воротнике = in a Lace Collar
+[attr.m]
+в шляпе = in a Hat | с книгой = with a Book | у окна = by a Window | в интерьере = in an Interior | с трубкой = with a Pipe |
+в кресле = in an Armchair | в тёмном сюртуке = in a Dark Frock Coat | на фоне пейзажа = against a Landscape |
+с собакой = with a Dog | за работой = at Work | в мастерской = in the Studio | в светлом костюме = in a Light Suit
+[attr.c]
+с куклой = with a Doll | с собакой = with a Dog | с кошкой = with a Cat | с яблоком = with an Apple |
+в матроске = in a Sailor Suit | с мячом = with a Ball | на лошадке = on a Toy Horse | с книгой = with a Book
+[portrait.alone]
+Автопортрет = Self-Portrait | Женский портрет = Portrait of a Woman | Мужской портрет = Portrait of a Man |
+Детский портрет = Portrait of a Child | Портрет в интерьере = Portrait in an Interior | Девушка в платке = Girl in a Shawl |
+Голова старика = Head of an Old Man | Этюд головы = Study of a Head | Девочка с яблоком = Girl with an Apple |
+Мальчик с собакой = Boy with a Dog | Дама с зонтиком = Lady with a Parasol | Читающая женщина = Woman Reading |
+Молодая женщина у зеркала = Young Woman at a Mirror | Девушка у окна = Girl at a Window |
+Портрет неизвестной = Portrait of an Unknown Woman
+[genre]
+На террасе = On the Terrace | В мастерской = In the Studio | За чаем = At Tea | Чтение письма = Reading a Letter |
+Дети на берегу = Children on the Shore | Рыбаки = Fishermen | Ярмарка = The Fair | Прачки = Washerwomen |
+У колодца = At the Well | Возвращение с поля = Return from the Fields | Игра в серсо = A Game of Hoops |
+Урок музыки = The Music Lesson | Девушка с корзиной = Girl with a Basket | На катке = On the Skating Rink |
+Катание на санях = Sleigh Ride | Посиделки = Evening Gathering | Сбор урожая = Harvest | В ожидании = Waiting |
+Отъезд = Departure | Вечер в семье = A Family Evening | Рукодельница = The Needlewoman | Пастушок = Shepherd Boy |
+Проводы зимы = Farewell to Winter | Деревенский праздник = Village Festival | Свидание = The Rendezvous |
+Сельская школа = Village School | У самовара = By the Samovar | За шитьём = Sewing | Утренний туалет = Morning Toilette |
+Пикник = The Picnic | На прогулке = Out for a Walk | Дачники = Summer Residents | В саду = In the Garden |
+На балконе = On the Balcony | У рояля = At the Piano | На пароходе = On the Steamer | Бульвар = The Boulevard |
+Купание = Bathing | Шахматисты = Chess Players | Сельский праздник = Country Festival | На рынке = At the Market |
+Торговка цветами = The Flower Seller | Уличный музыкант = Street Musician | В цирке = At the Circus |
+На сенокосе = Haymaking | Перед балом = Before the Ball | Письмо = The Letter | Новости = The News |
+Семейный портрет на веранде = Family Portrait on the Veranda | Игра в карты = A Game of Cards | Жатва = Reaping |
+Колыбельная = Lullaby
+[animal]
+Лошади на выгоне = Horses at Pasture | Собака у камина = Dog by the Fireplace | Кошка на подоконнике = Cat on a Windowsill |
+Утки на пруду = Ducks on a Pond | Коровы на водопое = Cows at a Watering Place | Петух и куры = Rooster and Hens |
+Тройка = Troika | Жеребёнок = The Foal | Гуси = Geese | Овцы на пастбище = Sheep at Pasture |
+Зайцы на опушке = Hares at the Forest Edge | Голуби = Pigeons | Лебеди = Swans | Олени у ручья = Deer by a Stream |
+Кот с клубком = Cat with a Ball of Wool | Щенки = Puppies | Лошадь в стойле = Horse in a Stall | Пара лошадей = A Pair of Horses |
+Козы = Goats | Лиса в зимнем лесу = Fox in a Winter Forest | Белка = Squirrel | Медвежата = Bear Cubs |
+Цапля на болоте = Heron in a Marsh | Аисты = Storks | Пёс на крыльце = Dog on the Porch
+[city.names]
+Париж = Paris | Венеция = Venice | Рим = Rome | Флоренция = Florence | Амстердам = Amsterdam | Брюгге = Bruges | Прага = Prague |
+Вена = Vienna | Стокгольм = Stockholm | Москва = Moscow | Санкт-Петербург = Saint Petersburg | Ярославль = Yaroslavl |
+Кострома = Kostroma | Нижний Новгород = Nizhny Novgorod | Казань = Kazan | Лондон = London | Мюнхен = Munich |
+Дрезден = Dresden | Неаполь = Naples | Генуя = Genoa | Марсель = Marseille | Руан = Rouen | Гамбург = Hamburg |
+Копенгаген = Copenhagen | Хельсинки = Helsinki | Барселона = Barcelona | Севилья = Seville | Краков = Kraków | Псков = Pskov |
+Тверь = Tver
+[city.scene]
+Улица = A Street | Бульвар = The Boulevard | Площадь = The Square | Старый квартал = The Old Quarter |
+Зимний вечер = Winter Evening | Весной = In Spring | Набережная = The Embankment | Вид с холма = View from the Hill |
+Сад = The Garden | Крыши = Rooftops | Рынок = The Market | Двор = A Courtyard | Мост = The Bridge |
+Вечерние огни = Evening Lights | Улица под дождём = Street in the Rain | Сумерки = Twilight | Первый снег = First Snow |
+Окраина = The Outskirts
+[city.alone]
+Вид на набережную = View of the Embankment | Улица в провинциальном городе = Street in a Provincial Town |
+Городской пейзаж = Cityscape | Вечерний бульвар = Evening Boulevard | Площадь в дождь = Square in the Rain |
+Старый дворик = Old Courtyard | Мост через канал = Bridge over a Canal | Крыши под снегом = Rooftops under Snow |
+Городская окраина = Town Outskirts | Рынок на площади = Market in the Square | Переулок = A Side Street |
+Окна напротив = Windows Opposite | Трамвай на мосту = Tram on a Bridge | Вокзал = The Railway Station |
+Улица с фонарями = Street with Lanterns
+[interior]
+Интерьер = Interior | Интерьер с роялем = Interior with a Piano | Комната с окном в сад = Room with a Window onto the Garden |
+В гостиной = In the Drawing Room | Мастерская художника = The Artist's Studio | Веранда = The Veranda |
+Библиотека = The Library | Уголок кабинета = Corner of a Study | Интерьер усадебного дома = Interior of a Country House |
+Утро в спальне = Morning in the Bedroom | Столовая = The Dining Room | Детская = The Nursery | Открытое окно = The Open Window |
+Анфилада = Enfilade
+[abstract]
+Композиция = Composition | Без названия = Untitled | Ритм = Rhythm | Структура = Structure | Абстракция = Abstraction |
+Пространство = Space | Метаморфоза = Metamorphosis | Движение = Movement | Равновесие = Balance | Элементы = Elements |
+Город ночью = City at Night | Красное и синее = Red and Blue | Фигуры = Figures | Линии = Lines | Вертикали = Verticals |
+Белая композиция = White Composition | Диалог = Dialogue | Сон = The Dream | Свет = Light | Знаки = Signs | Тишина = Silence |
+Плоскости = Planes | Импульс = Impulse | Пейзаж памяти = Landscape of Memory | Фрагмент = Fragment | Отражение = Reflection
+[plays]
+Северная баллада = A Northern Ballad | Ночь в старом саду = Night in an Old Garden | Волшебный фонарь = The Magic Lantern |
+Бродячие музыканты = The Strolling Musicians | Летний сон = A Summer Dream | Хрустальный город = The Crystal City |
+Белая ночь = White Night | Купеческая дочь = The Merchant's Daughter | Лунный пастух = The Moon Shepherd |
+Сказка о трёх ветрах = The Tale of Three Winds | Морская свадьба = The Sea Wedding | Деревенская ярмарка = The Village Fair |
+Принцесса и садовник = The Princess and the Gardener | Старый замок = The Old Castle | Карнавал = Carnival
+[tales]
+Тихая пристань = The Quiet Haven | Дом у моря = The House by the Sea | Записки провинциала = Notes of a Provincial |
+Летние дни = Summer Days | Зимний вечер = A Winter Evening | Сад над рекой = The Garden above the River |
+Последняя весна = The Last Spring | Рыбачья слобода = The Fishermen's Quarter | Дорога на север = The Road North |
+Чужая усадьба = Someone Else's Manor | Лесная сторожка = The Forest Lodge
+[series]
+Старый город = The Old Town | Времена года = The Seasons | Северные мотивы = Northern Motifs | Птицы = Birds |
+Морские берега = Sea Shores | Деревья = Trees | Сады и парки = Gardens and Parks | Мосты = Bridges | Цветы = Flowers |
+Ремёсла = Crafts | Окрестности = Environs | Путешествие по реке = A River Journey | Музыка = Music
+[drawing.alone]
+Этюд фигуры = Figure Study | Наброски = Sketches | Лист из альбома = Album Leaf | Этюд рук = Study of Hands |
+Натурщица = The Model | Лист с набросками фигур = Sheet of Figure Studies | Этюд дерева = Study of a Tree
+[book.plate]
+Растения = Plants | Птицы = Birds | Бабочки = Butterflies | Раковины = Seashells | Минералы = Minerals | Виды города = Town Views |
+Костюмы = Costumes | Орнамент = Ornament | Архитектурные виды = Architectural Views | Звери = Animals | Рыбы = Fishes |
+Карта окрестностей = Map of the Environs | Плоды = Fruits
+[photo.subject]
+Набережная = The Embankment | Портрет девушки = Portrait of a Girl | Улица = The Street | Пристань = The Pier |
+Семейный портрет = Family Portrait | Зимний парк = Winter Park | Рынок = The Market | Мост = The Bridge |
+Дети на берегу = Children on the Shore | Мастерская = The Workshop | Вокзал = The Station | Сенокос = Haymaking |
+Окно = The Window | Натюрморт с кувшином = Still Life with a Jug | Лодки = Boats | Деревья в тумане = Trees in Mist |
+Танцовщица = The Dancer | Портрет старика = Portrait of an Old Man | Площадь = The Square | Отражения = Reflections
+
+# Описание (только по-русски)
+[land.fg]
+деревянный мостик через ручей | тропинка, уходящая в лес | стога сена | группа берёз | лодка у берега |
+фигура крестьянки с коромыслом | изгородь и старая телега | пасущиеся коровы | заснеженная дорога | мельничная запруда |
+цветущий луг | песчаный берег | покосившийся забор | бревенчатая изба | валуны у воды |
+высокая трава с полевыми цветами | замёрзший пруд | старая ветла
+[land.bg]
+силуэт деревни | синеющий лес | гряда холмов | излучина реки | заснеженные крыши | освещённые солнцем поля | лиловые горы |
+низкие облака над горизонтом | белая усадьба среди деревьев | дальний берег в дымке | ветряная мельница на пригорке |
+стена соснового леса
+[light]
+в мягком вечернем освещении | в серебристой гамме пасмурного дня | в лучах заходящего солнца |
+в холодной голубоватой гамме зимнего дня | в тёплом золотистом колорите | в прозрачной утренней дымке |
+в контрастном освещении перед грозой | в приглушённой зеленовато-серой гамме | в ярком полуденном свете
+[manner]
+Широкий свободный мазок | Плотная пастозная живопись | Тонкая лессировочная живопись | Этюдная, энергичная манера письма |
+Тщательная, детальная проработка | Короткий раздельный мазок | Сдержанная, почти монохромная палитра | Звучный открытый цвет |
+Мягкая, обобщённая манера письма
+[portrait.pose]
+погрудно, в три четверти вправо | поясным портретом, в фас | сидящей в кресле | на тёмном нейтральном фоне |
+у окна, в рассеянном свете | в профиль | в полный рост на фоне пейзажа | в три четверти влево, на светлом фоне
+[portrait.dress]
+в тёмном платье с кружевным воротником | в светлой блузе | в тёмном сюртуке | в шляпе с вуалью | в домашнем платье |
+с жемчужным ожерельем | в бархатном жакете | в белой рубашке с открытым воротом
+[still.cloth]
+белой скатертью | тёмной бархатной тканью | вышитой салфеткой | простой холщовой скатертью | зелёным сукном
+[still.obj]
+фарфоровая чашка | медный кофейник | блюдо с яблоками | раскрытая книга | стеклянная ваза с розами | корзина с грибами |
+глиняная крынка | морская раковина | серебряная сахарница | ветка рябины | плетёная корзина | чайник и баранки |
+тыква и початки кукурузы | лимоны на оловянной тарелке | груши и айва | старинные часы
+[flowers.note]
+Букет написан свободно, крупными мазками, на светлом фоне | Цветы написаны тщательно, с вниманием к каждому лепестку |
+Букет выделяется на тёмном фоне, свет падает слева | Лёгкая, прозрачная живопись передаёт свежесть только что срезанных
+цветов | Цветы стоят на столе у окна, за которым виден сад
+[genre.note]
+Многофигурная композиция, полная бытовых подробностей | Сцена погружена в мягкий полумрак интерьера |
+Фигуры написаны живо и непринуждённо | Действие разворачивается на открытом воздухе, в летний день |
+Композиция построена на диагонали, ведущей взгляд в глубину | Тёплый свет лампы объединяет фигуры |
+Сюжет решён с лёгким юмором
+[marine.note]
+Корабли написаны с точным знанием такелажа | Свинцовые волны и разорванные облака передают напряжение шторма |
+Спокойная гладь воды отражает розовое небо | На горизонте — силуэт маяка | Пена прибоя передана лёгкими ударами кисти |
+Низкое солнце прокладывает по воде светлую дорожку
+[city.note]
+Улица оживлена фигурками прохожих и экипажами | Вид написан с высокой точки, город открывается панорамой |
+Мокрая мостовая отражает свет фонарей | Архитектура передана обобщённо, без мелочной детализации |
+Вечерние окна светятся тёплыми пятнами на фоне синих сумерек
+[animal.note]
+Животные написаны с натуры, с хорошим знанием анатомии | Шерсть передана мягкими лессировками |
+Фигуры животных вписаны в пейзаж свободно и естественно
+[interior.note]
+Солнечный свет падает из окна на паркет | В глубине комнаты — рояль и кресла в чехлах |
+Интерьер написан с любовью к деталям обстановки | Открытая дверь ведёт в соседнюю комнату
+[abstract.note]
+Композиция построена на контрасте открытых красных и синих плоскостей | Композиция построена на ритме вертикалей и
+диагоналей | Геометрические формы сочетаются со свободным жестом | Живопись строится на тонких градациях серого |
+Фактурная живопись с процарапываниями | Плоскости цвета наложены в несколько слоёв, сквозь верхние просвечивают нижние
+[portrait.note]
+Имя модели не установлено | По семейному преданию, на портрете — родственница прежних владельцев |
+Лицо проработано тщательно, костюм и фон — обобщённо | Взгляд модели обращён прямо на зрителя
+[open.oil]
+Законченная станковая работа | Повторение одного из излюбленных мотивов автора | Работа из серии, посвящённой одному
+месту | Картина написана в мастерской по натурным этюдам | Работа выполнена в мастерской
+[open.oil.small]
+Небольшая работа для интерьера | Камерная работа, написанная, по-видимому, с натуры | Этюд, выполненный на одном
+дыхании | Небольшой этюд с натуры
+[open.oil.large]
+Крупноформатное полотно | Большое станковое полотно | Масштабная станковая работа
+
+[open.paper]
+Законченный лист | Подготовительный рисунок | Лист из альбома путевых набросков | Быстрый набросок с натуры |
+Тщательно проработанный лист | Эскиз, выполненный для дальнейшей работы
+[note.specialist]
+Работа хорошо сохранила первоначальный колорит | Сюжет типичен для автора и встречается в нескольких вариантах |
+Композиция продумана и уравновешена | Работа характерна для своего времени и художественной среды |
+Подобные работы нечасто появляются на торгах | На обороте сохранились старые наклейки, подтверждающие происхождение |
+Мотив известен по нескольким этюдам автора | Работа выполнена на высоком профессиональном уровне
+[note.oil]
+Холст и подрамник — первоначальные | Под красочным слоем угадывается авторский рисунок | Холст не дублирован |
+Красочный слой плотный, хорошо сцеплен с грунтом | Живопись покрыта тонким слоем лака
+[note.any]
+Подобные вещи нечасто появляются на торгах | Работа характерна для своего времени и художественной среды |
+Работа выполнена на высоком профессиональном уровне | Сюжет типичен для автора и встречается в нескольких вариантах |
+Хороший образец работы мастера
+[frame]
+В резной золочёной раме | В профилированной раме | В багетной раме | Без рамы | В раме эпохи |
+В тонированной деревянной раме | В лепной раме с позолотой
+[paper.frame]
+Под стеклом, в паспарту | В паспарту | Без рамы | В раме под стеклом
+[labels]
+На подрамнике — этикетка художественного салона | На обороте — штамп магазина художественных принадлежностей |
+К работе прилагается заключение эксперта | На обороте — старая инвентарная наклейка |
+На подрамнике — надпись карандашом с названием работы
+[paper.labels]
+На обороте паспарту — этикетка художественного салона | К работе прилагается заключение эксперта |
+На обороте листа — штамп частного собрания | На обороте — надпись карандашом с названием работы
+[corner]
+правом нижнем углу | левом нижнем углу | правом верхнем углу | левом верхнем углу | нижней части
+[photo.process]
+Альбуминовый отпечаток | Серебряно-желатиновый отпечаток | Платинотипия | Отпечаток на солевой бумаге |
+Бромосеребряный отпечаток | Цветной хромогенный отпечаток | Пигментный отпечаток | Гуммиарабиковая печать
+[photo.note]
+Отпечаток сделан автором с собственного негатива | Отпечаток наклеен на картон с тиснёным именем ателье |
+Тонкая тональная проработка теней | Снимок сделан на натуре, при рассеянном свете | Кадр выстроен по диагонали |
+Резкость — на переднем плане, фон размыт
+[sculpture.subject]
+Лошадь = Horse | Борзая = Borzoi | Медведь = Bear | Пахарь = The Ploughman | Девушка с кувшином = Girl with a Jug |
+Купальщица = The Bather | Танцовщица = The Dancer | Рыбак = The Fisherman | Возчик = The Carter | Тройка = Troika | Лев = Lion |
+Олень = Stag | Собака с щенками = Dog with Puppies | Кошка = Cat | Ёж = Hedgehog | Сова = Owl | Жнея = The Reaper |
+Конь на водопое = Horse Drinking | Пастух со стадом = Shepherd with His Flock | Мальчик с рыбой = Boy with a Fish |
+Музыкант = The Musician | Читающая девушка = Girl Reading | Бык = Bull | Медведица с медвежатами = She-Bear with Cubs |
+Пеликан = Pelican | Цапля = Heron | Сеятель = The Sower | Мать и дитя = Mother and Child
+[paper.manner]
+Лёгкая прозрачная заливка, сквозь которую просвечивает бумага | Уверенная, экономная линия | Тонкая штриховка
+моделирует объёмы | Свободный, живой штрих | Сочные красочные пятна положены по сырому | Мягкая растушёвка в тенях |
+Контур проведён пером, цвет положен кистью поверх | Белила усиливают блики | Лист проработан тщательно, до мелочей
+[print.note]
+Оттиск чёткий, с сочным тоном | Хороший ранний оттиск с полными полями | Тираж печатался под наблюдением автора |
+Доска впоследствии была уничтожена, тираж невелик | Лист печатался в мастерской автора | Оттиск на плотной бумаге с
+широкими полями
+[reverse]
+На обороте — авторская надпись карандашом | На обороте — чернильная надпись прежнего владельца | На обороте — штамп
+выставки | На обороте — номер по описи частного собрания | На обороте — авторский набросок
+[photo.mount]
+наклеен на картон | на паспарту ателье | без подложки | наклеен на картон с тиснёным ободком | в альбомном паспарту
+[photo.sign]
+Подпись автора карандашом на обороте | Штамп фотографа на обороте | Тиснёный штамп ателье на подложке |
+Подпись автора чернилами на подложке | Авторская подпись и дата карандашом на обороте
+[sculpture.base]
+На мраморном основании | На круглом бронзовом основании | На деревянном постаменте | На прямоугольном основании из
+тёмного камня | Без постамента | На ступенчатом мраморном постаменте
+[sculpture.note]
+Фигура показана в движении, силуэт читается со всех сторон | Модель проработана тщательно, до мелких деталей |
+Обобщённая, крупная лепка | Поверхность покрыта ровной тёмно-коричневой патиной | Патина с зеленоватым оттенком |
+Мягкая, живая лепка сохраняет следы стеки | Композиция рассчитана на круговой обход | Пластика лаконичная, почти
+декоративная | Фактура шерсти передана лёгкими насечками
+[sculpture.cast]
+Прижизненная отливка | Авторская отливка | Отливка из небольшого тиража | Отливка выполнена в литейной мастерской по
+авторской модели | Уникальный экземпляр
+[theatre.note]
+Эскиз выполнен для постановки, сцена показана с точки зрения зрительного зала | Декорация решена как единое
+живописное пространство | Костюм показан на фигуре в движении, с пометками для мастерской | На полях — пометки
+художника о тканях и цвете | Эскиз передаёт атмосферу спектакля | Композиция рассчитана на сценическое освещение
+[illustration.note]
+Лист выполнен для книжного издания | Рисунок рассчитан на воспроизведение в печати | Композиция вписана в
+формат книжной полосы | На полях — пометки для типографии | Иллюстрация передаёт настроение текста
+[sketch.note]
+Наброски выполнены быстро, с натуры | Лист заполнен несколькими набросками разного масштаба | Фигуры намечены
+лёгкой линией, отдельные места проработаны подробнее | Набросок фиксирует позу и движение | Лист из рабочей папки
+художника
+[book.plate.note]
+Изображение сопровождается подписью под рисунком и номером таблицы | Лист отпечатан для научного издания, рисунок
+точен и подробен | На нижнем поле — номер таблицы и название по-латыни | Изображение выполнено с натуры, для
+описания в тексте издания

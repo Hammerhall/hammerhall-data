@@ -16,6 +16,7 @@
         <module>core</module>
         <module>sto</module>
         <module>air</module>
+        <module>auc</module>
     </modules>
 
     <properties>

@@ -1,0 +1,2390 @@
+{
+ "version": "auc-data-v1",
+ "profile": "small",
+ "identity": "manifest (без files) + rows и sha256_tsv каждой таблицы + sha256 texts + aggregates; sha256 и bytes файлов .tsv.gz, manifest.json и SOURCE.md — справочно (зависят от сборки zlib)",
+ "manifest": {
+  "version": "auc-data-v1",
+  "generator": "auc-gen 0.1.0",
+  "seed": 20261018,
+  "profile": "small",
+  "scale": "0.01",
+  "period": {
+   "from": "2025-10-01",
+   "to": "2027-10-30",
+   "now": "2027-09-01T00:00:00Z",
+   "business_timezone": "Europe/Moscow"
+  },
+  "modules": [
+   "house",
+   "people",
+   "catalog",
+   "auction",
+   "clients",
+   "money",
+   "site"
+  ],
+  "inputs": [
+   {
+    "name": "cities.tsv.gz",
+    "release": "sto-data-v1",
+    "license": "MIT",
+    "sha256_tsv": "d8bbfdf8b08a6df360922c55698e2789835b71f2d1da81c967c9ccd3a8931cee"
+   }
+  ],
+  "format": {
+   "encoding": "UTF-8",
+   "delimiter": "TAB",
+   "header": true,
+   "null": "empty field",
+   "time": "Unix seconds, UTC",
+   "date": "ISO 8601, YYYY-MM-DD",
+   "boolean": "t / f",
+   "compression": "gzip, mtime=0",
+   "money": "decimal string, 2 digits, rubles",
+   "milliseconds": "separate *_ms fields, 0-999"
+  }
+ },
+ "files": [
+  {
+   "name": "departments.tsv.gz",
+   "table": "departments",
+   "rows": 6,
+   "sha256_tsv": "60df410849581b778eddf45cd9ba999310f29a024161d1ae04182a94ee7c03dd",
+   "sha256_gz_reference": "e206f01ca46113b3ed7734b41e44354b9ac91a7f75bff0c626da6c0c4d417061"
+  },
+  {
+   "name": "categories.tsv.gz",
+   "table": "categories",
+   "rows": 125,
+   "sha256_tsv": "d4d2dbdd09872a35c38dded0e2c2b6d760b0fbc2c2b04aec4ba8d5bdacde1bde",
+   "sha256_gz_reference": "bf84b41d789dabb93031ef2ff4cf0b6d278edc4af1f5dced1669ac52019d7bfe"
+  },
+  {
+   "name": "cities.tsv.gz",
+   "table": "cities",
+   "rows": 149,
+   "sha256_tsv": "ee5763a2a326cff34026179a129d2f6abae3aed3dc910c0d030da231d215a414",
+   "sha256_gz_reference": "4480d8d8bdc0fc008f85670f66f8507990990ae3cb3a803999005d72ff9590a4"
+  },
+  {
+   "name": "offices.tsv.gz",
+   "table": "offices",
+   "rows": 8,
+   "sha256_tsv": "b043d5d74119376363f3208def90d6ce2b76cecd11df2a5e2d3d0c6697ae68f1",
+   "sha256_gz_reference": "15cd2e3dd89afa53d344bb816dd7d0dc4c0970d81a48820a46dc67ee2eab5e87"
+  },
+  {
+   "name": "staff.tsv.gz",
+   "table": "staff",
+   "rows": 234,
+   "sha256_tsv": "841680e984ee6097b132fd884371a024f881cae1f50e51eb7b9993849579880e",
+   "sha256_gz_reference": "7a7f0d49bfbe0c89f3ad159fe400e30ca08e3147861d9fb17efc6d2b55dd1180"
+  },
+  {
+   "name": "increment_bands.tsv.gz",
+   "table": "increment_bands",
+   "rows": 14,
+   "sha256_tsv": "484281a46718034fdf05f447f319ee9a9b78f7d6cae06b14ab14880ca9f43452",
+   "sha256_gz_reference": "1a11265603607b95828e51146cec2fc45144f7abb9d57a33d52ff7eb2b17e934"
+  },
+  {
+   "name": "fee_schedules.tsv.gz",
+   "table": "fee_schedules",
+   "rows": 11,
+   "sha256_tsv": "30343d0e77b84dea729e5db8c6d3e2303891c279b80c35bfb1db5f422c2bdaf6",
+   "sha256_gz_reference": "670dfff594a0dd73212b51f766e7297989da6cd164721e17329074fccd7e65fd"
+  },
+  {
+   "name": "fee_tiers.tsv.gz",
+   "table": "fee_tiers",
+   "rows": 10,
+   "sha256_tsv": "cb02ad83102cb7f6e5fa830d410cdf8681b472d66cfa4dce3fa61f66099c7bac",
+   "sha256_gz_reference": "1a9ce281d2e793a36a31ae2fd2e40d2296dfc35efe1d6cc3a8075729fda40211"
+  },
+  {
+   "name": "makers.tsv.gz",
+   "table": "makers",
+   "rows": 4208,
+   "sha256_tsv": "aba23ef93946f4cc530cc0652b94679e9951f69508fa0a642306838c0dedce2e",
+   "sha256_gz_reference": "f5fbbc30d6f128eaa153d348abaa573db1224305ff1985bc00b7aae7b63dbc60"
+  },
+  {
+   "name": "items.tsv.gz",
+   "table": "items",
+   "rows": 13845,
+   "sha256_tsv": "446212cb77bfe95bfc8f51843bfb84d1a50966835f3a9e90158004a4e14dbeee",
+   "sha256_gz_reference": "6ec5e2b6f64c6f1f334f5e15af1bd98dd3d3e01516214df9eddd06df341031ca"
+  },
+  {
+   "name": "provenance.tsv.gz",
+   "table": "provenance",
+   "rows": 11312,
+   "sha256_tsv": "8d2108c766e40e96a9a681de3436cb06824c2e4490e00fa68b87b5fd1ee4e6d1",
+   "sha256_gz_reference": "f7853b2f3d4a3d2d0a23b33d2093e682251eaf8a36e5e860b4d760b26d57c5b5"
+  },
+  {
+   "name": "consignments.tsv.gz",
+   "table": "consignments",
+   "rows": 2910,
+   "sha256_tsv": "403a356f4cec56b4303863e462cef2c5d6c8d4f9b7cb16fa806786d4a3584cbf",
+   "sha256_gz_reference": "22ce0ea38cdfd85f446d600d8be905106d7ff32623653622123416ab2dbc60ec"
+  },
+  {
+   "name": "consignment_items.tsv.gz",
+   "table": "consignment_items",
+   "rows": 13171,
+   "sha256_tsv": "ffa364342513be4dd63eb1efaad2c35fc49a1bb2b7e38fd3a39bd2cc9aa17c50",
+   "sha256_gz_reference": "0f2055f11a8a0003610f61529223c5d9897e3be5f13a41aa64428cda3f5cb6e4"
+  },
+  {
+   "name": "clients.tsv.gz",
+   "table": "clients",
+   "rows": 7520,
+   "sha256_tsv": "94279a4dea195ff8a9a4bc9354f29ec677508fbdd4e96d5941a8749974763750",
+   "sha256_gz_reference": "96f15b8d797ee25be795643b6f7c2fb1883dc21c89b1a108853ab5d6465adc2e"
+  },
+  {
+   "name": "sales.tsv.gz",
+   "table": "sales",
+   "rows": 982,
+   "sha256_tsv": "4513f083d30941494ba9f524620a1f93881b54893958050700fd7260f9c1911d",
+   "sha256_gz_reference": "e8d062ea51846549a835616448c927fee697d27735736d7472da491590d28b24"
+  },
+  {
+   "name": "sale_sessions.tsv.gz",
+   "table": "sale_sessions",
+   "rows": 111,
+   "sha256_tsv": "8aec5287a9becd90403770c68294c56923d9c3d5d7476dbbe2bf8e2f2f2d162f",
+   "sha256_gz_reference": "8bae7fc36ce673eec98a3f8f209d1f36a4f23521c730d6be7238831cb27d3533"
+  },
+  {
+   "name": "lots.tsv.gz",
+   "table": "lots",
+   "rows": 14332,
+   "sha256_tsv": "8d5627a9d02e272f3e5d9d17853d353aa643ae6e54a0d0eadef50350cf8b0171",
+   "sha256_gz_reference": "eddc7708269dfc9f461012efb409d580dfd265d97f686a36cf63e18f4c1afe40"
+  },
+  {
+   "name": "registrations.tsv.gz",
+   "table": "registrations",
+   "rows": 61149,
+   "sha256_tsv": "582d45efd7149d526708ec23f5e4147e165a6f95341545b6f13dae97af2a5599",
+   "sha256_gz_reference": "645814ebe95e11aa8e56062f06da630ff2350753f1c438246eef3f7aa1bad4d3"
+  },
+  {
+   "name": "bid_orders.tsv.gz",
+   "table": "bid_orders",
+   "rows": 24668,
+   "sha256_tsv": "2c91db6b4d256fd223f9c4ac2f5c4283c5af1e7385d00ab794170a3be8c1a9d6",
+   "sha256_gz_reference": "0c42933f58fd3fc73f65d5343d318799b327fa0de85b217bcbcca87c0b2da98f"
+  },
+  {
+   "name": "bids.tsv.gz",
+   "table": "bids",
+   "rows": 88492,
+   "sha256_tsv": "57a7bfc86aacb425992c9f4139065628b9860bdd223420b0d899b34976d6e78b",
+   "sha256_gz_reference": "459a18abb37076d6b8f9036ff0aa06085da9152c40d2a7b69d04535d16aeed6e"
+  },
+  {
+   "name": "lot_events.tsv.gz",
+   "table": "lot_events",
+   "rows": 59184,
+   "sha256_tsv": "9733fc5c7c0881fadb95bfe88998b2b316e765b8045e345276ce9259c869f4de",
+   "sha256_gz_reference": "8b11c69700a54a66356c0912a5928a4fdc5e942d8288efc9408252076038ba21"
+  },
+  {
+   "name": "item_status_log.tsv.gz",
+   "table": "item_status_log",
+   "rows": 80814,
+   "sha256_tsv": "2c251a2ff45776ef98b5f88420d392de20e44deb04b04a204e04c0cac6cc71d1",
+   "sha256_gz_reference": "9014df002df7d0b899ff86073d0547c78e88edb2382a9ed33b04c9046779bd4c"
+  },
+  {
+   "name": "invoices.tsv.gz",
+   "table": "invoices",
+   "rows": 8385,
+   "sha256_tsv": "39d796be9b8f480878acc4b4712804606cfe5cbbd758c1fea11bf6b7fc4c898d",
+   "sha256_gz_reference": "17cfeeb4938e654b34a9046d46886ca354f8a2744997c58193208a9b3e95003c"
+  },
+  {
+   "name": "invoice_lines.tsv.gz",
+   "table": "invoice_lines",
+   "rows": 10763,
+   "sha256_tsv": "154075538315502483bb33821805878644b790af22d5eb2b8a140e45834c4d1c",
+   "sha256_gz_reference": "d7bea6810c37805f722fa4122738059f5396bd889107b096e5bf5ef20ab98ec4"
+  },
+  {
+   "name": "payments.tsv.gz",
+   "table": "payments",
+   "rows": 17626,
+   "sha256_tsv": "28fb5fccc6ded2fcd92cb6b8fc770d25f61c689721491b8a4860140b463ced8a",
+   "sha256_gz_reference": "73a35f70ad0a91cf272f7cf6465fe89fbfd5d62ca481b75c81c1de027b4a7f9c"
+  },
+  {
+   "name": "settlements.tsv.gz",
+   "table": "settlements",
+   "rows": 11436,
+   "sha256_tsv": "0886b480e5031e4977abd4d44e55223336406c44c889b063c5fe36fc0ff50609",
+   "sha256_gz_reference": "ccfcc8dba4da55f13e4166bdeccea09f91d3a617e8fb28b8c7e9e20db1061be2"
+  },
+  {
+   "name": "settlement_lines.tsv.gz",
+   "table": "settlement_lines",
+   "rows": 14038,
+   "sha256_tsv": "35e3f7e8489b5b779235207a787e43f732c1ab6a1dbec34de3de02774c545787",
+   "sha256_gz_reference": "93246d75fa5f67f20629ac32c640cb9d42628f241791fe26e0026b9d83a2dd2f"
+  },
+  {
+   "name": "watchlist.tsv.gz",
+   "table": "watchlist",
+   "rows": 34751,
+   "sha256_tsv": "0b10baa43ca1739f1baa6e6f1d4f12912aee4aa005ef7724aedf55761d2b642e",
+   "sha256_gz_reference": "8058fed80bdbf5c7a60ec0a5d28674fc46e263d914bc0a8be9408dabe3bffbd0"
+  },
+  {
+   "name": "sessions.tsv.gz",
+   "table": "sessions",
+   "rows": 92695,
+   "sha256_tsv": "eafa38e11959794646321a1070190936ead5f869f95650af7f3ef44bf9f28279",
+   "sha256_gz_reference": "3cfaaaf13c84a0b4907d69520ce5c5bc9d428c0ed589cc423b9fa199ce9fed90"
+  },
+  {
+   "name": "session_events.tsv.gz",
+   "table": "session_events",
+   "rows": 539890,
+   "sha256_tsv": "a7b7e394c81840f3b96933e42d000c36f43c3f2d7d75994fd80b9aa48eff5835",
+   "sha256_gz_reference": "dfc567998aa9e2e380ec54e0d11f26a5e7e250eee9a97c28ff71f05f64d63d0e"
+  },
+  {
+   "name": "notifications.tsv.gz",
+   "table": "notifications",
+   "rows": 216759,
+   "sha256_tsv": "f063d82d62b7626c03fd4c116e3f7ab9176bbc20e6f84cba76e269245fd2ebb8",
+   "sha256_gz_reference": "a5c5e132f4f61fbe13806e47b97853da11a65f0e325d4c7ace6aa1ef4ca6e94a"
+  }
+ ],
+ "texts": [
+  {
+   "name": "LICENSE",
+   "sha256": "5ce64c2bc2e949427c77611f07a12b0a1e27586421edfe7c7975ffea2cfb09bd"
+  },
+  {
+   "name": "schema-tables.sql",
+   "sha256": "79b7e5fafe2a8085b3f142172fe0516afe42dad0afc6bbc0f4adc2a7c9e517e6"
+  },
+  {
+   "name": "schema-constraints.sql",
+   "sha256": "0f559dc10ebcfe424a2a9de853072be6a906d0ab57ed0362fbf38c06f3f78332"
+  },
+  {
+   "name": "schema.mmd",
+   "sha256": "c099f6f92d7c257d4ba3e55e9cef07447e451b1e5b8bf54e519e3f2f951bb0bd"
+  },
+  {
+   "name": "load-postgres.psql",
+   "sha256": "f7c3a0e7fe2fe80b9b485d9791c219f79bea6686873e4ffa41164482030c6cb8"
+  }
+ ],
+ "reference_only": [
+  "manifest.json",
+  "SOURCE.md"
+ ],
+ "aggregates": [
+  {
+   "table": "categories",
+   "op": "nulls",
+   "column": "parent_id",
+   "value": 26
+  },
+  {
+   "table": "categories",
+   "op": "distinct",
+   "column": "department_id",
+   "value": 6
+  },
+  {
+   "table": "cities",
+   "op": "sum",
+   "column": "population",
+   "scale": 0,
+   "value": "61157500"
+  },
+  {
+   "table": "offices",
+   "op": "nulls",
+   "column": "closed_on",
+   "value": 8
+  },
+  {
+   "table": "staff",
+   "op": "nulls",
+   "column": "department_id",
+   "value": 113
+  },
+  {
+   "table": "staff",
+   "op": "nulls",
+   "column": "left_on",
+   "value": 208
+  },
+  {
+   "table": "staff",
+   "op": "distinct",
+   "column": "role",
+   "value": 7
+  },
+  {
+   "table": "staff",
+   "op": "count_eq",
+   "column": "role",
+   "arg": "specialist",
+   "value": 113
+  },
+  {
+   "table": "staff",
+   "op": "count_eq",
+   "column": "role",
+   "arg": "auctioneer",
+   "value": 11
+  },
+  {
+   "table": "staff",
+   "op": "min",
+   "column": "hired_on",
+   "value": "2006-07-28"
+  },
+  {
+   "table": "staff",
+   "op": "max",
+   "column": "hired_on",
+   "value": "2027-07-06"
+  },
+  {
+   "table": "increment_bands",
+   "op": "sum",
+   "column": "from_amount",
+   "scale": 2,
+   "value": "21110000.00"
+  },
+  {
+   "table": "increment_bands",
+   "op": "sum",
+   "column": "step",
+   "scale": 2,
+   "value": "1944400.00"
+  },
+  {
+   "table": "fee_schedules",
+   "op": "nulls",
+   "column": "department_id",
+   "value": 10
+  },
+  {
+   "table": "fee_schedules",
+   "op": "nulls",
+   "column": "valid_to",
+   "value": 10
+  },
+  {
+   "table": "fee_schedules",
+   "op": "nulls",
+   "column": "rate_pct",
+   "value": 5
+  },
+  {
+   "table": "fee_schedules",
+   "op": "sum",
+   "column": "fixed_amount",
+   "scale": 2,
+   "value": "550.00"
+  },
+  {
+   "table": "fee_schedules",
+   "op": "nulls",
+   "column": "fixed_amount",
+   "value": 9
+  },
+  {
+   "table": "fee_tiers",
+   "op": "sum",
+   "column": "from_amount",
+   "scale": 2,
+   "value": "47330000.00"
+  },
+  {
+   "table": "fee_tiers",
+   "op": "sum",
+   "column": "rate_pct",
+   "scale": 3,
+   "value": "167.000"
+  },
+  {
+   "table": "makers",
+   "op": "nulls",
+   "column": "first_name",
+   "value": 1503
+  },
+  {
+   "table": "makers",
+   "op": "nulls",
+   "column": "patronymic",
+   "value": 2759
+  },
+  {
+   "table": "makers",
+   "op": "nulls",
+   "column": "last_name",
+   "value": 1503
+  },
+  {
+   "table": "makers",
+   "op": "nulls",
+   "column": "active_to",
+   "value": 608
+  },
+  {
+   "table": "makers",
+   "op": "nulls",
+   "column": "city_ru",
+   "value": 158
+  },
+  {
+   "table": "makers",
+   "op": "nulls",
+   "column": "school_ru",
+   "value": 2248
+  },
+  {
+   "table": "makers",
+   "op": "nulls",
+   "column": "specialty_ru",
+   "value": 0
+  },
+  {
+   "table": "makers",
+   "op": "nulls",
+   "column": "mark_ru",
+   "value": 0
+  },
+  {
+   "table": "makers",
+   "op": "count_eq",
+   "column": "tier",
+   "arg": "A",
+   "value": 124
+  },
+  {
+   "table": "makers",
+   "op": "distinct",
+   "column": "kind",
+   "value": 20
+  },
+  {
+   "table": "items",
+   "op": "nulls",
+   "column": "decline_reason",
+   "value": 13000
+  },
+  {
+   "table": "items",
+   "op": "nulls",
+   "column": "maker_id",
+   "value": 2910
+  },
+  {
+   "table": "items",
+   "op": "nulls",
+   "column": "dating_ru",
+   "value": 0
+  },
+  {
+   "table": "items",
+   "op": "nulls",
+   "column": "year_from",
+   "value": 0
+  },
+  {
+   "table": "items",
+   "op": "nulls",
+   "column": "year_to",
+   "value": 0
+  },
+  {
+   "table": "items",
+   "op": "nulls",
+   "column": "origin_place_ru",
+   "value": 543
+  },
+  {
+   "table": "items",
+   "op": "nulls",
+   "column": "material_ru",
+   "value": 1727
+  },
+  {
+   "table": "items",
+   "op": "nulls",
+   "column": "technique_ru",
+   "value": 2374
+  },
+  {
+   "table": "items",
+   "op": "nulls",
+   "column": "height_mm",
+   "value": 5014
+  },
+  {
+   "table": "items",
+   "op": "nulls",
+   "column": "width_mm",
+   "value": 6323
+  },
+  {
+   "table": "items",
+   "op": "nulls",
+   "column": "depth_mm",
+   "value": 13128
+  },
+  {
+   "table": "items",
+   "op": "nulls",
+   "column": "diameter_mm",
+   "value": 11080
+  },
+  {
+   "table": "items",
+   "op": "nulls",
+   "column": "weight_g",
+   "value": 10057
+  },
+  {
+   "table": "items",
+   "op": "nulls",
+   "column": "metal_fineness",
+   "value": 10572
+  },
+  {
+   "table": "items",
+   "op": "nulls",
+   "column": "signed",
+   "value": 3497
+  },
+  {
+   "table": "items",
+   "op": "count_eq",
+   "column": "accepted",
+   "arg": "f",
+   "value": 845
+  },
+  {
+   "table": "items",
+   "op": "count_eq",
+   "column": "attribution",
+   "arg": "by",
+   "value": 10641
+  },
+  {
+   "table": "items",
+   "op": "count_eq",
+   "column": "attribution",
+   "arg": "unknown",
+   "value": 2910
+  },
+  {
+   "table": "items",
+   "op": "distinct",
+   "column": "consignor_id",
+   "value": 1397
+  },
+  {
+   "table": "items",
+   "op": "distinct",
+   "column": "maker_id",
+   "value": 2549
+  },
+  {
+   "table": "items",
+   "op": "min",
+   "column": "received_at",
+   "scale": 0,
+   "value": "1748943392"
+  },
+  {
+   "table": "items",
+   "op": "max",
+   "column": "received_at",
+   "scale": 0,
+   "value": "1819722999"
+  },
+  {
+   "table": "items",
+   "op": "sum",
+   "column": "pieces",
+   "scale": 0,
+   "value": "146715"
+  },
+  {
+   "table": "items",
+   "op": "count_eq",
+   "column": "office_id",
+   "arg": "1",
+   "value": 7358
+  },
+  {
+   "table": "provenance",
+   "op": "nulls",
+   "column": "year_from",
+   "value": 404
+  },
+  {
+   "table": "provenance",
+   "op": "nulls",
+   "column": "year_to",
+   "value": 404
+  },
+  {
+   "table": "provenance",
+   "op": "nulls",
+   "column": "place_ru",
+   "value": 615
+  },
+  {
+   "table": "provenance",
+   "op": "nulls",
+   "column": "owner_name_ru",
+   "value": 4249
+  },
+  {
+   "table": "provenance",
+   "op": "distinct",
+   "column": "item_id",
+   "value": 6879
+  },
+  {
+   "table": "provenance",
+   "op": "distinct",
+   "column": "kind",
+   "value": 8
+  },
+  {
+   "table": "consignments",
+   "op": "nulls",
+   "column": "commission_rate",
+   "value": 2877
+  },
+  {
+   "table": "consignment_items",
+   "op": "sum",
+   "column": "agreed_low",
+   "scale": 2,
+   "value": "515927900.00"
+  },
+  {
+   "table": "consignment_items",
+   "op": "sum",
+   "column": "agreed_high",
+   "scale": 2,
+   "value": "826583650.00"
+  },
+  {
+   "table": "consignment_items",
+   "op": "sum",
+   "column": "agreed_reserve",
+   "scale": 2,
+   "value": "362424450.00"
+  },
+  {
+   "table": "consignment_items",
+   "op": "nulls",
+   "column": "agreed_reserve",
+   "value": 2318
+  },
+  {
+   "table": "consignment_items",
+   "op": "nulls",
+   "column": "ended_at",
+   "value": 1635
+  },
+  {
+   "table": "consignment_items",
+   "op": "nulls",
+   "column": "outcome",
+   "value": 1635
+  },
+  {
+   "table": "clients",
+   "op": "nulls",
+   "column": "first_name",
+   "value": 447
+  },
+  {
+   "table": "clients",
+   "op": "nulls",
+   "column": "patronymic",
+   "value": 1840
+  },
+  {
+   "table": "clients",
+   "op": "nulls",
+   "column": "last_name",
+   "value": 447
+  },
+  {
+   "table": "clients",
+   "op": "nulls",
+   "column": "company_name",
+   "value": 7073
+  },
+  {
+   "table": "clients",
+   "op": "nulls",
+   "column": "gender",
+   "value": 447
+  },
+  {
+   "table": "clients",
+   "op": "nulls",
+   "column": "birth_year",
+   "value": 447
+  },
+  {
+   "table": "clients",
+   "op": "nulls",
+   "column": "verified_at",
+   "value": 862
+  },
+  {
+   "table": "clients",
+   "op": "nulls",
+   "column": "enhanced_verified_at",
+   "value": 7489
+  },
+  {
+   "table": "clients",
+   "op": "nulls",
+   "column": "blocked_at",
+   "value": 7172
+  },
+  {
+   "table": "clients",
+   "op": "nulls",
+   "column": "block_reason",
+   "value": 7172
+  },
+  {
+   "table": "clients",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "company",
+   "value": 447
+  },
+  {
+   "table": "clients",
+   "op": "count_eq",
+   "column": "is_dealer",
+   "arg": "t",
+   "value": 62
+  },
+  {
+   "table": "clients",
+   "op": "count_eq",
+   "column": "language",
+   "arg": "en",
+   "value": 278
+  },
+  {
+   "table": "clients",
+   "op": "count_eq",
+   "column": "marketing_consent",
+   "arg": "t",
+   "value": 4872
+  },
+  {
+   "table": "clients",
+   "op": "count_eq",
+   "column": "block_reason",
+   "arg": "non_payment",
+   "value": 330
+  },
+  {
+   "table": "clients",
+   "op": "count_eq",
+   "column": "block_reason",
+   "arg": "shill_suspected",
+   "value": 5
+  },
+  {
+   "table": "clients",
+   "op": "count_eq",
+   "column": "block_reason",
+   "arg": "own_request",
+   "value": 13
+  },
+  {
+   "table": "clients",
+   "op": "distinct",
+   "column": "city_id",
+   "value": 126
+  },
+  {
+   "table": "clients",
+   "op": "min",
+   "column": "registered_at",
+   "scale": 0,
+   "value": "1325469851"
+  },
+  {
+   "table": "clients",
+   "op": "max",
+   "column": "registered_at",
+   "scale": 0,
+   "value": "1819742945"
+  },
+  {
+   "table": "clients",
+   "op": "sum",
+   "column": "birth_year",
+   "scale": 0,
+   "value": "13953291"
+  },
+  {
+   "table": "sales",
+   "op": "nulls",
+   "column": "published_at",
+   "value": 90
+  },
+  {
+   "table": "sales",
+   "op": "nulls",
+   "column": "bidding_opens_at",
+   "value": 90
+  },
+  {
+   "table": "sales",
+   "op": "nulls",
+   "column": "preview_from",
+   "value": 852
+  },
+  {
+   "table": "sales",
+   "op": "nulls",
+   "column": "preview_to",
+   "value": 852
+  },
+  {
+   "table": "sales",
+   "op": "nulls",
+   "column": "ends_at",
+   "value": 105
+  },
+  {
+   "table": "sales",
+   "op": "nulls",
+   "column": "lots_per_group",
+   "value": 130
+  },
+  {
+   "table": "sales",
+   "op": "nulls",
+   "column": "group_interval_s",
+   "value": 130
+  },
+  {
+   "table": "sales",
+   "op": "nulls",
+   "column": "extension_window_s",
+   "value": 130
+  },
+  {
+   "table": "sales",
+   "op": "nulls",
+   "column": "extension_s",
+   "value": 130
+  },
+  {
+   "table": "sales",
+   "op": "nulls",
+   "column": "extension_cap_s",
+   "value": 130
+  },
+  {
+   "table": "sale_sessions",
+   "op": "nulls",
+   "column": "ended_at",
+   "value": 2
+  },
+  {
+   "table": "lots",
+   "op": "nulls",
+   "column": "previous_lot_id",
+   "value": 12183
+  },
+  {
+   "table": "lots",
+   "op": "nulls",
+   "column": "session_no",
+   "value": 13217
+  },
+  {
+   "table": "lots",
+   "op": "sum",
+   "column": "low_estimate",
+   "scale": 2,
+   "value": "580444000.00"
+  },
+  {
+   "table": "lots",
+   "op": "sum",
+   "column": "high_estimate",
+   "scale": 2,
+   "value": "931252600.00"
+  },
+  {
+   "table": "lots",
+   "op": "sum",
+   "column": "starting_price",
+   "scale": 2,
+   "value": "392403700.00"
+  },
+  {
+   "table": "lots",
+   "op": "sum",
+   "column": "reserve",
+   "scale": 2,
+   "value": "404599950.00"
+  },
+  {
+   "table": "lots",
+   "op": "nulls",
+   "column": "reserve",
+   "value": 2436
+  },
+  {
+   "table": "lots",
+   "op": "nulls",
+   "column": "closes_at_planned",
+   "value": 1115
+  },
+  {
+   "table": "lots",
+   "op": "nulls",
+   "column": "opened_at",
+   "value": 77
+  },
+  {
+   "table": "lots",
+   "op": "nulls",
+   "column": "closed_at",
+   "value": 421
+  },
+  {
+   "table": "lots",
+   "op": "nulls",
+   "column": "closed_ms",
+   "value": 421
+  },
+  {
+   "table": "lots",
+   "op": "sum",
+   "column": "hammer_price",
+   "scale": 2,
+   "value": "403045200.00"
+  },
+  {
+   "table": "lots",
+   "op": "nulls",
+   "column": "hammer_price",
+   "value": 4037
+  },
+  {
+   "table": "lots",
+   "op": "nulls",
+   "column": "winning_bid_id",
+   "value": 4037
+  },
+  {
+   "table": "lots",
+   "op": "nulls",
+   "column": "buyer_registration_id",
+   "value": 3735
+  },
+  {
+   "table": "lots",
+   "op": "nulls",
+   "column": "underbidder_registration_id",
+   "value": 4900
+  },
+  {
+   "table": "lots",
+   "op": "sum",
+   "column": "after_sale_price",
+   "scale": 2,
+   "value": "20287100.00"
+  },
+  {
+   "table": "lots",
+   "op": "nulls",
+   "column": "after_sale_price",
+   "value": 14030
+  },
+  {
+   "table": "lots",
+   "op": "nulls",
+   "column": "after_sale_at",
+   "value": 14030
+  },
+  {
+   "table": "lots",
+   "op": "nulls",
+   "column": "withdrawn_at",
+   "value": 14206
+  },
+  {
+   "table": "lots",
+   "op": "nulls",
+   "column": "withdrawn_by",
+   "value": 14206
+  },
+  {
+   "table": "lots",
+   "op": "count_eq",
+   "column": "result",
+   "arg": "sold",
+   "value": 10295
+  },
+  {
+   "table": "lots",
+   "op": "count_eq",
+   "column": "result",
+   "arg": "bought_in",
+   "value": 3314
+  },
+  {
+   "table": "lots",
+   "op": "count_eq",
+   "column": "result",
+   "arg": "withdrawn",
+   "value": 126
+  },
+  {
+   "table": "lots",
+   "op": "count_eq",
+   "column": "result",
+   "arg": "sold_after_sale",
+   "value": 302
+  },
+  {
+   "table": "lots",
+   "op": "count_eq",
+   "column": "result",
+   "arg": "open",
+   "value": 295
+  },
+  {
+   "table": "lots",
+   "op": "sum",
+   "column": "extensions",
+   "scale": 0,
+   "value": "6838"
+  },
+  {
+   "table": "lots",
+   "op": "sum",
+   "column": "bid_count",
+   "scale": 0,
+   "value": "83320"
+  },
+  {
+   "table": "lots",
+   "op": "max",
+   "column": "bid_count",
+   "scale": 0,
+   "value": "45"
+  },
+  {
+   "table": "lots",
+   "op": "min",
+   "column": "published_at",
+   "scale": 0,
+   "value": "1759334400"
+  },
+  {
+   "table": "lots",
+   "op": "max",
+   "column": "closed_at",
+   "scale": 0,
+   "value": "1819728362"
+  },
+  {
+   "table": "registrations",
+   "op": "nulls",
+   "column": "decided_at",
+   "value": 12
+  },
+  {
+   "table": "registrations",
+   "op": "nulls",
+   "column": "decided_by_id",
+   "value": 52491
+  },
+  {
+   "table": "registrations",
+   "op": "nulls",
+   "column": "reject_reason",
+   "value": 60128
+  },
+  {
+   "table": "registrations",
+   "op": "sum",
+   "column": "bid_limit",
+   "scale": 2,
+   "value": "11457000000.00"
+  },
+  {
+   "table": "registrations",
+   "op": "nulls",
+   "column": "bid_limit",
+   "value": 22959
+  },
+  {
+   "table": "registrations",
+   "op": "nulls",
+   "column": "premium_approved_at",
+   "value": 61109
+  },
+  {
+   "table": "registrations",
+   "op": "sum",
+   "column": "deposit_required",
+   "scale": 2,
+   "value": "19025000.00"
+  },
+  {
+   "table": "registrations",
+   "op": "nulls",
+   "column": "deposit_required",
+   "value": 61109
+  },
+  {
+   "table": "bid_orders",
+   "op": "nulls",
+   "column": "replaces_id",
+   "value": 24668
+  },
+  {
+   "table": "bid_orders",
+   "op": "sum",
+   "column": "max_amount",
+   "scale": 2,
+   "value": "680073350.00"
+  },
+  {
+   "table": "bid_orders",
+   "op": "nulls",
+   "column": "max_amount",
+   "value": 53
+  },
+  {
+   "table": "bid_orders",
+   "op": "nulls",
+   "column": "revision_reason",
+   "value": 24668
+  },
+  {
+   "table": "bid_orders",
+   "op": "nulls",
+   "column": "ended_at",
+   "value": 59
+  },
+  {
+   "table": "bid_orders",
+   "op": "nulls",
+   "column": "phone_outcome",
+   "value": 24527
+  },
+  {
+   "table": "bid_orders",
+   "op": "nulls",
+   "column": "clerk_id",
+   "value": 24527
+  },
+  {
+   "table": "bids",
+   "op": "nulls",
+   "column": "registration_id",
+   "value": 405
+  },
+  {
+   "table": "bids",
+   "op": "nulls",
+   "column": "bid_order_id",
+   "value": 37751
+  },
+  {
+   "table": "bids",
+   "op": "sum",
+   "column": "amount",
+   "scale": 2,
+   "value": "3118782531.00"
+  },
+  {
+   "table": "bids",
+   "op": "nulls",
+   "column": "reject_reason",
+   "value": 83320
+  },
+  {
+   "table": "bids",
+   "op": "nulls",
+   "column": "request_key",
+   "value": 52460
+  },
+  {
+   "table": "bids",
+   "op": "nulls",
+   "column": "clerk_id",
+   "value": 85854
+  },
+  {
+   "table": "bids",
+   "op": "count_eq",
+   "column": "accepted",
+   "arg": "t",
+   "value": 83320
+  },
+  {
+   "table": "bids",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "manual",
+   "value": 37659
+  },
+  {
+   "table": "bids",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "max",
+   "value": 24179
+  },
+  {
+   "table": "bids",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "auto",
+   "value": 24719
+  },
+  {
+   "table": "bids",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "absentee",
+   "value": 1530
+  },
+  {
+   "table": "bids",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "vendor",
+   "value": 405
+  },
+  {
+   "table": "bids",
+   "op": "count_eq",
+   "column": "channel",
+   "arg": "online",
+   "value": 84930
+  },
+  {
+   "table": "bids",
+   "op": "count_eq",
+   "column": "channel",
+   "arg": "room",
+   "value": 1314
+  },
+  {
+   "table": "bids",
+   "op": "count_eq",
+   "column": "channel",
+   "arg": "phone",
+   "value": 372
+  },
+  {
+   "table": "bids",
+   "op": "count_eq",
+   "column": "reject_reason",
+   "arg": "duplicate",
+   "value": 148
+  },
+  {
+   "table": "bids",
+   "op": "count_eq",
+   "column": "reject_reason",
+   "arg": "race_lost",
+   "value": 149
+  },
+  {
+   "table": "bids",
+   "op": "count_eq",
+   "column": "reject_reason",
+   "arg": "after_close",
+   "value": 27
+  },
+  {
+   "table": "bids",
+   "op": "count_eq",
+   "column": "reject_reason",
+   "arg": "tied",
+   "value": 2652
+  },
+  {
+   "table": "bids",
+   "op": "count_eq",
+   "column": "extended_close",
+   "arg": "t",
+   "value": 6838
+  },
+  {
+   "table": "bids",
+   "op": "min",
+   "column": "placed_at",
+   "scale": 0,
+   "value": "1759703379"
+  },
+  {
+   "table": "bids",
+   "op": "max",
+   "column": "placed_at",
+   "scale": 0,
+   "value": "1819756736"
+  },
+  {
+   "table": "lot_events",
+   "op": "nulls",
+   "column": "bid_id",
+   "value": 33679
+  },
+  {
+   "table": "lot_events",
+   "op": "nulls",
+   "column": "new_close_at",
+   "value": 52346
+  },
+  {
+   "table": "lot_events",
+   "op": "nulls",
+   "column": "new_close_ms",
+   "value": 52346
+  },
+  {
+   "table": "lot_events",
+   "op": "sum",
+   "column": "price",
+   "scale": 2,
+   "value": "632550400.00"
+  },
+  {
+   "table": "lot_events",
+   "op": "nulls",
+   "column": "price",
+   "value": 40215
+  },
+  {
+   "table": "lot_events",
+   "op": "nulls",
+   "column": "staff_id",
+   "value": 55176
+  },
+  {
+   "table": "lot_events",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "extended",
+   "value": 6838
+  },
+  {
+   "table": "lot_events",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "extension_capped",
+   "value": 0
+  },
+  {
+   "table": "lot_events",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "reserve_met",
+   "value": 8372
+  },
+  {
+   "table": "lot_events",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "fair_warning",
+   "value": 1048
+  },
+  {
+   "table": "lot_events",
+   "op": "max",
+   "column": "seq",
+   "scale": 0,
+   "value": "21"
+  },
+  {
+   "table": "item_status_log",
+   "op": "nulls",
+   "column": "lot_id",
+   "value": 27840
+  },
+  {
+   "table": "item_status_log",
+   "op": "nulls",
+   "column": "consignment_id",
+   "value": 14690
+  },
+  {
+   "table": "item_status_log",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "buyer_default",
+   "value": 408
+  },
+  {
+   "table": "item_status_log",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "reoffer_planned",
+   "value": 2347
+  },
+  {
+   "table": "item_status_log",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "returned",
+   "value": 1422
+  },
+  {
+   "table": "item_status_log",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "released",
+   "value": 9979
+  },
+  {
+   "table": "item_status_log",
+   "op": "max",
+   "column": "seq",
+   "scale": 0,
+   "value": "19"
+  },
+  {
+   "table": "invoices",
+   "op": "sum",
+   "column": "hammer_total",
+   "scale": 2,
+   "value": "425688750.00"
+  },
+  {
+   "table": "invoices",
+   "op": "sum",
+   "column": "premium_total",
+   "scale": 2,
+   "value": "98515909.50"
+  },
+  {
+   "table": "invoices",
+   "op": "sum",
+   "column": "platform_fee_total",
+   "scale": 2,
+   "value": "685212.50"
+  },
+  {
+   "table": "invoices",
+   "op": "sum",
+   "column": "vat_total",
+   "scale": 2,
+   "value": "21632629.97"
+  },
+  {
+   "table": "invoices",
+   "op": "sum",
+   "column": "total",
+   "scale": 2,
+   "value": "546522501.97"
+  },
+  {
+   "table": "invoices",
+   "op": "sum",
+   "column": "late_fee",
+   "scale": 2,
+   "value": "470166.07"
+  },
+  {
+   "table": "invoices",
+   "op": "sum",
+   "column": "paid_total",
+   "scale": 2,
+   "value": "530931014.16"
+  },
+  {
+   "table": "invoices",
+   "op": "nulls",
+   "column": "paid_at",
+   "value": 525
+  },
+  {
+   "table": "invoices",
+   "op": "nulls",
+   "column": "cancelled_at",
+   "value": 7955
+  },
+  {
+   "table": "invoices",
+   "op": "nulls",
+   "column": "cancel_reason",
+   "value": 7955
+  },
+  {
+   "table": "invoices",
+   "op": "nulls",
+   "column": "related_invoice_id",
+   "value": 8220
+  },
+  {
+   "table": "invoices",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "sale",
+   "value": 7918
+  },
+  {
+   "table": "invoices",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "after_sale",
+   "value": 302
+  },
+  {
+   "table": "invoices",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "second_chance",
+   "value": 33
+  },
+  {
+   "table": "invoices",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "shortfall",
+   "value": 111
+  },
+  {
+   "table": "invoices",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "reissue",
+   "value": 21
+  },
+  {
+   "table": "invoices",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "issued",
+   "value": 76
+  },
+  {
+   "table": "invoices",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "part_paid",
+   "value": 0
+  },
+  {
+   "table": "invoices",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "paid",
+   "value": 7860
+  },
+  {
+   "table": "invoices",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "overdue",
+   "value": 19
+  },
+  {
+   "table": "invoices",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "cancelled",
+   "value": 430
+  },
+  {
+   "table": "invoices",
+   "op": "count_eq",
+   "column": "cancel_reason",
+   "arg": "non_payment",
+   "value": 409
+  },
+  {
+   "table": "invoices",
+   "op": "count_eq",
+   "column": "cancel_reason",
+   "arg": "house_error",
+   "value": 21
+  },
+  {
+   "table": "invoices",
+   "op": "min",
+   "column": "issued_at",
+   "scale": 0,
+   "value": "1760288760"
+  },
+  {
+   "table": "invoices",
+   "op": "max",
+   "column": "issued_at",
+   "scale": 0,
+   "value": "1819738186"
+  },
+  {
+   "table": "invoices",
+   "op": "max",
+   "column": "number",
+   "value": "INV-2027-003023"
+  },
+  {
+   "table": "invoice_lines",
+   "op": "sum",
+   "column": "price",
+   "scale": 2,
+   "value": "425688750.00"
+  },
+  {
+   "table": "invoice_lines",
+   "op": "sum",
+   "column": "premium",
+   "scale": 2,
+   "value": "98515909.50"
+  },
+  {
+   "table": "invoice_lines",
+   "op": "sum",
+   "column": "platform_fee",
+   "scale": 2,
+   "value": "685212.50"
+  },
+  {
+   "table": "invoice_lines",
+   "op": "sum",
+   "column": "vat",
+   "scale": 2,
+   "value": "21632629.97"
+  },
+  {
+   "table": "invoice_lines",
+   "op": "sum",
+   "column": "line_total",
+   "scale": 2,
+   "value": "546522501.97"
+  },
+  {
+   "table": "invoice_lines",
+   "op": "count_eq",
+   "column": "vat_rate",
+   "arg": "20",
+   "value": 1372
+  },
+  {
+   "table": "invoice_lines",
+   "op": "count_eq",
+   "column": "vat_rate",
+   "arg": "22",
+   "value": 9391
+  },
+  {
+   "table": "invoice_lines",
+   "op": "count_eq",
+   "column": "premium_schedule_id",
+   "arg": "1",
+   "value": 4038
+  },
+  {
+   "table": "invoice_lines",
+   "op": "count_eq",
+   "column": "premium_schedule_id",
+   "arg": "2",
+   "value": 4733
+  },
+  {
+   "table": "invoice_lines",
+   "op": "count_eq",
+   "column": "premium_schedule_id",
+   "arg": "3",
+   "value": 1992
+  },
+  {
+   "table": "invoice_lines",
+   "op": "max",
+   "column": "line_no",
+   "scale": 0,
+   "value": "14"
+  },
+  {
+   "table": "payments",
+   "op": "nulls",
+   "column": "invoice_id",
+   "value": 8326
+  },
+  {
+   "table": "payments",
+   "op": "nulls",
+   "column": "registration_id",
+   "value": 17546
+  },
+  {
+   "table": "payments",
+   "op": "nulls",
+   "column": "settlement_id",
+   "value": 9369
+  },
+  {
+   "table": "payments",
+   "op": "sum",
+   "column": "amount",
+   "scale": 2,
+   "value": "927350680.42"
+  },
+  {
+   "table": "payments",
+   "op": "nulls",
+   "column": "failure_reason",
+   "value": 16338
+  },
+  {
+   "table": "payments",
+   "op": "nulls",
+   "column": "provider_ref",
+   "value": 10144
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "deposit",
+   "value": 40
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "deposit_applied",
+   "value": 11
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "deposit_refund",
+   "value": 29
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "deposit_forfeit",
+   "value": 0
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "invoice",
+   "value": 9285
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "refund",
+   "value": 4
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "payout",
+   "value": 8257
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "method",
+   "arg": "card",
+   "value": 4155
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "method",
+   "arg": "sbp",
+   "value": 3327
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "method",
+   "arg": "bank_transfer",
+   "value": 9660
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "method",
+   "arg": "cash",
+   "value": 473
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "method",
+   "arg": "deposit",
+   "value": 11
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "failed",
+   "value": 1288
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "failure_reason",
+   "arg": "declined",
+   "value": 438
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "failure_reason",
+   "arg": "insufficient_funds",
+   "value": 384
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "failure_reason",
+   "arg": "timeout",
+   "value": 272
+  },
+  {
+   "table": "payments",
+   "op": "count_eq",
+   "column": "failure_reason",
+   "arg": "limit",
+   "value": 194
+  },
+  {
+   "table": "payments",
+   "op": "min",
+   "column": "at",
+   "scale": 0,
+   "value": "1760345763"
+  },
+  {
+   "table": "payments",
+   "op": "max",
+   "column": "at",
+   "scale": 0,
+   "value": "1819744388"
+  },
+  {
+   "table": "settlements",
+   "op": "sum",
+   "column": "hammer_total",
+   "scale": 2,
+   "value": "414359900.00"
+  },
+  {
+   "table": "settlements",
+   "op": "sum",
+   "column": "commission_total",
+   "scale": 2,
+   "value": "59499423.25"
+  },
+  {
+   "table": "settlements",
+   "op": "sum",
+   "column": "fees_total",
+   "scale": 2,
+   "value": "8882902.50"
+  },
+  {
+   "table": "settlements",
+   "op": "sum",
+   "column": "vat_total",
+   "scale": 2,
+   "value": "14899035.34"
+  },
+  {
+   "table": "settlements",
+   "op": "sum",
+   "column": "net_total",
+   "scale": 2,
+   "value": "331078538.91"
+  },
+  {
+   "table": "settlements",
+   "op": "sum",
+   "column": "paid_total",
+   "scale": 2,
+   "value": "315809312.66"
+  },
+  {
+   "table": "settlements",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "awaiting_buyers",
+   "value": 508
+  },
+  {
+   "table": "settlements",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "part_paid",
+   "value": 4
+  },
+  {
+   "table": "settlements",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "paid",
+   "value": 8483
+  },
+  {
+   "table": "settlements",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "owed_by_consignor",
+   "value": 2441
+  },
+  {
+   "table": "settlements",
+   "op": "max",
+   "column": "created_at",
+   "scale": 0,
+   "value": "1819627188"
+  },
+  {
+   "table": "settlement_lines",
+   "op": "sum",
+   "column": "price",
+   "scale": 2,
+   "value": "414359900.00"
+  },
+  {
+   "table": "settlement_lines",
+   "op": "nulls",
+   "column": "price",
+   "value": 3822
+  },
+  {
+   "table": "settlement_lines",
+   "op": "sum",
+   "column": "commission",
+   "scale": 2,
+   "value": "59499423.25"
+  },
+  {
+   "table": "settlement_lines",
+   "op": "sum",
+   "column": "insurance_fee",
+   "scale": 2,
+   "value": "6215398.50"
+  },
+  {
+   "table": "settlement_lines",
+   "op": "sum",
+   "column": "catalogue_fee",
+   "scale": 2,
+   "value": "2309700.00"
+  },
+  {
+   "table": "settlement_lines",
+   "op": "sum",
+   "column": "withdrawal_fee",
+   "scale": 2,
+   "value": "357804.00"
+  },
+  {
+   "table": "settlement_lines",
+   "op": "sum",
+   "column": "vat",
+   "scale": 2,
+   "value": "14899035.34"
+  },
+  {
+   "table": "settlement_lines",
+   "op": "sum",
+   "column": "net",
+   "scale": 2,
+   "value": "331078538.91"
+  },
+  {
+   "table": "settlement_lines",
+   "op": "nulls",
+   "column": "payable_at",
+   "value": 3924
+  },
+  {
+   "table": "settlement_lines",
+   "op": "nulls",
+   "column": "paid_at",
+   "value": 3620
+  },
+  {
+   "table": "settlement_lines",
+   "op": "count_eq",
+   "column": "outcome",
+   "arg": "sold",
+   "value": 9881
+  },
+  {
+   "table": "settlement_lines",
+   "op": "count_eq",
+   "column": "outcome",
+   "arg": "sold_after_sale",
+   "value": 302
+  },
+  {
+   "table": "settlement_lines",
+   "op": "count_eq",
+   "column": "outcome",
+   "arg": "second_chance",
+   "value": 33
+  },
+  {
+   "table": "settlement_lines",
+   "op": "count_eq",
+   "column": "outcome",
+   "arg": "bought_in",
+   "value": 3309
+  },
+  {
+   "table": "settlement_lines",
+   "op": "count_eq",
+   "column": "outcome",
+   "arg": "withdrawn",
+   "value": 124
+  },
+  {
+   "table": "settlement_lines",
+   "op": "count_eq",
+   "column": "outcome",
+   "arg": "buyer_default",
+   "value": 389
+  },
+  {
+   "table": "settlement_lines",
+   "op": "max",
+   "column": "line_no",
+   "scale": 0,
+   "value": "10"
+  },
+  {
+   "table": "watchlist",
+   "op": "nulls",
+   "column": "removed_at",
+   "value": 31440
+  },
+  {
+   "table": "watchlist",
+   "op": "count_eq",
+   "column": "via",
+   "arg": "app",
+   "value": 8003
+  },
+  {
+   "table": "watchlist",
+   "op": "min",
+   "column": "added_at",
+   "scale": 0,
+   "value": "1759431705"
+  },
+  {
+   "table": "watchlist",
+   "op": "max",
+   "column": "added_at",
+   "scale": 0,
+   "value": "1819756664"
+  },
+  {
+   "table": "sessions",
+   "op": "nulls",
+   "column": "client_id",
+   "value": 33170
+  },
+  {
+   "table": "sessions",
+   "op": "nulls",
+   "column": "city_id",
+   "value": 5239
+  },
+  {
+   "table": "sessions",
+   "op": "count_eq",
+   "column": "device",
+   "arg": "app",
+   "value": 15893
+  },
+  {
+   "table": "sessions",
+   "op": "count_eq",
+   "column": "device",
+   "arg": "mobile_web",
+   "value": 34843
+  },
+  {
+   "table": "sessions",
+   "op": "count_eq",
+   "column": "source",
+   "arg": "push",
+   "value": 4711
+  },
+  {
+   "table": "sessions",
+   "op": "count_eq",
+   "column": "source",
+   "arg": "search",
+   "value": 25854
+  },
+  {
+   "table": "sessions",
+   "op": "min",
+   "column": "started_at",
+   "scale": 0,
+   "value": "1759335272"
+  },
+  {
+   "table": "sessions",
+   "op": "max",
+   "column": "ended_at",
+   "scale": 0,
+   "value": "1819756780"
+  },
+  {
+   "table": "session_events",
+   "op": "nulls",
+   "column": "sale_id",
+   "value": 24937
+  },
+  {
+   "table": "session_events",
+   "op": "nulls",
+   "column": "lot_id",
+   "value": 91470
+  },
+  {
+   "table": "session_events",
+   "op": "nulls",
+   "column": "query",
+   "value": 514953
+  },
+  {
+   "table": "session_events",
+   "op": "nulls",
+   "column": "results",
+   "value": 514953
+  },
+  {
+   "table": "session_events",
+   "op": "nulls",
+   "column": "page",
+   "value": 473357
+  },
+  {
+   "table": "session_events",
+   "op": "nulls",
+   "column": "bid_id",
+   "value": 516603
+  },
+  {
+   "table": "session_events",
+   "op": "nulls",
+   "column": "bid_order_id",
+   "value": 539890
+  },
+  {
+   "table": "session_events",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "lot_view",
+   "value": 375615
+  },
+  {
+   "table": "session_events",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "search",
+   "value": 24937
+  },
+  {
+   "table": "session_events",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "catalogue_page",
+   "value": 66533
+  },
+  {
+   "table": "session_events",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "watch_add",
+   "value": 23980
+  },
+  {
+   "table": "session_events",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "watch_remove",
+   "value": 2251
+  },
+  {
+   "table": "session_events",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "bid_form",
+   "value": 23287
+  },
+  {
+   "table": "session_events",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "bid_submit",
+   "value": 23287
+  },
+  {
+   "table": "session_events",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "order_set",
+   "value": 0
+  },
+  {
+   "table": "session_events",
+   "op": "sum",
+   "column": "results",
+   "scale": 0,
+   "value": "165701"
+  },
+  {
+   "table": "session_events",
+   "op": "sum",
+   "column": "page",
+   "scale": 0,
+   "value": "92116"
+  },
+  {
+   "table": "session_events",
+   "op": "max",
+   "column": "seq",
+   "scale": 0,
+   "value": "91"
+  },
+  {
+   "table": "notifications",
+   "op": "nulls",
+   "column": "sale_id",
+   "value": 0
+  },
+  {
+   "table": "notifications",
+   "op": "nulls",
+   "column": "lot_id",
+   "value": 130210
+  },
+  {
+   "table": "notifications",
+   "op": "nulls",
+   "column": "invoice_id",
+   "value": 194048
+  },
+  {
+   "table": "notifications",
+   "op": "nulls",
+   "column": "sent_at",
+   "value": 13596
+  },
+  {
+   "table": "notifications",
+   "op": "nulls",
+   "column": "delivered_at",
+   "value": 14924
+  },
+  {
+   "table": "notifications",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "outbid",
+   "value": 44003
+  },
+  {
+   "table": "notifications",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "closing_soon",
+   "value": 29298
+  },
+  {
+   "table": "notifications",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "lot_won",
+   "value": 13248
+  },
+  {
+   "table": "notifications",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "payment_reminder",
+   "value": 3458
+  },
+  {
+   "table": "notifications",
+   "op": "count_eq",
+   "column": "channel",
+   "arg": "push",
+   "value": 26050
+  },
+  {
+   "table": "notifications",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "suppressed",
+   "value": 13696
+  },
+  {
+   "table": "notifications",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "failed",
+   "value": 1226
+  },
+  {
+   "table": "notifications",
+   "op": "count_eq",
+   "column": "status",
+   "arg": "pending",
+   "value": 2
+  },
+  {
+   "table": "notifications",
+   "op": "sum",
+   "column": "attempts",
+   "scale": 0,
+   "value": "211720"
+  }
+ ]
+}

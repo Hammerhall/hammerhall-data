@@ -1,0 +1,140 @@
+# Книги, рукописи, карты. Названия — парами «по-русски = in English».
+[travel.dat]
+Волге = along the Volga | северным губерниям = through the Northern Provinces | Финляндии = through Finland |
+Италии = through Italy | Швейцарии = through Switzerland | Норвегии = through Norway | Уралу = through the Urals |
+Сибири = through Siberia | Европе = through Europe | Средиземному морю = across the Mediterranean |
+Скандинавии = through Scandinavia | Альпам = through the Alps | Рейну = along the Rhine | Шотландии = through Scotland |
+Карелии = through Karelia | Голландии = through Holland | Дунаю = along the Danube
+[region.gen]
+Северного края = the Northern Region | Поволжья = the Volga Region | Урала = the Urals | Сибири = Siberia | Тосканы = Tuscany |
+Альп = the Alps | Норвегии = Norway | Бретани = Brittany | Карелии = Karelia | Прибрежья = the Coast |
+Верхней Волги = the Upper Volga | озёрного края = the Lake Country
+[place.prep]
+Италии = Italy | Швейцарии = Switzerland | Норвегии = Norway | Париже = Paris | Риме = Rome | Лондоне = London |
+деревне = the Country | горах = the Mountains | Голландии = Holland
+[place.gen]
+Италии = Italy | Рима = Rome | Парижа = Paris | Лондона = London | Швейцарии = Switzerland | деревни = the Country |
+Венеции = Venice | Флоренции = Florence
+[travel.alone]
+Записки путешественника = A Traveller's Notes | По рекам и озёрам = By River and Lake |
+Дорожные впечатления = Impressions of the Road | Вокруг света на парусном судне = Around the World under Sail |
+На пароходе по северным рекам = By Steamer on Northern Rivers | Пешком по горам = On Foot in the Mountains
+[poetry]
+Стихотворения = Poems | Собрание стихотворений = Collected Poems | Стихи = Verses | Лирика = Lyrics |
+Первая книга стихов = First Book of Poems | Сонеты = Sonnets | Северные мотивы = Northern Motifs | Морские песни = Sea Songs |
+Вечерние звёзды = Evening Stars | Листопад: стихи = Falling Leaves: Poems | Песни и баллады = Songs and Ballads |
+Тихие дни: стихи = Quiet Days: Poems | Дорожные стихи = Poems of the Road | Сад: книга стихов = The Garden: A Book of Poems |
+Зимняя тетрадь = Winter Notebook | Облака = Clouds | Речные заводи = River Backwaters
+[novel]
+Тихая пристань = The Quiet Haven | Дом у моря = The House by the Sea | Летние дни = Summer Days | Зимний вечер = A Winter Evening |
+Сад над рекой = The Garden above the River | Последняя весна = The Last Spring | Рыбачья слобода = The Fishermen's Quarter |
+Дорога на север = The Road North | Чужая усадьба = Someone Else's Manor | Лесная сторожка = The Forest Lodge |
+Белый пароход = The White Steamer | Наследство = The Inheritance | Дальние родственники = Distant Relations |
+Городок на реке = The Little Town on the River | Старый мост = The Old Bridge | Два берега = Two Shores |
+Сёстры = The Sisters | Учитель музыки = The Music Teacher | Северная гостиница = The Northern Inn | Первый снег = First Snow
+[prose.alone]
+Повести и рассказы = Novellas and Stories | Рассказы = Stories | Записки провинциала = Notes of a Provincial |
+Летние дни: рассказы = Summer Days: Stories | Дачные рассказы = Country-House Stories
+[history.gen]
+архитектуры = Architecture | фарфорового производства = Porcelain Manufacture | гравюры = Engraving |
+садового искусства = Garden Design | книгопечатания = Printing | мореплавания = Navigation | часового дела = Watchmaking |
+ювелирного искусства = Jewellery | естествознания = Natural History | театра = the Theatre | костюма = Costume |
+мебельного искусства = Furniture
+[study.gen]
+минералогии = Mineralogy | ботаники = Botany | астрономии = Astronomy | перспективы = Perspective | черчения = Draughtsmanship |
+геологии = Geology | рисования = Drawing | зоологии = Zoology
+[atlas.gen]
+птиц = Birds | растений = Plants | бабочек = Butterflies | минералов = Minerals | звёздного неба = the Starry Sky | рыб = Fishes |
+грибов = Fungi | раковин = Seashells
+[course.gen]
+геометрии = Geometry | физики = Physics | естественной истории = Natural History | химии = Chemistry |
+космографии = Cosmography | механики = Mechanics
+[kids]
+Азбука в картинках = Picture Alphabet | Сказки = Fairy Tales | Новые сказки для детей = New Fairy Tales for Children |
+Приключения ёжика = The Adventures of a Little Hedgehog | Приключения медвежонка = The Adventures of a Bear Cub |
+Приключения маленького паровоза = The Adventures of a Little Steam Engine |
+Приключения бумажного кораблика = The Adventures of a Paper Boat | Книжка-игрушка «Зоосад» = Toy Book “The Zoo” |
+Книжка-игрушка «Наша улица» = Toy Book “Our Street” | Книжка-игрушка «Кто что делает» = Toy Book “Who Does What” |
+Книжка-игрушка «Поезд» = Toy Book “The Train” | Весёлый счёт = Merry Counting | Стихи для детей = Poems for Children |
+Книжка-раскладушка «Цирк» = Fold-out Book “The Circus” | Загадки и считалки = Riddles and Counting Rhymes
+[house]
+Домашний лечебник = The Home Doctor | Сад и огород = Garden and Kitchen Garden | Руководство к садоводству = A Guide to Gardening |
+Поваренная книга = Cookery Book | Рукоделие для девиц = Needlework for Young Ladies | Советы молодым хозяйкам = Advice to Young Housewives |
+Домашнее хозяйство = Housekeeping | Комнатные растения = House Plants | Пчеловодство для начинающих = Beekeeping for Beginners |
+Огород на подоконнике = A Kitchen Garden on the Windowsill
+[music]
+Сборник романсов для голоса и фортепиано = Romances for Voice and Piano | Вальсы для фортепиано = Waltzes for Piano |
+Школа игры на фортепиано = Piano Method | Альбом пьес для скрипки = Album of Pieces for Violin |
+Детский альбом: пьесы для фортепиано = Children's Album: Pieces for Piano | Песни для хора = Songs for Choir
+[journal]
+Садовый вестник = The Garden Herald | Детский досуг = Children's Leisure | Мир путешествий = World of Travel |
+Записки любителя = Notes of an Amateur | Вечерняя беседа = Evening Conversation | Отголоски = Echoes | Наш край = Our Region |
+Вестник любителей старины = Antiquarian Herald | Домашняя библиотека = Home Library | Иллюстрированный листок = The Illustrated Sheet |
+Полевой цветок = The Wild Flower | Новый собеседник = The New Companion
+[early]
+Новый и полный географический словарь = A New and Complete Geographical Dictionary |
+Краткое руководство к земледелию = A Short Guide to Agriculture | Начальные основания физики = First Principles of Physics |
+Сельский житель = The Country Dweller | Опыт описания редких растений = An Essay on Rare Plants |
+Собрание повестей и анекдотов = A Collection of Tales and Anecdotes | Письмовник = Letter-Writing Manual |
+Наставление о садах = Instructions on Gardens | Арифметика, или Наука числительная = Arithmetic, or the Science of Numbers |
+Описание путешествия по морям = Account of a Voyage by Sea | Детское чтение для сердца и разума = Children's Reading for Heart and Mind |
+Всеобщая история натуры = A General History of Nature | Карманная книжка для любителей = Pocket Book for Amateurs
+[art.city]
+Альбом видов = Album of Views of | Художественные сокровища = Art Treasures of
+[art.alone]
+История костюма = A History of Costume | Мастера гравюры = Masters of Engraving | Образцы вышивок = Embroidery Patterns |
+Альбом орнаментов = Album of Ornaments | Сокровища старинных усадеб = Treasures of Old Country Houses |
+Мебель и убранство дома = Furniture and Interior Decoration | Садовые павильоны = Garden Pavilions
+[binding]
+Владельческий полукожаный переплёт с тиснением на корешке | Издательская коленкоровая обложка с тиснением |
+Цельнокожаный переплёт эпохи с золотым тиснением, обрез золочёный | В издательской иллюстрированной обложке |
+Издательский картонаж | В бумажной обложке, без переплёта | Сохранена издательская обложка |
+Владельческий переплёт из мраморной бумаги с кожаными уголками | Полотняный переплёт с блинтовым тиснением |
+Издательский переплёт с цветной литографированной наклейкой
+[feature]
+Первое издание | Редкое издание | С гравированным фронтисписом | Хромолитографированные таблицы |
+Иллюстрации — гравюры на дереве | Владельческие пометы на полях | Дарственная надпись автора на титульном листе |
+Подпись прежнего владельца на титуле | С картой в конце книги | Иллюстрации — фототипии | Неразрезанный экземпляр |
+Экземпляр на бумаге улучшенного качества
+[book.note]
+Хороший экземпляр издания | Издание пользуется спросом у собирателей | Полный экземпляр, все листы на месте |
+Экземпляр с широкими полями | Книга характерна для издательской культуры своего времени | Иллюстрации чёткие,
+хорошей печати | Подобные издания нечасто встречаются в продаже
+[manuscript.prof]
+архитектора = the Architect | садовника = the Gardener | инженера = the Engineer | путешественника = the Traveller |
+врача = Doctor | учителя = the Teacher | натуралиста = the Naturalist | художника = the Artist
+[manuscript.prof.nom]
+архитектор | садовник | инженер | путешественник | врач | учитель | натуралист | художник
+[manuscript.topic]
+поездке по Волге | работах в саду | погоде и урожае | театральных постановках | заседаниях общества любителей
+естествознания | постройке дома | путешествии в Италию | жизни за городом | учёбе в университете | концертах и
+музыкальных вечерах
+[watermark]
+«лилия» | «якорь» | «буквы и год» | «пчела» | «башня» | «рожок» | «голубь»
+[manuscript.note]
+Документ интересен для истории быта своего времени | Записи живые, с подробностями повседневной жизни |
+Сохранились вложенные засушенные цветы и вырезки | Текст не публиковался | На полях — рисунки автора |
+Подобные документы редко сохраняются в таком объёме
+[sea.gen]
+Балтийского моря = the Baltic Sea | Северного моря = the North Sea | Средиземного моря = the Mediterranean Sea |
+Белого моря = the White Sea | Атлантического океана = the Atlantic Ocean | Ладожского озера = Lake Ladoga |
+Финского залива = the Gulf of Finland | Онежского озера = Lake Onega | Адриатического моря = the Adriatic Sea
+[river.gen]
+реки Волги = the Volga | реки Оки = the Oka | реки Рейна = the Rhine | реки Дуная = the Danube | реки Сены = the Seine |
+реки Камы = the Kama | реки Луары = the Loire
+[continent.gen]
+Азии = Asia | Африки = Africa | Северной Америки = North America | Южной Америки = South America | Австралии = Australia |
+Европы = Europe
+[map.note]
+Карта чёткой печати, с богатым картушем | Подробно показаны дороги, реки и селения | На полях — масштабные
+линейки и пояснения | Карта характерна для картографии своего времени | Раскраска свежая, контуры чёткие |
+Подобные листы нечасто встречаются в полной сохранности | Рельеф показан штрихами | Береговая линия проведена
+тщательно
+[map.note.sea]
+Береговая линия и промеры глубин нанесены подробно | Показаны маяки, мели и фарватеры | Карта характерна для
+морской картографии своего времени | На полях — масштабные линейки и пояснения | Подобные листы нечасто
+встречаются в полной сохранности
+[map.note.celestial]
+Созвездия показаны фигурами, звёзды — по величине | Подробно нанесены эклиптика и небесный экватор | Надписи
+созвездий выполнены каллиграфически | Карта характерна для астрономических изданий своего времени | Подобные
+листы нечасто встречаются в полной сохранности

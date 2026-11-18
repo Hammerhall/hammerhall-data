@@ -1,0 +1,142 @@
+# Коллекционные предметы: марки, открытки, игрушки, памятные вещи. Названия — парами «по-русски = in English».
+# Валюты почты: мелкая (1, 2, 5 — три формы) ; крупная — по языковой группе
+[currency]
+RU : копейка,копейки,копеек : рубль,рубля,рублей | FR : сантим,сантима,сантимов : франк,франка,франков |
+IT : чентезимо,чентезимо,чентезимо : лира,лиры,лир | DE : пфенниг,пфеннига,пфеннигов : марка,марки,марок |
+NL : цент,цента,центов : гульден,гульдена,гульденов | GB : пенс,пенса,пенсов : шиллинг,шиллинга,шиллингов |
+SC : эре,эре,эре : крона,кроны,крон | ES : сентимо,сентимо,сентимо : песета,песеты,песет |
+PL : грош,гроша,грошей : злотый,злотых,злотых | CZ : геллер,геллера,геллеров : крона,кроны,крон
+[stamp.early]
+Цифра в овале = Numeral in Oval | Аллегорическая фигура = Allegorical Figure | Голова в лавровом венке = Laureate Head |
+Почтовый рожок = Post Horn | Гербовый щит = Shield | Сидящая фигура с весами = Seated Figure with Scales |
+Номинал в рамке = Value in Frame | Цифра в розетке = Numeral in Rosette
+[stamp.subject]
+Ласточка = Swallow | Парусник = Sailing Ship | Олень = Stag | Лилии = Lilies | Маяк = Lighthouse | Первый паровоз = First Locomotive |
+Воздушный шар = Balloon | Почтовая карета = Mail Coach | Сова = Owl | Снежинка = Snowflake | Подсолнух = Sunflower |
+Белый медведь = Polar Bear | Конькобежец = Skater | Лыжник = Skier | Скрипка = Violin | Мельница = Windmill | Глобус = Globe |
+Почтовый голубь = Carrier Pigeon | Горное озеро = Mountain Lake | Ландыш = Lily of the Valley | Тюлень = Seal | Аист = Stork |
+Старый мост = Old Bridge | Регата = Regatta | Ромашки = Daisies | Дирижабль = Airship | Ледокол = Icebreaker |
+Северное сияние = Northern Lights | Пингвин = Penguin
+[stamp.modern]
+Спутник = Satellite | Детский рисунок = Child's Drawing | Гоночный автомобиль = Racing Car | Реактивный самолёт = Jet Aircraft |
+Телевышка = Television Tower | Морской вокзал = Sea Terminal | Атомный ледокол = Nuclear Icebreaker | Футболист = Footballer |
+Фигуристка = Figure Skater
+[stamp.topic]
+Птицы = Birds | Бабочки = Butterflies | Цветы = Flowers | Грибы = Mushrooms | Рыбы северных морей = Fish of the Northern Seas |
+Народные костюмы = Traditional Costumes | Старинные часы = Antique Clocks | Музыкальные инструменты = Musical Instruments |
+Кошки = Cats | Собаки = Dogs | Зимние виды спорта = Winter Sports | Парусные суда = Sailing Ships | Маяки = Lighthouses |
+Мосты = Bridges | Паровозы = Locomotives | Минералы = Minerals | Морские раковины = Seashells | Цирк = Circus | Шахматы = Chess |
+Архитектура = Architecture | Деревья = Trees | Почтовые кареты = Mail Coaches | Воздухоплавание = Aeronautics | Ремёсла = Crafts |
+Ягоды = Berries | Насекомые = Insects | Летние виды спорта = Summer Sports | Лошади = Horses |
+Полярные исследования = Polar Exploration | Сказки = Fairy Tales
+[stamp.topic.modern]
+Космос = Space | Детские рисунки = Children's Drawings | Старинные автомобили = Vintage Cars | Самолёты = Aircraft
+[perf]
+12 | 12½ | 13 | 13 × 13½ | 14 | 11½ | 14 × 13½ | 10½ | 12 × 11½
+[stamp.watermark]
+«волнистые линии» | «ромбы» | «соты» | «звёздочки» | «почтовый рожок» | «буквы в рамке»
+[stamp.printing]
+глубокая | высокая | офсетная | металлография | литография | типографская
+[stamp.variety]
+смещение перфорации | двойная печать | перевёрнутый центр | пропуск цвета | сдвиг рисунка | отсутствие зубцовки с
+одной стороны | точка в рамке | разрыв линии рамки | смещение цвета
+[stamp.color]
+карминный | ультрамариновый | оливковый | фиолетовый | коричневый | зелёный | синий | красно-коричневый | серо-голубой |
+оранжевый | бирюзовый | сиреневый | многоцветный | чёрный и красный | сепия | изумрудный
+[stamp.note]
+Марка хорошо отцентрирована | Зубцы целые, рисунок чёткий | Краски свежие, яркие | Выпуск пользуется спросом у
+собирателей марок этого эмитента | Марка встречается нечасто | Тираж выпуска был невелик | Хороший образец
+почтовых выпусков своего времени
+[postcard.greeting]
+С Новым годом = New Year Greetings | С днём рождения = Birthday Greetings | Весенний привет = Spring Greetings |
+Привет с дачи = Greetings from the Country | С днём свадьбы = Wedding Greetings | Поздравляю! = Congratulations!
+[postcard.view]
+набережная | главная улица | городской театр | вокзал | городской сад | мост через реку | рынок | пристань | бульвар |
+ратуша | гостиный двор | университет | библиотека | фонтан на площади | пароходная пристань | парк
+[postcard.note]
+Печать чёткая, краски свежие | Открытка из нумерованной серии издателя | Оборот разделённый, для адреса и текста |
+Хороший образец открыточного издания своего времени | Подобные открытки нечасто встречаются в продаже
+[toy.tin]
+Паровоз заводной = Clockwork Locomotive | Трамвай заводной = Clockwork Tram | Пароход заводной = Clockwork Steamer |
+Грузовик жестяной заводной = Clockwork Tinplate Lorry | Лимузин жестяной = Tinplate Limousine |
+Гоночный автомобиль, жесть = Tinplate Racing Car | Автобус жестяной = Tinplate Bus | Пожарная машина жестяная = Tinplate Fire Engine |
+Фургон заводной = Clockwork Van | Аэроплан жестяной = Tinplate Aeroplane | Мотоциклист заводной = Clockwork Motorcyclist |
+Заводная птичка в клетке = Clockwork Bird in a Cage | Заводная карусель = Clockwork Carousel
+[toy.doll]
+Кукла с фарфоровой головкой = Doll with Porcelain Head | Кукла в народном костюме = Doll in Traditional Dress |
+Кукла характерная = Character Doll | Кукла из папье-маше = Papier-Mâché Doll | Кукла тряпичная = Rag Doll |
+Кукла с закрывающимися глазами = Doll with Sleeping Eyes | Кукла в бальном платье = Doll in a Ball Gown
+[toy.soft]
+Мишка плюшевый = Plush Teddy Bear | Медведь на колёсах = Bear on Wheels | Заяц плюшевый = Plush Hare |
+Собачка плюшевая = Plush Dog | Кот плюшевый = Plush Cat | Слонёнок плюшевый = Plush Elephant
+[toy.wood]
+Лошадка-качалка = Rocking Horse | Лошадка на колёсах = Horse on Wheels | Деревянная лошадка = Wooden Horse | Матрёшка = Nesting Doll |
+Неваляшка = Roly-Poly Toy | Набор кубиков с картинками = Set of Picture Blocks | Юла = Spinning Top | Волчок = Whirligig |
+Кукольный домик = Doll's House | Кукольная мебель, набор = Set of Doll's Furniture | Игрушечная посуда, набор = Toy Tea Set
+[toy.train]
+Железная дорога, набор = Toy Railway Set | Паровоз с тендером = Locomotive and Tender | Модель парусника = Model Sailing Ship |
+Конструктор металлический = Metal Construction Set | Модель паровоза = Model Locomotive | Модель парохода = Model Steamer
+[toy.game]
+Лото «Зоосад» = Lotto “The Zoo” | «Путешествие по морям» = “A Voyage by Sea” | «Вокруг света» = “Around the World” |
+«Северный полюс» = “The North Pole” | «Почта» = “The Post” | «Весёлые гонки» = “Merry Races” | «Пароходы» = “Steamers” |
+«Угадай-ка» = “Guess!” | «Мозаика» = “Mosaic” | Домино детское = Children's Dominoes | «Звёздный путь» = “Star Road” |
+«Город мастеров» = “Town of Craftsmen”
+[toy.festive]
+Ёлочные игрушки = Tree Decorations | Ёлочные игрушки из ваты = Cotton-Wool Tree Decorations |
+Ёлочные игрушки стеклянные = Glass Tree Decorations | Ёлочные игрушки из картона = Cardboard Tree Decorations
+[toy.figureset]
+Цирк = Circus | Зоопарк = Zoo | Ферма = Farm | Деревня = Village | Морской порт = Seaport | Лесные звери = Forest Animals
+[toy.note]
+Игрушка характерна для своего времени и производителя | Подобные игрушки нечасто сохраняются в комплекте |
+Тщательная работа, все детали на месте | Игрушка была популярна и выпускалась несколько лет | Хорошая основа для
+собрания старинных игрушек
+
+[mem.play]
+Северная баллада = A Northern Ballad | Ночь в старом саду = Night in an Old Garden | Волшебный фонарь = The Magic Lantern |
+Бродячие музыканты = The Strolling Musicians | Летний сон = A Summer Dream | Хрустальный город = The Crystal City |
+Белая ночь = White Night | Купеческая дочь = The Merchant's Daughter | Лунный пастух = The Moon Shepherd |
+Морская свадьба = The Sea Wedding | Деревенская ярмарка = The Village Fair | Принцесса и садовник = The Princess and the Gardener |
+Старый замок = The Old Castle | Карнавал = Carnival | Дом у моря = The House by the Sea | Зимняя сказка = A Winter's Tale
+[mem.song]
+Сиреневый вечер = Lilac Evening | Вальс у озера = Waltz by the Lake | Ночная дорога = Night Road |
+Колыбельная для дочки = Lullaby for a Daughter | Звёзды над гаванью = Stars over the Harbour | Танго у моря = Tango by the Sea |
+Северная полька = Northern Polka | Голубой фокстрот = Blue Foxtrot | Песня о старом клёне = Song of the Old Maple |
+Огни на реке = Lights on the River | Весенний перрон = Spring Platform
+[mem.film]
+Девушка с маяка = The Girl from the Lighthouse | Летний сад = The Summer Garden | Огни большой гавани = Lights of the Great Harbour |
+Весёлые соседи = Merry Neighbours | Северный экспресс = The Northern Express | Дом с мезонином = The House with an Attic |
+Счастливый билет = The Lucky Ticket | Звезда цирка = Star of the Circus | Тайна старого моста = The Secret of the Old Bridge |
+Музыкальная история = A Musical Story
+[mem.performer]
+певицы : f = Singer | певца : m = Singer | балерины : f = Ballerina | скрипача : m = Violinist | пианистки : f = Pianist |
+пианиста : m = Pianist | актрисы : f = Actress | актёра : m = Actor | дирижёра : m = Conductor | клоуна : m = Clown
+[mem.sport]
+конькобежному спорту = Speed Skating | гребле = Rowing | лёгкой атлетике = Athletics | велосипедному спорту = Cycling |
+шахматам = Chess | лыжным гонкам = Cross-Country Skiing | плаванию = Swimming | фигурному катанию = Figure Skating
+[mem.sport.thing]
+Спортивный вымпел = Sports Pennant | Значок спортивного общества = Sports Club Badge | Коньки беговые = Racing Skates |
+Мяч футбольный кожаный = Leather Football | Ракетка теннисная деревянная = Wooden Tennis Racket |
+Фотография команды гребцов = Photograph of a Rowing Crew
+[mem.travel]
+Саквояж кожаный = Leather Travelling Bag | Дорожный сундук = Travelling Trunk | Набор багажных наклеек = Set of Luggage Labels |
+Путеводитель по Волге = Guide to the Volga | Дорожный несессер = Travelling Vanity Case | Билет на пароход = Steamer Ticket |
+Расписание пароходов = Steamer Timetable
+[mem.ephemera]
+Пригласительный билет на бал = Invitation to a Ball | Билет на открытие выставки = Exhibition Opening Ticket |
+Памятный альбом выпускников гимназии = Gymnasium Graduates' Album | Жестяная коробка из-под чая = Tinplate Tea Caddy |
+Коробка из-под конфет = Sweet Box | Меню торжественного обеда = Banquet Menu | Календарь настенный = Wall Calendar |
+Веер с автографами = Fan with Autographs | Театральный бинокль = Opera Glasses
+# Техника и приборы: название / годы = in English
+[mem.tech]
+Граммофон / 1895-1930 = Gramophone | Патефон / 1925-1965 = Portable Gramophone | Радиоприёмник ламповый / 1925-1965 = Valve Radio |
+Пишущая машинка / 1890-1990 = Typewriter | Телефонный аппарат настенный / 1890-1960 = Wall Telephone |
+Барометр-анероид / 1850-1970 = Aneroid Barometer | Арифмометр / 1880-1970 = Arithmometer | Фонарь каретный / 1850-1920 = Carriage Lamp |
+Фотоаппарат складной / 1900-1960 = Folding Camera | Стереоскоп с набором карточек / 1860-1930 = Stereoscope with Cards |
+Кинопроектор детский / 1930-1990 = Toy Film Projector | Швейная машина ручная / 1870-1960 = Hand Sewing Machine |
+Часы-будильник / 1900-1990 = Alarm Clock | Кофемолка ручная / 1880-1970 = Coffee Grinder | Весы почтовые / 1860-1950 = Postal Scales |
+Магнитофон катушечный / 1955-1990 = Reel-to-Reel Tape Recorder | Фильмоскоп / 1950-1990 = Filmstrip Viewer |
+Микроскоп / 1850-1960 = Microscope | Глобус-планетарий / 1880-1950 = Mechanical Orrery
+[mem.note]
+Предмет хорошо передаёт быт своего времени | Подобные вещи редко сохраняются | Вещь из одной семьи, хранилась
+бережно | Предмет интересен для собрания памятных вещей | Сохранилась первоначальная отделка | Хороший образец
+изделий своего времени

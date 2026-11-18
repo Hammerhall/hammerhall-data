@@ -1,0 +1,128 @@
+# Дерево категорий: отдел ; код ; родитель (- — верхний уровень) ; по-русски ; по-английски ; вид генератора (- — не лист) ;
+# вариант (- — любой) ; вес листа внутри отдела ; мастер (- — как у вида, none — без мастера, иначе код MakerKind)
+[tree]
+painting ; painting ; - ; Живопись ; Paintings ; - ; - ; 0 ; -
+painting ; painting.landscape ; painting ; Пейзаж ; Landscapes ; PAINTING_OIL ; landscape ; 18 ; -
+painting ; painting.portrait ; painting ; Портрет ; Portraits ; PAINTING_OIL ; portrait ; 8 ; -
+painting ; painting.still_life ; painting ; Натюрморт ; Still Lifes ; PAINTING_OIL ; still_life ; 8 ; -
+painting ; painting.genre ; painting ; Жанровая живопись ; Genre Scenes ; PAINTING_OIL ; genre ; 6 ; -
+painting ; painting.marine ; painting ; Марина ; Marine Paintings ; PAINTING_OIL ; marine ; 4 ; -
+painting ; painting.city ; painting ; Городской пейзаж ; Cityscapes ; PAINTING_OIL ; city ; 5 ; -
+painting ; painting.animal ; painting ; Анималистика ; Animal Paintings ; PAINTING_OIL ; animal ; 3 ; -
+painting ; painting.interior ; painting ; Интерьер ; Interiors ; PAINTING_OIL ; interior ; 2 ; -
+painting ; painting.abstract ; painting ; Абстрактная живопись ; Abstract Paintings ; PAINTING_OIL ; abstract ; 4 ; -
+painting ; paper ; - ; Графика ; Works on Paper ; - ; - ; 0 ; -
+painting ; paper.watercolour ; paper ; Акварель и гуашь ; Watercolours and Gouaches ; DRAWING ; watercolour ; 7 ; -
+painting ; paper.drawing ; paper ; Рисунок ; Drawings ; DRAWING ; drawing ; 6 ; -
+painting ; paper.pastel ; paper ; Пастель ; Pastels ; DRAWING ; pastel ; 2 ; -
+painting ; paper.theatre ; paper ; Театрально-декорационная графика ; Theatre Designs ; DRAWING ; theatre ; 2 ; -
+painting ; paper.illustration ; paper ; Книжная иллюстрация ; Book Illustrations ; DRAWING ; illustration ; 2 ; -
+painting ; prints ; - ; Эстамп ; Prints ; - ; - ; 0 ; -
+painting ; prints.etching ; prints ; Офорт и гравюра на металле ; Etchings and Engravings ; PRINT ; etching ; 3 ; -
+painting ; prints.lithograph ; prints ; Литография ; Lithographs ; PRINT ; lithograph ; 2 ; -
+painting ; prints.woodcut ; prints ; Ксилография и линогравюра ; Woodcuts and Linocuts ; PRINT ; woodcut ; 2 ; -
+painting ; prints.screenprint ; prints ; Шелкография ; Screenprints ; PRINT ; screenprint ; 1 ; -
+painting ; sculpture ; - ; Малая скульптура ; Small Sculpture ; SCULPTURE ; - ; 3 ; -
+painting ; photography ; - ; Фотография ; Photography ; PHOTO ; - ; 3 ; -
+jewelry ; jewellery ; - ; Украшения ; Jewellery ; - ; - ; 0 ; -
+jewelry ; jewellery.rings ; jewellery ; Кольца ; Rings ; JEWELRY ; ring ; 18 ; -
+jewelry ; jewellery.earrings ; jewellery ; Серьги ; Earrings ; JEWELRY ; earrings ; 12 ; -
+jewelry ; jewellery.brooches ; jewellery ; Броши ; Brooches ; JEWELRY ; brooch ; 11 ; -
+jewelry ; jewellery.pendants ; jewellery ; Кулоны и подвески ; Pendants ; JEWELRY ; pendant ; 7 ; -
+jewelry ; jewellery.necklaces ; jewellery ; Колье, ожерелья, бусы ; Necklaces ; JEWELRY ; necklace ; 6 ; -
+jewelry ; jewellery.bracelets ; jewellery ; Браслеты ; Bracelets ; JEWELRY ; bracelet ; 6 ; -
+jewelry ; jewellery.cufflinks ; jewellery ; Запонки и булавки ; Cufflinks and Tie Pins ; JEWELRY ; cufflinks ; 4 ; -
+jewelry ; jewellery.parures ; jewellery ; Гарнитуры ; Parures ; JEWELRY ; parure ; 3 ; -
+jewelry ; watches ; - ; Часы ; Watches ; - ; - ; 0 ; -
+jewelry ; watches.wrist ; watches ; Наручные часы ; Wristwatches ; WATCH ; wrist ; 15 ; -
+jewelry ; watches.pocket ; watches ; Карманные часы ; Pocket Watches ; WATCH ; pocket ; 10 ; -
+jewelry ; watches.pendant ; watches ; Часы-кулоны ; Pendant Watches ; WATCH ; pendant ; 2 ; -
+jewelry ; gemstones ; - ; Камни ; Gemstones ; GEMSTONE ; - ; 3 ; -
+coins ; coins ; - ; Монеты ; Coins ; - ; - ; 0 ; -
+coins ; coins.gold ; coins ; Золотые монеты ; Gold Coins ; COIN ; gold ; 16 ; -
+coins ; coins.silver ; coins ; Серебряные монеты ; Silver Coins ; COIN ; silver ; 34 ; -
+coins ; coins.copper ; coins ; Медные монеты ; Copper Coins ; COIN ; copper ; 18 ; -
+coins ; coins.sets ; coins ; Наборы и лоты монет ; Coin Sets and Lots ; COIN ; set ; 8 ; -
+coins ; medals ; - ; Медали и жетоны ; Medals and Tokens ; - ; - ; 0 ; -
+coins ; medals.commemorative ; medals ; Памятные медали ; Commemorative Medals ; MEDAL ; commemorative ; 7 ; -
+coins ; medals.table ; medals ; Настольные медали и плакеты ; Table Medals and Plaquettes ; MEDAL ; table ; 3 ; -
+coins ; medals.exhibition ; medals ; Наградные медали выставок ; Exhibition Medals ; MEDAL ; exhibition ; 4 ; -
+coins ; medals.tokens ; medals ; Жетоны ; Tokens ; MEDAL ; token ; 4 ; -
+coins ; banknotes ; - ; Боны ; Banknotes ; BANKNOTE ; - ; 6 ; -
+books ; books ; - ; Книги ; Books ; - ; - ; 0 ; -
+books ; books.early ; books ; Старопечатные книги ; Early Printed Books ; BOOK ; early ; 4 ; -
+books ; books.travel ; books ; Путешествия ; Travel ; BOOK ; travel ; 8 ; -
+books ; books.prose ; books ; Художественная литература ; Literature ; BOOK ; prose ; 12 ; -
+books ; books.poetry ; books ; Поэзия ; Poetry ; BOOK ; poetry ; 8 ; -
+books ; books.science ; books ; Наука и естествознание ; Science and Natural History ; BOOK ; science ; 9 ; -
+books ; books.art ; books ; Искусство и архитектура ; Art and Architecture ; BOOK ; art ; 6 ; -
+books ; books.children ; books ; Детская книга ; Children's Books ; BOOK ; children ; 6 ; -
+books ; books.household ; books ; Домоводство и садоводство ; Household and Gardening ; BOOK ; house ; 3 ; -
+books ; books.music ; books ; Ноты ; Sheet Music ; BOOK ; music ; 2 ; -
+books ; books.periodicals ; books ; Периодика ; Periodicals ; BOOK ; journal ; 3 ; -
+books ; manuscripts ; - ; Рукописи и автографы ; Manuscripts and Autographs ; - ; - ; 0 ; -
+books ; manuscripts.diaries ; manuscripts ; Дневники и записные книжки ; Diaries and Notebooks ; MANUSCRIPT ; diary ; 3 ; -
+books ; manuscripts.letters ; manuscripts ; Письма и переписка ; Letters and Correspondence ; MANUSCRIPT ; letters ; 3 ; -
+books ; manuscripts.albums ; manuscripts ; Альбомы ; Albums ; MANUSCRIPT ; album ; 2 ; -
+books ; manuscripts.literary ; manuscripts ; Рукописи сочинений ; Literary Manuscripts ; MANUSCRIPT ; literary ; 1 ; -
+books ; manuscripts.records ; manuscripts ; Хозяйственные и научные записи ; Household and Scientific Records ; MANUSCRIPT ; records ; 1 ; -
+books ; maps ; - ; Карты и атласы ; Maps and Atlases ; - ; - ; 0 ; -
+books ; maps.world ; maps ; Карты мира и частей света ; World and Continental Maps ; MAP ; world ; 4 ; -
+books ; maps.sea ; maps ; Морские карты и лоции ; Sea Charts ; MAP ; sea ; 2 ; -
+books ; maps.city ; maps ; Планы городов ; Town Plans ; MAP ; city ; 3 ; -
+books ; maps.atlas ; maps ; Атласы ; Atlases ; MAP ; atlas ; 2 ; -
+books ; maps.celestial ; maps ; Карты звёздного неба ; Celestial Maps ; MAP ; celestial ; 1 ; -
+books ; maps.globe ; maps ; Глобусы ; Globes ; MAP ; globe ; 1 ; -
+books ; book_plates ; - ; Гравюры из книг ; Book Plates and Engravings ; PRINT ; book_plate ; 3 ; -
+decorative ; porcelain ; - ; Фарфор и фаянс ; Porcelain and Faience ; - ; - ; 0 ; -
+decorative ; porcelain.tea ; porcelain ; Чайные и кофейные сервизы ; Tea and Coffee Services ; PORCELAIN ; tea ; 5 ; -
+decorative ; porcelain.dinner ; porcelain ; Столовые сервизы ; Dinner Services ; PORCELAIN ; dinner ; 2 ; -
+decorative ; porcelain.cups ; porcelain ; Чашки и пары ; Cups and Saucers ; PORCELAIN ; cup ; 5 ; -
+decorative ; porcelain.plates ; porcelain ; Тарелки и блюда ; Plates and Dishes ; PORCELAIN ; plate ; 5 ; -
+decorative ; porcelain.figures ; porcelain ; Статуэтки ; Figurines ; PORCELAIN ; figure ; 8 ; -
+decorative ; porcelain.vases ; porcelain ; Вазы ; Vases ; PORCELAIN ; vase ; 4 ; -
+decorative ; porcelain.tableware ; porcelain ; Предметы сервировки ; Tableware ; PORCELAIN ; tableware ; 4 ; -
+decorative ; silver ; - ; Серебро ; Silver ; - ; - ; 0 ; -
+decorative ; silver.tea ; silver ; Чайное и кофейное серебро ; Tea and Coffee Silver ; SILVER ; tea ; 7 ; -
+decorative ; silver.flatware ; silver ; Столовые приборы ; Flatware ; SILVER ; flatware ; 4 ; -
+decorative ; silver.boxes ; silver ; Портсигары, шкатулки, табакерки ; Cases and Boxes ; SILVER ; boxes ; 5 ; -
+decorative ; silver.candlesticks ; silver ; Подсвечники ; Candlesticks ; SILVER ; candlesticks ; 2 ; -
+decorative ; silver.table ; silver ; Предметы сервировки ; Table Silver ; SILVER ; table ; 4 ; -
+decorative ; furniture ; - ; Мебель ; Furniture ; - ; - ; 0 ; -
+decorative ; furniture.case ; furniture ; Корпусная мебель ; Case Furniture ; FURNITURE ; case ; 4 ; -
+decorative ; furniture.tables ; furniture ; Столы ; Tables ; FURNITURE ; table ; 3 ; -
+decorative ; furniture.seating ; furniture ; Мебель для сидения ; Seating ; FURNITURE ; seating ; 3 ; -
+decorative ; furniture.mirrors ; furniture ; Зеркала ; Mirrors ; FURNITURE ; mirror ; 1 ; -
+decorative ; furniture.other ; furniture ; Ширмы, этажерки, сундуки ; Screens, Étagères and Chests ; FURNITURE ; other ; 1 ; -
+decorative ; glass ; - ; Стекло и хрусталь ; Glass and Crystal ; - ; - ; 0 ; -
+decorative ; glass.art ; glass ; Художественное стекло ; Art Glass ; GLASS ; art ; 3 ; -
+decorative ; glass.crystal ; glass ; Хрусталь ; Crystal ; GLASS ; crystal ; 2 ; -
+decorative ; bronze ; - ; Бронза и литьё ; Bronze and Cast Metal ; - ; - ; 0 ; -
+decorative ; bronze.animal ; bronze ; Анималистическая бронза ; Animal Bronzes ; BRONZE ; animal ; 3 ; -
+decorative ; bronze.figural ; bronze ; Жанровая скульптура ; Figural Bronzes ; BRONZE ; figural ; 3 ; -
+decorative ; bronze.lighting ; bronze ; Светильники и подсвечники ; Lighting ; BRONZE ; lighting ; 2 ; FOUNDRY
+decorative ; bronze.desk ; bronze ; Письменные приборы ; Desk Objects ; BRONZE ; desk ; 2 ; FOUNDRY
+decorative ; clocks ; - ; Каминные и настольные часы ; Mantel and Table Clocks ; CLOCK ; - ; 3 ; -
+decorative ; carpets ; - ; Ковры и текстиль ; Carpets and Textiles ; CARPET ; - ; 3 ; -
+collectibles ; stamps ; - ; Марки и почтовая история ; Stamps and Postal History ; - ; - ; 0 ; -
+collectibles ; stamps.single ; stamps ; Марки ; Stamps ; STAMP ; single ; 10 ; -
+collectibles ; stamps.sets ; stamps ; Серии и блоки ; Sets and Souvenir Sheets ; STAMP ; set ; 6 ; -
+collectibles ; stamps.covers ; stamps ; Конверты и почтовая история ; Covers and Postal History ; STAMP ; cover ; 4 ; -
+collectibles ; stamps.collections ; stamps ; Коллекции марок ; Stamp Collections ; STAMP ; collection ; 2 ; -
+collectibles ; postcards ; - ; Открытки ; Postcards ; POSTCARD ; - ; 8 ; -
+collectibles ; toys ; - ; Игрушки и модели ; Toys and Models ; - ; - ; 0 ; -
+collectibles ; toys.tin ; toys ; Жестяные и заводные игрушки ; Tinplate and Clockwork Toys ; TOY ; tin ; 6 ; -
+collectibles ; toys.dolls ; toys ; Куклы ; Dolls ; TOY ; doll ; 5 ; -
+collectibles ; toys.soft ; toys ; Мягкие игрушки ; Soft Toys ; TOY ; soft ; 3 ; -
+collectibles ; toys.wooden ; toys ; Деревянные игрушки ; Wooden Toys ; TOY ; wood ; 3 ; -
+collectibles ; toys.trains ; toys ; Железные дороги и модели ; Trains and Models ; TOY ; train ; 3 ; -
+collectibles ; toys.games ; toys ; Настольные игры ; Board Games ; TOY ; game ; 2 ; -
+collectibles ; toys.festive ; toys ; Ёлочные игрушки ; Festive Decorations ; TOY ; festive ; 2 ; -
+collectibles ; memorabilia ; - ; Памятные вещи ; Memorabilia ; - ; - ; 0 ; -
+collectibles ; memorabilia.theatre ; memorabilia ; Театр и музыка ; Theatre and Music ; MEMORABILIA ; theatre ; 5 ; -
+collectibles ; memorabilia.cinema ; memorabilia ; Кино ; Cinema ; MEMORABILIA ; cinema ; 3 ; -
+collectibles ; memorabilia.sport ; memorabilia ; Спорт ; Sport ; MEMORABILIA ; sport ; 3 ; -
+collectibles ; memorabilia.travel ; memorabilia ; Путешествия ; Travel ; MEMORABILIA ; travel ; 2 ; -
+collectibles ; memorabilia.photos ; memorabilia ; Фотографии и альбомы ; Photographs and Albums ; MEMORABILIA ; photo ; 4 ; -
+collectibles ; memorabilia.tech ; memorabilia ; Техника и приборы ; Technology and Instruments ; MEMORABILIA ; tech ; 4 ; -
+collectibles ; memorabilia.ephemera ; memorabilia ; Предметы быта ; Ephemera ; MEMORABILIA ; ephemera ; 3 ; -

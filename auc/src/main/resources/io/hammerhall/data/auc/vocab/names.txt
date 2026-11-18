@@ -1,0 +1,311 @@
+# Имена людей по языковым группам — для мастеров, авторов, владельцев собраний. Все сочетания выдуманы.
+# Мужские имена русских: «имя : отчество м. : отчество ж. : эпоха = English» (эпоха: o — родившимся до 1900, n — после
+# 1895, a — всем). Женские: «имя : эпоха = English». Фамилии иностранцев — «по-русски = в оригинале», русских — только
+# по-русски (по-английски — транслитерация). Города: «им. : род. : пред. : страна : вес = English».
+# В списках нет фамилий известных художников, ювелиров, фабрикантов, марок; страховка — real-names.txt.
+
+[RU.male]
+Иван : Иванович : Ивановна : a = Ivan | Пётр : Петрович : Петровна : a = Pyotr | Николай : Николаевич : Николаевна : a = Nikolai |
+Алексей : Алексеевич : Алексеевна : a = Alexei | Михаил : Михайлович : Михайловна : a = Mikhail |
+Фёдор : Фёдорович : Фёдоровна : a = Fyodor | Василий : Васильевич : Васильевна : a = Vasily |
+Андрей : Андреевич : Андреевна : a = Andrei | Сергей : Сергеевич : Сергеевна : a = Sergei |
+Александр : Александрович : Александровна : a = Alexander | Дмитрий : Дмитриевич : Дмитриевна : a = Dmitry |
+Павел : Павлович : Павловна : a = Pavel | Константин : Константинович : Константиновна : a = Konstantin |
+Григорий : Григорьевич : Григорьевна : a = Grigory | Илья : Ильич : Ильинична : a = Ilya | Ефим : Ефимович : Ефимовна : o = Yefim |
+Арсений : Арсеньевич : Арсеньевна : a = Arseny | Борис : Борисович : Борисовна : a = Boris | Виктор : Викторович : Викторовна : n = Viktor |
+Владимир : Владимирович : Владимировна : a = Vladimir | Георгий : Георгиевич : Георгиевна : a = Georgy |
+Евгений : Евгеньевич : Евгеньевна : a = Yevgeny | Кирилл : Кириллович : Кирилловна : a = Kirill |
+Леонид : Леонидович : Леонидовна : a = Leonid | Матвей : Матвеевич : Матвеевна : a = Matvei |
+Никифор : Никифорович : Никифоровна : o = Nikifor | Роман : Романович : Романовна : a = Roman | Семён : Семёнович : Семёновна : a = Semyon |
+Степан : Степанович : Степановна : a = Stepan | Тимофей : Тимофеевич : Тимофеевна : a = Timofei | Яков : Яковлевич : Яковлевна : a = Yakov |
+Юрий : Юрьевич : Юрьевна : n = Yuri | Аркадий : Аркадьевич : Аркадьевна : a = Arkady | Вениамин : Вениаминович : Вениаминовна : a = Veniamin |
+Герасим : Герасимович : Герасимовна : o = Gerasim | Лев : Львович : Львовна : a = Lev | Савва : Саввич : Саввична : o = Savva |
+Захар : Захарович : Захаровна : o = Zakhar | Прохор : Прохорович : Прохоровна : o = Prokhor | Филипп : Филиппович : Филипповна : a = Filipp |
+Антон : Антонович : Антоновна : a = Anton | Олег : Олегович : Олеговна : n = Oleg | Вадим : Вадимович : Вадимовна : n = Vadim |
+Игорь : Игоревич : Игоревна : n = Igor | Глеб : Глебович : Глебовна : n = Gleb | Ярослав : Ярославович : Ярославовна : n = Yaroslav |
+Всеволод : Всеволодович : Всеволодовна : a = Vsevolod | Митрофан : Митрофанович : Митрофановна : o = Mitrofan |
+Онисим : Онисимович : Онисимовна : o = Onisim | Платон : Платонович : Платоновна : o = Platon | Модест : Модестович : Модестовна : o = Modest |
+Валентин : Валентинович : Валентиновна : n = Valentin | Анатолий : Анатольевич : Анатольевна : n = Anatoly |
+Геннадий : Геннадьевич : Геннадьевна : n = Gennady | Ростислав : Ростиславович : Ростиславовна : n = Rostislav | Эраст : Эрастович : Эрастовна : o = Erast
+
+[RU.female]
+Анна : a = Anna | Мария : a = Maria | Елена : a = Yelena | Ольга : a = Olga | Вера : a = Vera | Надежда : a = Nadezhda |
+Екатерина : a = Yekaterina | Софья : a = Sofya | Зинаида : o = Zinaida | Татьяна : a = Tatyana | Ирина : n = Irina |
+Наталья : a = Natalya | Людмила : n = Lyudmila | Елизавета : a = Yelizaveta | Варвара : a = Varvara | Ксения : a = Kseniya |
+Любовь : a = Lyubov | Нина : n = Nina | Галина : n = Galina | Марина : n = Marina | Евгения : a = Yevgeniya |
+Александра : a = Alexandra | Антонина : a = Antonina | Пелагея : o = Pelageya | Прасковья : o = Praskovya | Евдокия : o = Yevdokiya |
+Лидия : a = Lidiya | Тамара : n = Tamara | Валентина : n = Valentina | Майя : n = Maya | Алла : n = Alla | Светлана : n = Svetlana |
+Инна : n = Inna | Дарья : a = Darya | Полина : a = Polina
+
+[RU.surnames]
+Аверин | Агапов | Алтухов | Анохин | Аристов | Астахов | Балакин | Баскаков | Батурин | Белоглазов | Белозёров | Беспалов |
+Бобылёв | Болдырев | Брагин | Буланов | Варенцов | Веденеев | Вершинин | Веселов | Ветлугин | Викулов | Ворожцов |
+Воскобойников | Гладышев | Глебов | Горохов | Грибов | Губанов | Гулин | Демьянов | Дьяконов | Евсеев | Елагин | Ельчанинов |
+Еремеев | Есаулов | Жаворонков | Жеребцов | Жилин | Журин | Зарубин | Засецкий | Звонарёв | Земцов | Зеленин | Зубарев |
+Извеков | Изюмов | Илюхин | Калачёв | Капустин | Каргин | Кирсанов | Клочков | Ковров | Кожин | Колобов | Колычев | Копылов |
+Коробейников | Костылев | Кочетов | Кравцов | Краюхин | Кречетов | Кудинов | Кулагин | Курочкин | Лаврентьев | Ладыгин |
+Лапин | Ларцев | Левашов | Логвинов | Лукин | Лыков | Маринин | Масленников | Мезенцев | Мелихов | Можаев | Мокеев | Молоков |
+Мухортов | Набатов | Неклюдов | Немчинов | Никольский | Новосёлов | Огнев | Одинцов | Окунев | Онуфриев | Орехов | Осокин |
+Остапов | Охотин | Парамонов | Пастухов | Перевезенцев | Перепёлкин | Пестов | Подольский | Полозов | Полуэктов | Порошин |
+Прибытков | Пташников | Пушкарёв | Пыжов | Ракитин | Рассохин | Ременников | Рогов | Русаков | Рыжов | Рязанцев | Савватеев |
+Самарин | Селиверстов | Семенихин | Сибиряков | Скобцев | Скороходов | Слепцов | Смолин | Снегирёв | Соймонов | Сорокоумов |
+Стрешнев | Сухотин | Сычёв | Таранов | Телегин | Тепляков | Тиунов | Толмачёв | Трегубов | Трубников | Тугаринов | Тюрин |
+Улитин | Усольцев | Устюжанин | Фалеев | Филин | Фирсанов | Фомичёв | Хвостов | Хрусталёв | Цыганков | Черемисинов |
+Чесноков | Чижов | Чудинов | Ширяев | Шумилов | Щеглов | Юрасов | Яхонтов | Ястребов | Авдонин | Аникин | Антипов | Артамонов |
+Афонин | Барыкин | Бахирев | Безбородов | Белокуров | Березин | Бессонов | Бирюлёв | Бойков | Бокарёв | Бугров | Букин |
+Буянов | Ванюшин | Васютин | Вахрушев | Вдовин | Вешняков | Вилков | Воротынцев | Выборнов | Вьюгин | Гаранин | Гвоздев |
+Глазов | Глухов | Голубцов | Горюнов | Гостев | Гребнев | Гривцов | Грошев | Губин | Гусаков | Дедов | Деревянкин | Долгов |
+Дорохов | Дружинин | Дубинин | Дудин | Думнов | Егошин | Елизаров | Ерохин | Жарков | Жигарев | Жмакин | Заварзин | Завьялов |
+Задорин | Зайков | Захарьин | Звягин | Зенков | Игумнов | Изотов | Кабанов | Казанцев | Камышев | Канунников | Карташов |
+Квашнин | Киреев | Кислицын | Клементьев | Ковригин | Кожухов | Колесов | Комлев | Коняев | Копейкин | Коренев | Косарев |
+Котляров | Кошелев | Крупенников | Кувшинов | Кузовлев | Курбатов | Кустов | Лабутин | Латышев | Леднёв | Лелюхин | Ленков |
+Лепёхин | Летягин | Липатов | Лисицын | Лопатин | Лукашин | Любавин | Мазаев | Макеев | Мальков | Мартемьянов | Мачихин |
+Медников | Мещанинов | Минеев | Мишутин | Молодцов | Мордасов | Морошкин | Мосягин | Мохов | Мурашов | Назимов | Новгородцев |
+Носков | Огородников | Окладников | Оловянников | Осетров | Павлищев | Панкратов | Паршин | Пеньков | Первушин | Перфильев |
+Петрушин | Поздняков | Покатилов | Полетаев | Постников | Потехин | Почивалов | Пряжников | Пустовалов | Раков | Растворов |
+Рачков | Ребров | Рукин | Саламатов | Санин | Свистунов | Севастьянов | Серёгин | Синицын | Скрипицын | Собакин | Сомин |
+Сотников | Спешнев | Старков | Стогов | Столбов | Струков | Субботин | Сурмин | Сутягин | Тараканов | Татаринов | Тельнов |
+Тимашев | Тихонравов | Толоконников | Топорков | Травин | Тузов | Туркин | Углов | Уржумцев | Утешев | Федулов | Филатьев |
+Холщевников | Хорошилов | Хромов | Целищев | Чалов | Чеботарёв | Чекмарёв | Шабанов | Шапкин | Шарыгин | Шатилов | Шевелёв |
+Шорин | Шумский | Щербинин | Юматов | Юшков | Яблоков | Якимов | Белопольский | Залесский | Красноборский | Лесовский |
+Медынский | Озерецкий | Ольшевский | Подгорецкий | Тихвинский | Дубенский | Ясенский | Липецкий | Вельский |
+Каргопольский | Ветлужский | Белевский | Мещовский | Седых | Долгих | Косых | Толстых | Сухих | Глухих
+
+[RU.cities]
+Санкт-Петербург : Санкт-Петербурга : Санкт-Петербурге : RU : 9 = Saint Petersburg | Москва : Москвы : Москве : RU : 9 = Moscow |
+Казань : Казани : Казани : RU : 1 = Kazan | Нижний Новгород : Нижнего Новгорода : Нижнем Новгороде : RU : 1 = Nizhny Novgorod |
+Самара : Самары : Самаре : RU : 1 = Samara | Саратов : Саратова : Саратове : RU : 1 = Saratov |
+Ярославль : Ярославля : Ярославле : RU : 1 = Yaroslavl | Тверь : Твери : Твери : RU : 1 = Tver | Пермь : Перми : Перми : RU : 0.6 = Perm |
+Екатеринбург : Екатеринбурга : Екатеринбурге : RU : 0.8 = Yekaterinburg | Иркутск : Иркутска : Иркутске : RU : 0.5 = Irkutsk |
+Владимир : Владимира : Владимире : RU : 0.6 = Vladimir | Кострома : Костромы : Костроме : RU : 0.6 = Kostroma |
+Вологда : Вологды : Вологде : RU : 0.6 = Vologda | Архангельск : Архангельска : Архангельске : RU : 0.4 = Arkhangelsk |
+Тула : Тулы : Туле : RU : 0.6 = Tula | Рязань : Рязани : Рязани : RU : 0.5 = Ryazan | Калуга : Калуги : Калуге : RU : 0.5 = Kaluga |
+Смоленск : Смоленска : Смоленске : RU : 0.5 = Smolensk | Псков : Пскова : Пскове : RU : 0.5 = Pskov |
+Великий Новгород : Великого Новгорода : Великом Новгороде : RU : 0.5 = Veliky Novgorod |
+Новосибирск : Новосибирска : Новосибирске : RU : 0.4 = Novosibirsk
+
+[FR.male]
+Жан = Jean | Пьер = Pierre | Луи = Louis | Анри = Henri | Эмиль = Émile | Люсьен = Lucien | Гастон = Gaston | Марсель = Marcel |
+Жорж = Georges | Шарль = Charles | Андре = André | Поль = Paul | Рене = René | Морис = Maurice | Жюль = Jules | Альбер = Albert |
+Огюст = Auguste | Франсуа = François | Этьен = Étienne | Леон = Léon | Эжен = Eugène | Фернан = Fernand | Роже = Roger |
+Жак = Jacques | Мишель = Michel | Ив = Yves | Клод = Claude | Ги = Guy | Антуан = Antoine | Феликс = Félix | Габриэль = Gabriel |
+Жиль = Gilles | Оливье = Olivier | Ипполит = Hippolyte | Арман = Armand | Батист = Baptiste | Ксавье = Xavier | Тьерри = Thierry
+
+[FR.female]
+Мари = Marie | Жанна = Jeanne | Луиза = Louise | Сюзанна = Suzanne | Элен = Hélène | Сесиль = Cécile | Мадлен = Madeleine |
+Жюльетта = Juliette | Клер = Claire | Одетт = Odette | Симона = Simone | Ивонна = Yvonne | Полина = Pauline | Изабель = Isabelle |
+Анна = Anne | Катрин = Catherine | Николь = Nicole | Мартина = Martine | Франсуаза = Françoise | Маргерит = Marguerite
+
+[FR.surnames]
+Бастид = Bastide | Бельфонтен = Bellefontaine | Буасье = Boissier | Варенн = Varenne | Гайяр = Gaillard | Дельмас = Delmas |
+Деспре = Desprez | Жоли = Joly | Кадо = Cadot | Казаль = Cazal | Кламар = Clamart | Корню = Cornu | Кутюрье = Couturier |
+Лавалле = Lavallée | Ламарш = Lamarche | Лефлок = Lefloch | Лорио = Loriot | Мажоре = Majorel | Марешаль = Maréchal |
+Менар = Ménard | Монфор = Montfort | Обри = Aubry | Пеллетье = Pelletier | Руайе = Royer | Савари = Savary | Тейсье = Teissier |
+Тувенен = Thouvenin | Фавье = Favier | Шамбон = Chambon | Бодуэн = Baudoin | Вердье = Verdier | Дюкло = Duclos |
+Лемерсье = Lemercier | Мартино = Martineau | Монтаньяк = Montagnac | Наварр = Navarre | Перрен = Perrin | Пуйяр = Pouillard |
+Рамбер = Rambert | Сен-Жиль = Saint-Gilles | Таверн = Taverne | Террье = Terrier | Тибо = Thibault | Шалье = Challier |
+Шатлен = Chatelain | Бриссак = Brissac | Дельваль = Delval | Дюбрей = Dubreuil | Кастанье = Castagné | Ламбло = Lamblot |
+Пасторель = Pastorel | Сарразен = Sarrazin | Фонтанель = Fontanel | Шарон = Charron | Эрбель = Herbel | Батайе = Bataillé |
+Бовуазен = Beauvoisin | Вальбер = Valbert | Гишар = Guichard | Дантен = Dantin | Дюмениль = Dumesnil | Жибер = Gibert |
+Ламот = Lamotte | Лафорж = Laforge | Маре = Marais | Монтрёй = Montreuil | Нуэль = Nouel | Отье = Authier | Пейрак = Peyrac |
+Тевене = Thévenet | Шардон = Chardon | Эмери = Émery | Ласалль = Lasalle | Кольмар = Colmar | Леруж = Lerouge | Обуан = Aubouin |
+Пелиссье = Pélissier | Сежур = Séjour
+
+[FR.cities]
+Париж : Парижа : Париже : FR : 9 = Paris | Лион : Лиона : Лионе : FR : 1 = Lyon | Марсель : Марселя : Марселе : FR : 1 = Marseille |
+Руан : Руана : Руане : FR : 0.7 = Rouen | Бордо : Бордо : Бордо : FR : 0.7 = Bordeaux | Ницца : Ниццы : Ницце : FR : 0.6 = Nice |
+Нант : Нанта : Нанте : FR : 0.5 = Nantes | Тулуза : Тулузы : Тулузе : FR : 0.5 = Toulouse | Лилль : Лилля : Лилле : FR : 0.4 = Lille |
+Женева : Женевы : Женеве : CH : 0.5 = Geneva | Брюссель : Брюсселя : Брюсселе : BE : 0.6 = Brussels
+
+[IT.male]
+Джованни = Giovanni | Франческо = Francesco | Антонио = Antonio | Джузеппе = Giuseppe | Луиджи = Luigi | Карло = Carlo |
+Марио = Mario | Паоло = Paolo | Пьетро = Pietro | Альберто = Alberto | Энрико = Enrico | Витторио = Vittorio | Умберто = Umberto |
+Федерико = Federico | Анджело = Angelo | Риккардо = Riccardo | Сильвио = Silvio | Эмилио = Emilio | Альдо = Aldo | Бруно = Bruno |
+Гвидо = Guido | Лоренцо = Lorenzo | Маттео = Matteo | Стефано = Stefano | Томмазо = Tommaso | Чезаре = Cesare |
+Эудженио = Eugenio | Аугусто = Augusto
+
+[IT.female]
+Мария = Maria | Джулия = Giulia | Франческа = Francesca | Лючия = Lucia | Элена = Elena | Анна = Anna | Кьяра = Chiara |
+Изабелла = Isabella | Беатриче = Beatrice | Тереза = Teresa | Катерина = Caterina | Клара = Clara | Роза = Rosa | Сильвия = Silvia |
+Маргерита = Margherita
+
+[IT.surnames]
+Альбертини = Albertini | Бальдуччи = Balducci | Бенедетти = Benedetti | Бертолини = Bertolini | Бонелли = Bonelli |
+Борелли = Borelli | Гальярди = Gagliardi | Гаспарини = Gasparini | Донати = Donati | Каваллари = Cavallari | Кальви = Calvi |
+Капелли = Capelli | Кортези = Cortesi | Луккези = Lucchesi | Мазетти = Masetti | Марчелли = Marcelli | Монтанари = Montanari |
+Негри = Negri | Пагано = Pagano | Руджеро = Ruggero | Сантини = Santini | Убальди = Ubaldi | Фабиани = Fabiani |
+Фиорелли = Fiorelli | Чезарини = Cesarini | Мариани = Mariani | Мартелли = Martelli | Пасторини = Pastorini | Пьерони = Pieroni |
+Скарпелли = Scarpelli | Тедески = Tedeschi | Беллони = Belloni | Гаррони = Garroni | Галлуцци = Galluzzi | Дельфини = Delfini |
+Онорати = Onorati | Пиччоли = Piccoli | Урбинати = Urbinati | Вальсекки = Valsecchi | Феррандини = Ferrandini | Ломеллини = Lomellini |
+Ромагноли = Romagnoli | Сартори = Sartori | Таддеи = Taddei | Фантони = Fantoni
+
+[IT.cities]
+Рим : Рима : Риме : IT : 3 = Rome | Флоренция : Флоренции : Флоренции : IT : 3 = Florence | Венеция : Венеции : Венеции : IT : 2 = Venice |
+Милан : Милана : Милане : IT : 3 = Milan | Неаполь : Неаполя : Неаполе : IT : 2 = Naples | Турин : Турина : Турине : IT : 1.5 = Turin |
+Болонья : Болоньи : Болонье : IT : 1 = Bologna | Генуя : Генуи : Генуе : IT : 1 = Genoa
+
+[DE.male]
+Иоганн = Johann | Фридрих = Friedrich | Карл = Karl | Генрих = Heinrich | Вильгельм = Wilhelm | Людвиг = Ludwig | Георг = Georg |
+Франц = Franz | Отто = Otto | Эрнст = Ernst | Пауль = Paul | Макс = Max | Рудольф = Rudolf | Вальтер = Walter | Курт = Kurt |
+Ханс = Hans | Петер = Peter | Клаус = Klaus | Юрген = Jürgen | Дитер = Dieter | Хельмут = Helmut | Густав = Gustav | Август = August |
+Конрад = Konrad | Фриц = Fritz | Эрих = Erich | Бернхард = Bernhard | Томас = Thomas | Мартин = Martin | Альбрехт = Albrecht
+
+[DE.female]
+Анна = Anna | Мария = Maria | Хельга = Helga | Грета = Greta | Лотта = Lotte | Ингрид = Ingrid | Марта = Martha | Клара = Klara |
+Эмма = Emma | Луиза = Luise | Гертруда = Gertrud | Элизабет = Elisabeth | Ханна = Hanna | Ирма = Irma | Урсула = Ursula |
+Габриэле = Gabriele
+
+[DE.surnames]
+Альтхаус = Althaus | Беренд = Berend | Бирнбаум = Birnbaum | Брандль = Brandl | Вайднер = Weidner | Вальдек = Waldeck |
+Гайслер = Geisler | Дорнбуш = Dornbusch | Зайдлер = Seidler | Кальтенбах = Kaltenbach | Кольбах = Kolbach | Краузе = Krause |
+Ландауэр = Landauer | Линдеман = Lindemann | Майерхоф = Meyerhof | Нойберт = Neubert | Обермайер = Obermaier |
+Райнхольд = Reinhold | Ротмунд = Rothmund | Шайбле = Scheible | Шёнфельд = Schönfeld | Таубер = Tauber |
+Фалькенберг = Falkenberg | Фогельзанг = Vogelsang | Ханке = Hanke | Хартвиг = Hartwig | Хеберле = Heberle | Цельнер = Zellner |
+Эггерт = Eggert | Бюлер = Bühler | Гензель = Gensel | Дитмар = Dittmar | Зелигер = Seliger | Лангхоф = Langhoff |
+Нидерман = Niedermann | Остервальд = Osterwald | Ратгебер = Ratgeber | Штегеман = Stegemann | Тиллинг = Tilling |
+Фризен = Friesen | Халлер = Haller | Эбнер = Ebner | Айзенберг = Eisenberg | Блюменталь = Blumenthal | Вендлер = Wendler |
+Дрекслер = Drexler | Кляйнер = Kleiner | Пёльман = Pöhlmann | Зидентопф = Siedentopf | Тальберг = Thalberg | Вирт = Wirth |
+Гольдаммер = Goldammer | Кернер = Kerner | Лихтенау = Lichtenau | Морбах = Morbach | Пфлюгер = Pflüger | Розенбах = Rosenbach |
+Штайнбах = Steinbach | Хольцман = Holzmann | Эренберг = Ehrenberg
+
+[DE.cities]
+Мюнхен : Мюнхена : Мюнхене : DE : 3 = Munich | Берлин : Берлина : Берлине : DE : 3 = Berlin | Дрезден : Дрездена : Дрездене : DE : 2 = Dresden |
+Дюссельдорф : Дюссельдорфа : Дюссельдорфе : DE : 1.5 = Düsseldorf | Гамбург : Гамбурга : Гамбурге : DE : 1.5 = Hamburg |
+Лейпциг : Лейпцига : Лейпциге : DE : 1.5 = Leipzig | Кёльн : Кёльна : Кёльне : DE : 1 = Cologne |
+Франкфурт-на-Майне : Франкфурта-на-Майне : Франкфурте-на-Майне : DE : 1 = Frankfurt am Main | Вена : Вены : Вене : AT : 3 = Vienna |
+Зальцбург : Зальцбурга : Зальцбурге : AT : 0.7 = Salzburg | Грац : Граца : Граце : AT : 0.5 = Graz | Цюрих : Цюриха : Цюрихе : CH : 1 = Zurich |
+Базель : Базеля : Базеле : CH : 0.7 = Basel
+
+[NL.male]
+Ян = Jan | Питер = Pieter | Хендрик = Hendrik | Виллем = Willem | Корнелис = Cornelis | Йоханнес = Johannes | Антон = Anton |
+Якоб = Jacob | Герард = Gerard | Дирк = Dirk | Мартен = Maarten | Тео = Theo | Франс = Frans | Кес = Kees | Хенк = Henk |
+Эверт = Evert | Лукас = Lucas | Рейнир = Reinier | Йозеф = Jozef | Эмиль = Emiel
+
+[NL.female]
+Анна = Anna | Мария = Maria | Йоханна = Johanna | Катарина = Catharina | Элизабет = Elisabeth | Гертруда = Geertruida | Сара = Sara |
+Маргарета = Margaretha | Хелена = Helena | Тереза = Theresia
+
+[NL.surnames]
+ван Беек = van Beek | Бонт = Bont | Вестерхоф = Westerhof | Грунвелд = Groenveld | Йонкер = Jonker | ван Леувен = van Leeuwen |
+Маттейс = Matthijs | Ниуланд = Nieuwland | Остерхаут = Oosterhout | Питерсе = Pieterse | Рейкен = Reijken | ван Сантен = van Santen |
+Слёйтер = Sluiter | Стеенберген = Steenbergen | Хогевен = Hogeveen | Хюберс = Huberts | Велтман = Veltman | Дамен = Damen |
+Ламмерс = Lammers | Мескер = Mesker | Нордман = Noordman | Ойстерман = Oijsterman | Рамакер = Ramaker | Схаап = Schaap |
+Тейссен = Thijssen | ван Хасселт = van Hasselt | ван Ромпай = van Rompaey | Деккерс = Dekkers | Вейнгарт = Wijngaart |
+ван Остен = van Oosten | Клаасен = Klaasen | Рутгерс = Rutgers | де Хоп = de Hoop | Брамсен = Bramsen | ван Дорт = van Dort
+
+[NL.cities]
+Амстердам : Амстердама : Амстердаме : NL : 3 = Amsterdam | Гаага : Гааги : Гааге : NL : 2 = The Hague |
+Роттердам : Роттердама : Роттердаме : NL : 1 = Rotterdam | Харлем : Харлема : Харлеме : NL : 1 = Haarlem |
+Утрехт : Утрехта : Утрехте : NL : 1 = Utrecht | Брюссель : Брюсселя : Брюсселе : BE : 2 = Brussels |
+Антверпен : Антверпена : Антверпене : BE : 1.5 = Antwerp | Гент : Гента : Генте : BE : 1 = Ghent | Брюгге : Брюгге : Брюгге : BE : 0.7 = Bruges
+
+[GB.male]
+Джон = John | Уильям = William | Томас = Thomas | Джеймс = James | Генри = Henry | Чарльз = Charles | Джордж = George |
+Эдвард = Edward | Роберт = Robert | Артур = Arthur | Фредерик = Frederick | Альфред = Alfred | Уолтер = Walter | Гарольд = Harold |
+Эрнест = Ernest | Сэмюэл = Samuel | Бенджамин = Benjamin | Дэвид = David | Ричард = Richard | Фрэнсис = Francis | Хью = Hugh |
+Дуглас = Douglas | Филип = Philip | Питер = Peter | Майкл = Michael | Кеннет = Kenneth
+
+[GB.female]
+Мэри = Mary | Элизабет = Elizabeth | Энн = Anne | Шарлотта = Charlotte | Эмили = Emily | Маргарет = Margaret | Сара = Sarah |
+Элис = Alice | Эдит = Edith | Флоренс = Florence | Дороти = Dorothy | Хелен = Helen | Джейн = Jane | Кэтрин = Catherine |
+Агнес = Agnes | Вивьен = Vivien
+
+[GB.surnames]
+Эшбёрн = Ashburn | Брэдшоу = Bradshaw | Эллингем = Ellingham | Гиллинг = Gilling | Хейворд = Hayward | Инглби = Ingleby |
+Кершоу = Kershaw | Лоутон = Lawton | Ньюком = Newcome | Оукли = Oakley | Седжвик = Sedgwick | Торнбери = Thornbury |
+Уэйкфилд = Wakefield | Бёрчелл = Burchell | Колдуэлл = Caldwell | Дэнверс = Danvers | Фенвик = Fenwick | Гловер = Glover |
+Хэдли = Hadley | Ловелл = Lovell | Монтроуз = Montrose | Норбери = Norbury | Рэмсделл = Ramsdell | Уитком = Whitcombe |
+Эпплби = Appleby | Дартон = Darton | Фэрли = Fairley | Меррик = Merrick | Олдридж = Aldridge | Прескотт = Prescott |
+Рамсботтом = Ramsbottom | Тремейн = Tremayne | Уэстбрук = Westbrook | Кортни = Courtney | Холбрук = Holbrook |
+Кенворти = Kenworthy | Линтон = Linton | Сомерс = Somers | Таунсенд = Townsend | Уэверли = Waverley | Брайтвелл = Brightwell |
+Кэллоуэй = Calloway | Данфорт = Danforth | Хаттерсли = Hattersley | Мейкпис = Makepeace | Стоунхэм = Stoneham |
+Пеннингтон = Pennington | Элдридж = Eldridge
+
+[GB.cities]
+Лондон : Лондона : Лондоне : GB : 6 = London | Эдинбург : Эдинбурга : Эдинбурге : GB : 1.5 = Edinburgh | Бат : Бата : Бате : GB : 0.5 = Bath |
+Бристоль : Бристоля : Бристоле : GB : 0.8 = Bristol | Ливерпуль : Ливерпуля : Ливерпуле : GB : 0.8 = Liverpool |
+Манчестер : Манчестера : Манчестере : GB : 0.8 = Manchester | Нью-Йорк : Нью-Йорка : Нью-Йорке : US : 3 = New York |
+Бостон : Бостона : Бостоне : US : 1.5 = Boston | Филадельфия : Филадельфии : Филадельфии : US : 1 = Philadelphia |
+Чикаго : Чикаго : Чикаго : US : 1 = Chicago
+
+[SC.male]
+Карл = Carl | Эрик = Erik | Ларс = Lars | Ханс = Hans | Нильс = Nils | Улоф = Olof | Густав = Gustav | Йохан = Johan |
+Андерс = Anders | Свен = Sven | Аксель = Axel | Кнут = Knut | Эйнар = Einar | Хенрик = Henrik | Петер = Peter | Магнус = Magnus |
+Туре = Ture | Пер = Per | Арне = Arne | Бьёрн = Björn
+
+[SC.female]
+Анна = Anna | Ингрид = Ingrid | Хельга = Helga | Карин = Karin | Астрид = Astrid | Сигрид = Sigrid | Эльса = Elsa | Марта = Marta |
+Кристина = Kristina | Ханна = Hanna | Сигне = Signe | Ловиса = Lovisa
+
+[SC.surnames]
+Бергстрём = Bergström | Блумквист = Blomqvist | Вальгрен = Wahlgren | Экберг = Ekberg | Ферм = Ferm | Гранлунд = Granlund |
+Хедлунд = Hedlund | Хольмберг = Holmberg | Исаксен = Isaksen | Карлстедт = Carlstedt | Лундквист = Lundqvist | Нурдин = Nordin |
+Окерлунд = Åkerlund | Сандель = Sandell | Шёберг = Sjöberg | Странд = Strand | Тувессон = Tuvesson | Унгер = Unger |
+Вестергрен = Westergren | Квист = Qvist | Лёфгрен = Löfgren | Мелин = Melin | Норбю = Norby | Ранхейм = Ranheim |
+Хёгберг = Högberg | Сюндберг = Sundberg | Энгстрём = Engström | Бьёрклунд = Björklund | Ватне = Vatne | Гуллберг = Gullberg |
+Даниельсен = Danielsen | Ингман = Ingman | Квале = Kvale | Нюберг = Nyberg | Оттесен = Ottesen | Ремме = Remme | Скоуг = Skoug |
+Тофте = Tofte | Хауген = Haugen | Виклунд = Wiklund | Альгрен = Ahlgren | Брёндум = Brøndum | Лидквист = Lidqvist |
+Сварфвар = Svarfvar
+
+[SC.cities]
+Стокгольм : Стокгольма : Стокгольме : SE : 3 = Stockholm | Гётеборг : Гётеборга : Гётеборге : SE : 1 = Gothenburg |
+Осло : Осло : Осло : NO : 2 = Oslo | Берген : Бергена : Бергене : NO : 1 = Bergen | Копенгаген : Копенгагена : Копенгагене : DK : 3 = Copenhagen |
+Оденсе : Оденсе : Оденсе : DK : 0.5 = Odense | Хельсинки : Хельсинки : Хельсинки : FI : 2 = Helsinki | Турку : Турку : Турку : FI : 0.7 = Turku
+
+[ES.male]
+Хосе = José | Антонио = Antonio | Мануэль = Manuel | Франсиско = Francisco | Хуан = Juan | Хоакин = Joaquín | Рафаэль = Rafael |
+Мигель = Miguel | Педро = Pedro | Луис = Luis | Висенте = Vicente | Энрике = Enrique | Игнасио = Ignacio | Рамон = Ramón |
+Фернандо = Fernando | Сантьяго = Santiago | Хавьер = Javier | Эмилио = Emilio | Карлос = Carlos
+
+[ES.female]
+Мария = María | Кармен = Carmen | Долорес = Dolores | Хосефа = Josefa | Изабель = Isabel | Пилар = Pilar | Лусия = Lucía |
+Тереза = Teresa | Мерседес = Mercedes | Роса = Rosa | Элена = Elena | Ана = Ana
+
+[ES.surnames]
+Альварадо = Alvarado | Аренас = Arenas | Бенавидес = Benavides | Бермудес = Bermúdez | Гальярдо = Gallardo | Гарридо = Garrido |
+Домингес = Domínguez | Гусман = Guzmán | Ласарте = Lasarte | Наварро = Navarro | Паредес = Paredes | Киньонес = Quiñones |
+Рамирес = Ramírez | Сальседо = Salcedo | Карвахаль = Carvajal | Луке = Luque | Монтальво = Montalvo | Олмедо = Olmedo |
+Риос = Ríos | Солер = Soler | Бустаманте = Bustamante | Корралес = Corrales | Гальвес = Gálvez | Мансанарес = Manzanares |
+Отеро = Otero | Монтес = Montes | Лобос = Lobos | Ортис = Ortiz | Себальос = Ceballos | Кордеро = Cordero | Прадос = Prados |
+Эскудеро = Escudero | Вальверде = Valverde | Карраско = Carrasco | Пеньялвер = Peñalver | Арсе = Arce | Мирабаль = Mirabal
+
+[ES.cities]
+Мадрид : Мадрида : Мадриде : ES : 3 = Madrid | Барселона : Барселоны : Барселоне : ES : 3 = Barcelona |
+Севилья : Севильи : Севилье : ES : 1 = Seville | Валенсия : Валенсии : Валенсии : ES : 1 = Valencia
+
+[PL.male]
+Ян = Jan | Станислав = Stanisław | Юзеф = Józef | Казимеж = Kazimierz | Тадеуш = Tadeusz | Войцех = Wojciech | Анджей = Andrzej |
+Збигнев = Zbigniew | Ежи = Jerzy | Кароль = Karol | Владислав = Władysław | Мечислав = Mieczysław | Хенрик = Henryk |
+Антони = Antoni | Францишек = Franciszek | Людвик = Ludwik | Феликс = Feliks
+
+[PL.female]
+Анна = Anna | Мария = Maria | Ядвига = Jadwiga | Зофья = Zofia | Ирена = Irena | Халина = Halina | Барбара = Barbara |
+Кристина = Krystyna | Ванда = Wanda | Эльжбета = Elżbieta | Каролина = Karolina | Ханна = Hanna
+
+[PL.surnames]
+Ковальский = Kowalski | Лисецкий = Lisiecki | Пясецкий = Piasecki | Рутковский = Rutkowski | Урбаньский = Urbański |
+Цесельский = Ciesielski | Яблоньский = Jabłoński | Глинецкий = Glinecki | Дзедзиц = Dziedzic | Мазур = Mazur | Пентак = Pentak |
+Рогальский = Rogalski | Сулковский = Sułkowski | Шиманский = Szymański | Ясиньский = Jasiński | Бялецкий = Białecki |
+Мачеевский = Maciejewski | Осиньский = Osiński | Петшак = Pietrzak | Стасяк = Stasiak | Червиньский = Czerwiński |
+Влодарский = Włodarski | Кшеминский = Krzemiński | Ольшак = Olszak
+
+[PL.cities]
+Варшава : Варшавы : Варшаве : PL : 3 = Warsaw | Краков : Кракова : Кракове : PL : 2 = Kraków | Познань : Познани : Познани : PL : 1 = Poznań
+
+[CZ.male]
+Ян = Jan | Йозеф = Josef | Франтишек = František | Вацлав = Václav | Карел = Karel | Ярослав = Jaroslav | Иржи = Jiří |
+Ладислав = Ladislav | Антонин = Antonín | Богуслав = Bohuslav | Мирослав = Miroslav | Владимир = Vladimír | Зденек = Zdeněk |
+Томаш = Tomáš | Любош = Luboš | Отакар = Otakar
+
+[CZ.female]
+Анна = Anna | Мария = Marie | Божена = Božena | Людмила = Ludmila | Зденка = Zdenka | Ярмила = Jarmila | Власта = Vlasta |
+Ирена = Irena | Милада = Milada | Эва = Eva | Вера = Věra
+
+[CZ.surnames]
+Новак = Novák | Горак = Horák | Соукуп = Soukup | Урбан = Urban | Холуб = Holub | Кратохвил = Kratochvíl | Поспишил = Pospíšil |
+Стейскал = Stejskal | Беран = Beran | Догнал = Dohnal | Мраз = Mráz | Ржегак = Řehák | Брож = Brož | Вондрак = Vondrák |
+Кашпар = Kašpar | Седлак = Sedlák | Яноуш = Janouš | Гавлик = Havlík | Коваржик = Kovařík | Лукаш = Lukáš | Тесарж = Tesař |
+Хлупач = Chlupáč
+
+[CZ.cities]
+Прага : Праги : Праге : CZ : 3 = Prague | Брно : Брно : Брно : CZ : 1 = Brno | Пльзень : Пльзеня : Пльзене : CZ : 0.5 = Plzeň
