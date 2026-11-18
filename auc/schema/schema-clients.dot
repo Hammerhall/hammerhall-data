@@ -1,0 +1,14 @@
+// auc-data-v1 — группа «Клиенты»: все поля её таблиц; таблицы других групп, на которые они ссылаются, — серой рамкой.
+// Сгенерировано из описания схемы; руками не править. Картинка (SVG): tools/schema-svg.sh auc.
+digraph schema {
+  graph [rankdir=LR, fontname="DejaVu Sans", fontsize=13, nodesep=0.35, ranksep=0.9, pad=0.3, splines=true, newrank=true];
+  node [shape=plain, fontname="DejaVu Sans", fontsize=11];
+  edge [dir=both, arrowtail=none, arrowhead=crow, arrowsize=0.9, color="#333333"];
+  subgraph "cluster_clients" {
+    label=<<B>Клиенты</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "clients" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>clients</B><BR/>Клиенты</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="id"><FONT FACE="DejaVu Sans Mono"># </FONT>id</TD></TR><TR><TD ALIGN="LEFT" PORT="kind"><FONT FACE="DejaVu Sans Mono">∗ </FONT>kind</TD></TR><TR><TD ALIGN="LEFT" PORT="first_name"><FONT FACE="DejaVu Sans Mono">○ </FONT>first_name</TD></TR><TR><TD ALIGN="LEFT" PORT="patronymic"><FONT FACE="DejaVu Sans Mono">○ </FONT>patronymic</TD></TR><TR><TD ALIGN="LEFT" PORT="last_name"><FONT FACE="DejaVu Sans Mono">○ </FONT>last_name</TD></TR><TR><TD ALIGN="LEFT" PORT="company_name"><FONT FACE="DejaVu Sans Mono">○ </FONT>company_name</TD></TR><TR><TD ALIGN="LEFT" PORT="gender"><FONT FACE="DejaVu Sans Mono">○ </FONT>gender</TD></TR><TR><TD ALIGN="LEFT" PORT="birth_year"><FONT FACE="DejaVu Sans Mono">○ </FONT>birth_year</TD></TR><TR><TD ALIGN="LEFT" PORT="city_id"><FONT FACE="DejaVu Sans Mono">∗ </FONT>city_id</TD></TR><TR><TD ALIGN="LEFT" PORT="email"><FONT FACE="DejaVu Sans Mono">∗ </FONT>email</TD></TR><TR><TD ALIGN="LEFT" PORT="language"><FONT FACE="DejaVu Sans Mono">∗ </FONT>language</TD></TR><TR><TD ALIGN="LEFT" PORT="is_dealer"><FONT FACE="DejaVu Sans Mono">∗ </FONT>is_dealer</TD></TR><TR><TD ALIGN="LEFT" PORT="registered_at"><FONT FACE="DejaVu Sans Mono">∗ </FONT>registered_at</TD></TR><TR><TD ALIGN="LEFT" PORT="verified_at"><FONT FACE="DejaVu Sans Mono">○ </FONT>verified_at</TD></TR><TR><TD ALIGN="LEFT" PORT="enhanced_verified_at"><FONT FACE="DejaVu Sans Mono">○ </FONT>enhanced_verified_at</TD></TR><TR><TD ALIGN="LEFT" PORT="marketing_consent"><FONT FACE="DejaVu Sans Mono">∗ </FONT>marketing_consent</TD></TR><TR><TD ALIGN="LEFT" PORT="blocked_at"><FONT FACE="DejaVu Sans Mono">○ </FONT>blocked_at</TD></TR><TR><TD ALIGN="LEFT" PORT="block_reason"><FONT FACE="DejaVu Sans Mono">○ </FONT>block_reason</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
+  }
+  "cities" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#999999" BGCOLOR="white"><TR><TD><FONT COLOR="#666666">cities<BR/>Города</FONT></TD></TR></TABLE>>];
+  "cities" -> "clients":"city_id";
+}

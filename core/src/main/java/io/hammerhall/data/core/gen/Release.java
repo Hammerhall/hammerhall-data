@@ -5,6 +5,7 @@ import io.hammerhall.data.core.io.GzipTsvFile;
 import io.hammerhall.data.core.io.Json;
 import io.hammerhall.data.core.io.TableSink;
 import io.hammerhall.data.core.schema.Schema;
+import io.hammerhall.data.core.schema.SchemaDot;
 import io.hammerhall.data.core.schema.SchemaExport;
 import io.hammerhall.data.core.schema.Table;
 
@@ -20,8 +21,12 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Сборка выпуска: модули по зависимостям → самопроверка → {@code manifest.json}, DDL, ER-диаграмма, SOURCE.md,
- * LICENSE. Провал проверки — манифест не пишется, выпуск не годен.
+ * Сборка выпуска: модули по зависимостям → самопроверка → {@code manifest.json}, DDL, ER-диаграмма, картинки схемы,
+ * SOURCE.md, LICENSE. Провал проверки — манифест не пишется, выпуск не годен.
+ *
+ * <p>Картинки схемы (SVG) рисует не генератор, а Graphviz ({@code tools/schema-svg.sh <код>}): сборка берёт их из
+ * {@code <код>/schema/} репозитория как есть. До генерации проверяется, что каждая есть и нарисована из того DOT,
+ * который генератор пишет сейчас (отметка sha256 в SVG); нет или устарела — ошибка с подсказкой, данных не трогаем.
  */
 public final class Release {
 
@@ -80,23 +85,58 @@ public final class Release {
         Schema schema = dataset.schema();
         List<String> schemaErrors = schema.validate();
         if (!schemaErrors.isEmpty()) throw new IllegalStateException("описание схемы с ошибками: " + schemaErrors);
+        Map<String, byte[]> pictures = pictures(dataset, schema);
         Files.createDirectories(cfg.out());
         for (Table t : schema.tables()) Files.deleteIfExists(cfg.out().resolve(t.name() + ".tsv.gz"));
         Files.deleteIfExists(cfg.out().resolve("manifest.json"));
         // прежние тексты выпуска — тоже: проваленная самопроверка не должна оставить в папке старые SOURCE.md и DDL
         for (String f : Expected.TEXTS) Files.deleteIfExists(cfg.out().resolve(f));
         Files.deleteIfExists(cfg.out().resolve("SOURCE.md"));
+        try (java.util.stream.Stream<Path> old = Files.list(cfg.out())) {
+            for (Path p : old.filter(p -> p.getFileName().toString().matches("schema.*\\.svg")).toList()) Files.delete(p);
+        }
 
         GenContext ctx = new GenContext(cfg, schema, dataset.gzipHeader());
         try {
-            return run(dataset, cfg, schema, inputs, ctx, plan(dataset.modules(), cfg));
+            return run(dataset, cfg, schema, inputs, ctx, plan(dataset.modules(), cfg), pictures);
         } finally {
             ctx.integrity().close();
         }
     }
 
+    /**
+     * Картинки схемы из {@code <код>/schema/} репозитория: имя → байты SVG. Каждая из {@link SchemaDot#pictures} должна
+     * быть и нести отметку sha256 того DOT, который генератор пишет сейчас ({@link SchemaDot#svgMarker}).
+     */
+    static Map<String, byte[]> pictures(Dataset dataset, Schema schema) throws IOException {
+        Path dir = Cli.dataDir(dataset).resolve("schema");
+        Map<String, String> dots = SchemaDot.files(schema);
+        Map<String, byte[]> out = new LinkedHashMap<>();
+        List<String> bad = new ArrayList<>();
+        for (Map.Entry<String, String> d : dots.entrySet()) {
+            String svg = SchemaDot.svgName(d.getKey());
+            Path p = dir.resolve(svg);
+            if (!Files.isRegularFile(p)) {
+                bad.add(svg + " — нет файла");
+                continue;
+            }
+            byte[] bytes = Files.readAllBytes(p);
+            String sha = SchemaDot.markedSha256(new String(bytes, StandardCharsets.UTF_8));
+            if (!SchemaDot.sha256(d.getValue()).equals(sha)) {
+                bad.add(svg + (sha == null ? " — нет отметки sha256 DOT" : " — нарисована из другого DOT (схема изменилась)"));
+                continue;
+            }
+            out.put(svg, bytes);
+        }
+        if (!bad.isEmpty()) {
+            throw new IllegalStateException("картинки схемы в " + dir + ": " + String.join("; ", bad) + ". Перерисуй: "
+                    + "./build.sh " + dataset.code() + " exec schema && tools/schema-svg.sh " + dataset.code());
+        }
+        return out;
+    }
+
     private static Result run(Dataset dataset, Config cfg, Schema schema, List<Map<String, Object>> inputs,
-                              GenContext ctx, List<Module> plan) throws IOException {
+                              GenContext ctx, List<Module> plan, Map<String, byte[]> pictures) throws IOException {
         Docs docs = dataset.docs();
         ctx.log("выпуск " + cfg.datasetVersion() + ", профиль " + cfg.profile().code() + ", seed " + cfg.seed()
                 + ", модули " + plan.stream().map(Module::name).toList());
@@ -147,6 +187,7 @@ public final class Release {
         write(cfg.out().resolve("schema-tables.sql"), SchemaExport.tablesSql(schema));
         write(cfg.out().resolve("schema-constraints.sql"), SchemaExport.constraintsSql(schema));
         write(cfg.out().resolve("schema.mmd"), SchemaExport.mermaid(schema));
+        for (Map.Entry<String, byte[]> p : pictures.entrySet()) Files.write(cfg.out().resolve(p.getKey()), p.getValue());
         List<String> present = new ArrayList<>();
         for (GzipTsvFile.Info f : files) present.add(f.name().substring(0, f.name().length() - ".tsv.gz".length()));
         write(cfg.out().resolve("load-postgres.psql"), SchemaExport.loaderPsql(schema, present));

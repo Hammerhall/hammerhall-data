@@ -3,6 +3,7 @@ package io.hammerhall.data.air;
 import io.hammerhall.data.air.dump.PgValues;
 import io.hammerhall.data.core.gen.Release;
 import io.hammerhall.data.core.schema.Schema;
+import io.hammerhall.data.core.schema.SchemaDot;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -14,8 +15,8 @@ import java.util.Map;
 /**
  * SOURCE.md и LICENSE выпуска — SOURCE.md тот же, что у прежней сборки на Python (из манифеста), с двумя
  * поправками: про время — как на самом деле ({@link PgValues#ROUNDING}); про аэропорты — без списка; плюс абзац о
- * профиле и о схеме. Числа форматируются как у Python ({@code {:.1f}}, {@code round(…, 1)} — от точного значения
- * {@code double}, половина — к чётному).
+ * профиле и о схеме (картинка схемы — {@link SchemaDot#sourceMd}). Числа форматируются как у Python
+ * ({@code {:.1f}}, {@code round(…, 1)} — от точного значения {@code double}, половина — к чётному).
  */
 public final class AirDocs implements Release.Docs {
     static final String[] MONTHS = {"янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"};
@@ -157,10 +158,18 @@ public final class AirDocs implements Release.Docs {
                 равна сумме цен её сегментов. Контрольные суммы — в `manifest.json` (`sha256` — сжатого файла,
                 `sha256_tsv` — содержимого).
 
-                ## Схема и загрузка в Postgres
+                ## Схема
+
+                """);
+        sb.append(SchemaDot.sourceMd(schema));
+        sb.append("""
 
                 Таблицы — `schema-tables.sql`, ключи, связи, проверки и индексы — `schema-constraints.sql` (после
-                загрузки), ER-диаграмма — `schema.mmd` (Mermaid). Из папки выпуска:
+                загрузки), ER-диаграмма — `schema.mmd` (Mermaid).
+
+                ## Загрузка в Postgres
+
+                Из папки выпуска:
                 `psql -v ON_ERROR_STOP=1 -d БАЗА -f schema-tables.sql -f load-postgres.psql -f schema-constraints.sql`
                 (моменты переводятся `to_timestamp`).
                 """);

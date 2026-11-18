@@ -282,6 +282,38 @@
   {
    "name": "load-postgres.psql",
    "sha256": "454e53a6b756fa6f4f840e024bb60dcb26bf6cc0eafef6407e0a6a72cc888970"
+  },
+  {
+   "name": "schema.svg",
+   "sha256": "1c6113e2a2587e0aba783ddd38d4912e1269ad59b9115f3ac9bc7b870e97ab2d"
+  },
+  {
+   "name": "schema-catalog.svg",
+   "sha256": "0b47b6fb83623bfbd6c40e2230c541862206add095d3b308adb75cebd20e2ab8"
+  },
+  {
+   "name": "schema-geo.svg",
+   "sha256": "4e417f5917bb25f29801564e018bc33ec150becdc7448ce36df99d17b7b92c15"
+  },
+  {
+   "name": "schema-supply.svg",
+   "sha256": "3aff0b091cf762a8f3b8a2927b998b812d026b7489b26d61354582a6af645baf"
+  },
+  {
+   "name": "schema-market.svg",
+   "sha256": "121868054f312c9d9b96928b1f5d5cf2481e8fb31e57d11003a4e1fe6d07c308"
+  },
+  {
+   "name": "schema-customers.svg",
+   "sha256": "1899fac69f8f4fbaf73e96d7bf781a92f64795f631875daa359b5eb95af39827"
+  },
+  {
+   "name": "schema-orders.svg",
+   "sha256": "4b8305bb7d72dc1fe5b06a10141c88bff07311235eeec30de4b9d77a82a9d889"
+  },
+  {
+   "name": "schema-site.svg",
+   "sha256": "7f0225b24bafd5841801e85f639fe9d8de3dfd51a9737bcee1ef2fcaabb9e5cf"
   }
  ],
  "reference_only": [

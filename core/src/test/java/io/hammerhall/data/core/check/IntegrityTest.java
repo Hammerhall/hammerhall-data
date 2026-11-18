@@ -31,25 +31,29 @@ class IntegrityTest {
 
     static Schema schema() {
         Schema s = new Schema("t", "test-v1").group("g", "Тест");
-        s.add(Table.of("parent", "g", "Цель").col("id", INT, "id").pk("id"));
-        s.add(Table.of("child", "g", "Ссылки").col("id", INT, "id").col("parent_id", INT, "на цель").ref("parent").pk("id"));
-        s.add(Table.of("events", "g", "Порядок не по ключу, ключ — целый")
+        s.add(Table.of("parent", "g", "Цель").title("Цели").col("id", INT, "id").pk("id"));
+        s.add(Table.of("child", "g", "Ссылки").title("Ссылки").col("id", INT, "id").col("parent_id", INT, "на цель")
+                .ref("parent").pk("id"));
+        s.add(Table.of("events", "g", "Порядок не по ключу, ключ — целый").title("События")
                 .col("id", INT, "id").col("at", MOMENT, "момент").pk("id").orderBy("at", "id"));
-        s.add(Table.of("codes", "g", "Порядок не по ключу, ключ — текст")
+        s.add(Table.of("codes", "g", "Порядок не по ключу, ключ — текст").title("Коды")
                 .col("code", TEXT, "код").col("at", MOMENT, "момент").pk("code").orderBy("at"));
-        s.add(Table.of("grouped", "g", "Порядок — с части ключа")
+        s.add(Table.of("grouped", "g", "Порядок — с части ключа").title("Группы")
                 .col("a", INT, "a").col("b", INT, "b").col("c", INT, "c").pk("a", "b").orderBy("a", "c"));
-        s.add(Table.of("mono", "g", "Порядок — ключ и ещё поле")
+        s.add(Table.of("mono", "g", "Порядок — ключ и ещё поле").title("Пары")
                 .col("a", INT, "a").col("b", INT, "b").pk("a").orderBy("a", "b"));
-        s.add(Table.of("uniq", "g", "UNIQUE")
+        s.add(Table.of("uniq", "g", "UNIQUE").title("Уникальные")
                 .col("id", INT, "id").col("code", TEXT, "код").nullable().col("x", INT, "x").col("y", INT, "y")
                 .pk("id").unique("code").unique("x", "y"));
-        s.add(Table.of("items", "g", "Составной ключ").col("order_id", INT, "заказ").col("line_no", INT, "строка")
+        s.add(Table.of("items", "g", "Составной ключ").title("Строки").col("order_id", INT, "заказ")
+                .col("line_no", INT, "строка")
                 .pk("order_id", "line_no"));
-        s.add(Table.of("returns", "g", "Составная ссылка").col("id", INT, "id").col("order_id", INT, "заказ")
+        s.add(Table.of("returns", "g", "Составная ссылка").title("Возвраты").col("id", INT, "id")
+                .col("order_id", INT, "заказ")
                 .col("line_no", INT, "строка").pk("id").fk(List.of("order_id", "line_no"), "items"));
-        s.add(Table.of("keys", "g", "Текстовый ключ").col("key", TEXT, "ключ").pk("key"));
-        s.add(Table.of("specs", "g", "Ссылка на текст").col("id", INT, "id").col("key", TEXT, "ключ").ref("keys").pk("id"));
+        s.add(Table.of("keys", "g", "Текстовый ключ").title("Ключи").col("key", TEXT, "ключ").pk("key"));
+        s.add(Table.of("specs", "g", "Ссылка на текст").title("Свойства").col("id", INT, "id").col("key", TEXT, "ключ")
+                .ref("keys").pk("id"));
         assertEquals(List.of(), s.validate());
         return s;
     }

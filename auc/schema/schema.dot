@@ -1,0 +1,112 @@
+// auc-data-v1 — карта схемы: таблицы по группам без полей, связи между таблицами (одна на пару; в справочные группы — не рисуются).
+// Сгенерировано из описания схемы; руками не править. Картинка (SVG): tools/schema-svg.sh auc.
+digraph schema {
+  graph [rankdir=LR, fontname="DejaVu Sans", fontsize=13, nodesep=0.35, ranksep=0.9, pad=0.3, splines=true, newrank=true];
+  node [shape=plain, fontname="DejaVu Sans", fontsize=11];
+  edge [dir=both, arrowtail=none, arrowhead=crow, arrowsize=0.9, color="#333333"];
+  subgraph "cluster_house" {
+    label=<<B>Дом и правила</B><BR/><FONT POINT-SIZE="10">справочник: связи с ним — на картинках групп</FONT>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "departments" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>departments</B><BR/>Отделы</TD></TR></TABLE>>];
+    "categories" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>categories</B><BR/>Категории</TD></TR></TABLE>>];
+    "cities" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>cities</B><BR/>Города</TD></TR></TABLE>>];
+    "offices" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>offices</B><BR/>Офисы</TD></TR></TABLE>>];
+    "staff" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>staff</B><BR/>Сотрудники</TD></TR></TABLE>>];
+    "increment_bands" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>increment_bands</B><BR/>Шаги ставки</TD></TR></TABLE>>];
+    "fee_schedules" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>fee_schedules</B><BR/>Шкалы и сборы</TD></TR></TABLE>>];
+    "fee_tiers" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>fee_tiers</B><BR/>Ступени шкал</TD></TR></TABLE>>];
+  }
+  subgraph "cluster_catalog" {
+    label=<<B>Мастера и вещи</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "makers" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>makers</B><BR/>Мастера</TD></TR></TABLE>>];
+    "items" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>items</B><BR/>Вещи</TD></TR></TABLE>>];
+    "provenance" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>provenance</B><BR/>Происхождение вещей</TD></TR></TABLE>>];
+    "consignments" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>consignments</B><BR/>Договоры комиссии</TD></TR></TABLE>>];
+    "consignment_items" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>consignment_items</B><BR/>Вещи в договорах</TD></TR></TABLE>>];
+  }
+  subgraph "cluster_clients" {
+    label=<<B>Клиенты</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "clients" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>clients</B><BR/>Клиенты</TD></TR></TABLE>>];
+  }
+  subgraph "cluster_auction" {
+    label=<<B>Торги</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "sales" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>sales</B><BR/>Торги</TD></TR></TABLE>>];
+    "sale_sessions" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>sale_sessions</B><BR/>Сессии торгов</TD></TR></TABLE>>];
+    "lots" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>lots</B><BR/>Лоты</TD></TR></TABLE>>];
+    "registrations" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>registrations</B><BR/>Регистрации</TD></TR></TABLE>>];
+    "bid_orders" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>bid_orders</B><BR/>Поручения</TD></TR></TABLE>>];
+    "bids" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>bids</B><BR/>Ставки</TD></TR></TABLE>>];
+    "lot_events" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>lot_events</B><BR/>События лотов</TD></TR></TABLE>>];
+    "item_status_log" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>item_status_log</B><BR/>Статусы вещей</TD></TR></TABLE>>];
+  }
+  subgraph "cluster_money" {
+    label=<<B>Деньги</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "invoices" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>invoices</B><BR/>Счета</TD></TR></TABLE>>];
+    "invoice_lines" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>invoice_lines</B><BR/>Строки счетов</TD></TR></TABLE>>];
+    "payments" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>payments</B><BR/>Платежи</TD></TR></TABLE>>];
+    "settlements" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>settlements</B><BR/>Отчёты комитентам</TD></TR></TABLE>>];
+    "settlement_lines" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>settlement_lines</B><BR/>Строки отчётов</TD></TR></TABLE>>];
+  }
+  subgraph "cluster_site" {
+    label=<<B>Сайт и уведомления</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "watchlist" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>watchlist</B><BR/>Наблюдения за лотами</TD></TR></TABLE>>];
+    "sessions" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>sessions</B><BR/>Визиты</TD></TR></TABLE>>];
+    "session_events" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>session_events</B><BR/>События визитов</TD></TR></TABLE>>];
+    "notifications" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>notifications</B><BR/>Уведомления</TD></TR></TABLE>>];
+  }
+  "clients" -> "items";
+  "makers" -> "items" [style=dashed];
+  "items" -> "provenance";
+  "clients" -> "consignments";
+  "consignments" -> "consignment_items";
+  "items" -> "consignment_items";
+  "sales" -> "sale_sessions";
+  "sales" -> "lots";
+  "items" -> "lots";
+  "consignments" -> "lots";
+  "bids" -> "lots" [style=dashed];
+  "registrations" -> "lots" [style=dashed];
+  "sale_sessions" -> "lots" [style=dashed];
+  "sales" -> "registrations";
+  "clients" -> "registrations";
+  "lots" -> "bid_orders";
+  "registrations" -> "bid_orders";
+  "lots" -> "bids";
+  "registrations" -> "bids" [style=dashed];
+  "bid_orders" -> "bids" [style=dashed];
+  "lots" -> "lot_events";
+  "bids" -> "lot_events" [style=dashed];
+  "items" -> "item_status_log";
+  "lots" -> "item_status_log" [style=dashed];
+  "consignments" -> "item_status_log" [style=dashed];
+  "sales" -> "invoices";
+  "registrations" -> "invoices";
+  "clients" -> "invoices";
+  "invoices" -> "invoice_lines";
+  "lots" -> "invoice_lines";
+  "clients" -> "payments";
+  "invoices" -> "payments" [style=dashed];
+  "registrations" -> "payments" [style=dashed];
+  "settlements" -> "payments" [style=dashed];
+  "sales" -> "settlements";
+  "clients" -> "settlements";
+  "settlements" -> "settlement_lines";
+  "lots" -> "settlement_lines";
+  "clients" -> "watchlist";
+  "lots" -> "watchlist";
+  "clients" -> "sessions" [style=dashed];
+  "sessions" -> "session_events";
+  "sales" -> "session_events" [style=dashed];
+  "lots" -> "session_events" [style=dashed];
+  "bids" -> "session_events" [style=dashed];
+  "bid_orders" -> "session_events" [style=dashed];
+  "clients" -> "notifications";
+  "sales" -> "notifications" [style=dashed];
+  "lots" -> "notifications" [style=dashed];
+  "invoices" -> "notifications" [style=dashed];
+}

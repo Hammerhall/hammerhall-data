@@ -3,6 +3,7 @@ package io.hammerhall.data.core.gen;
 import io.hammerhall.data.core.check.PublicNames;
 import io.hammerhall.data.core.io.Json;
 import io.hammerhall.data.core.schema.Schema;
+import io.hammerhall.data.core.schema.SchemaDot;
 import io.hammerhall.data.core.schema.SchemaExport;
 import io.hammerhall.data.core.time.Period;
 
@@ -32,7 +33,8 @@ import java.util.zip.GZIPInputStream;
  * <pre>
  *   generate --profile small|medium|full --seed N --out DIR [--ВХОД ПУТЬ …]
  *            [--modules a,b] [--to YYYY-MM-DD] [--gzip 1..9, по умолчанию — у набора, обычно 6] [--inputs strict]
- *   schema   [--out DIR]               DDL (две части), ER-диаграмма Mermaid, поля — без данных (по умолчанию — &lt;код&gt;/schema)
+ *   schema   [--out DIR]               DDL (две части), ER-диаграмма Mermaid, поля, картинки схемы в DOT — без данных
+ *                                      (по умолчанию — &lt;код&gt;/schema; SVG из DOT — tools/schema-svg.sh &lt;код&gt;)
  *   verify   DIR                       сверить файлы выпуска с manifest.json (строки, sha256 сжатого и разжатого)
  *   freeze   DIR [--out FILE]          файл ожиданий из готового выпуска (по умолчанию &lt;код&gt;/expected/ВЕРСИЯ-ПРОФИЛЬ.json)
  *   check    DIR [--expected FILE] [--aggregates no]   проверить выпуск против ожиданий (как tools/check_data.py)
@@ -79,7 +81,7 @@ public final class Cli {
                 return 0;
             }
             case "verify" -> {
-                return verify(need(dir)) ? 0 : 1;
+                return verify(d, need(dir)) ? 0 : 1;
             }
             case "freeze" -> {
                 freeze(d, need(dir), opt.get("out"));
@@ -209,26 +211,55 @@ public final class Cli {
         return Expected.check(dir, Expected.read(exp), System.out, aggregates);
     }
 
-    /** Файлы схемы, которые пишет {@link #schema} (и которые лежат в git в {@code <код>/schema/}). */
+    /**
+     * Текстовые файлы схемы, которые пишет {@link #schema} (и которые лежат в git в {@code <код>/schema/}); к ним —
+     * картинки схемы в DOT ({@link SchemaDot#files}).
+     */
     public static final List<String> SCHEMA_FILES = List.of("schema-tables.sql", "schema-constraints.sql", "schema.mmd",
             "schema-fields.md");
 
-    /** Тексты схемы по {@link #SCHEMA_FILES}. */
-    public static List<String> schemaTexts(Schema s) {
+    /** Файлы схемы: имя → текст — {@link #SCHEMA_FILES}, затем DOT картинок схемы. */
+    public static Map<String, String> schemaTexts(Schema s) {
         List<String> errors = s.validate();
         if (!errors.isEmpty()) throw new IllegalStateException("описание схемы: " + errors);
-        return List.of(SchemaExport.tablesSql(s), SchemaExport.constraintsSql(s), SchemaExport.mermaid(s),
-                "# " + s.version() + " — поля\n" + SchemaExport.fieldsMarkdown(s));
+        Map<String, String> out = new LinkedHashMap<>();
+        out.put(SCHEMA_FILES.get(0), SchemaExport.tablesSql(s));
+        out.put(SCHEMA_FILES.get(1), SchemaExport.constraintsSql(s));
+        out.put(SCHEMA_FILES.get(2), SchemaExport.mermaid(s));
+        out.put(SCHEMA_FILES.get(3), "# " + s.version() + " — поля\n" + SchemaExport.fieldsMarkdown(s));
+        out.putAll(SchemaDot.files(s));
+        return out;
+    }
+
+    /** DOT картинок в папке схемы ({@code schema*.dot}), по имени. */
+    public static List<Path> dotFiles(Path dir) throws IOException {
+        if (!Files.isDirectory(dir)) return List.of();
+        try (java.util.stream.Stream<Path> st = Files.list(dir)) {
+            return st.filter(p -> {
+                String n = p.getFileName().toString();
+                return n.startsWith("schema") && n.endsWith(".dot");
+            }).sorted().toList();
+        }
     }
 
     static void schema(Dataset d, Path out) throws IOException {
         Schema s = d.schema();
-        List<String> texts = schemaTexts(s);
+        Map<String, String> texts = schemaTexts(s);
         Files.createDirectories(out);
-        for (int i = 0; i < SCHEMA_FILES.size(); i++) {
-            Files.writeString(out.resolve(SCHEMA_FILES.get(i)), texts.get(i), StandardCharsets.UTF_8);
+        // картинки, которых генератор больше не пишет (группу переименовали, схема стала меньше), — вместе с их SVG
+        for (Path old : dotFiles(out)) {
+            String n = old.getFileName().toString();
+            if (texts.containsKey(n)) continue;
+            Files.delete(old);
+            Files.deleteIfExists(out.resolve(SchemaDot.svgName(n)));
+            System.out.println("удалена картинка схемы, которой больше нет: " + n);
         }
-        System.out.println("схема: " + s.tables().size() + " таблиц → " + out);
+        for (Map.Entry<String, String> e : texts.entrySet()) {
+            Files.writeString(out.resolve(e.getKey()), e.getValue(), StandardCharsets.UTF_8);
+        }
+        int dots = texts.size() - SCHEMA_FILES.size();
+        System.out.println("схема: " + s.tables().size() + " таблиц, картинок " + dots + " → " + out
+                + (dots > 0 ? "; SVG из DOT: tools/schema-svg.sh " + d.code() : ""));
     }
 
     /**
@@ -259,8 +290,9 @@ public final class Cli {
         return s.clean() && s.files() > 0;
     }
 
+    /** Файлы выпуска против {@code manifest.json}; тексты (с картинками схемы набора) — есть ли. */
     @SuppressWarnings("unchecked")
-    static boolean verify(Path dir) throws IOException {
+    public static boolean verify(Dataset d, Path dir) throws IOException {
         Map<String, Object> m = (Map<String, Object>) Json.parse(Files.readString(dir.resolve("manifest.json"), StandardCharsets.UTF_8));
         boolean ok = true;
         for (Map<String, Object> f : (List<Map<String, Object>>) m.get("files")) {
@@ -283,8 +315,9 @@ public final class Cli {
             ok &= good;
             System.out.println((good ? "OK   " : "НЕТ  ") + f.get("name") + " " + (lines - 1) + " строк");
         }
-        for (String extra : List.of("LICENSE", "SOURCE.md", "schema-tables.sql", "schema-constraints.sql", "schema.mmd",
-                "load-postgres.psql")) {
+        List<String> extras = new ArrayList<>(Expected.texts(d.schema()));
+        extras.add(1, "SOURCE.md");
+        for (String extra : extras) {
             boolean present = Files.exists(dir.resolve(extra));
             ok &= present;
             System.out.println((present ? "OK   " : "НЕТ  ") + extra);

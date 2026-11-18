@@ -283,6 +283,34 @@
   {
    "name": "load-postgres.psql",
    "sha256": "f7c3a0e7fe2fe80b9b485d9791c219f79bea6686873e4ffa41164482030c6cb8"
+  },
+  {
+   "name": "schema.svg",
+   "sha256": "98d86267cd21412d1956d39c853521b1f1c6227962cfba87cf8293f2b6540808"
+  },
+  {
+   "name": "schema-house.svg",
+   "sha256": "62fed95ae89af45d13f0ee5911af6984fb24811a0e7a749436df9375899e5b29"
+  },
+  {
+   "name": "schema-catalog.svg",
+   "sha256": "94115729c4904f72b6d5618f8749333742866daad1e7ff6ea0d92dfad854fb1e"
+  },
+  {
+   "name": "schema-clients.svg",
+   "sha256": "5f0399e47e62e8f48ba526e422a055e5a974633b54684cc854aba5d0abfbec12"
+  },
+  {
+   "name": "schema-auction.svg",
+   "sha256": "5d2c207404a47debda92ae5f845e7a501cee5e6a3dfcfe64241198c9f970dfb1"
+  },
+  {
+   "name": "schema-money.svg",
+   "sha256": "140b6e1adf0f8e0c17226a4a1b3a9e3d227ac7823478f3948bcbabdc70e0b12c"
+  },
+  {
+   "name": "schema-site.svg",
+   "sha256": "18531a8cbb402b752c31ed7a8fc24d0406a507274022510a2f07e3bc6a8543fd"
   }
  ],
  "reference_only": [

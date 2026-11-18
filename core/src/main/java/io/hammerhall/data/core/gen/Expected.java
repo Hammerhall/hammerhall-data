@@ -4,6 +4,7 @@ import io.hammerhall.data.core.check.Aggregate;
 import io.hammerhall.data.core.check.Aggregates;
 import io.hammerhall.data.core.io.Json;
 import io.hammerhall.data.core.schema.Schema;
+import io.hammerhall.data.core.schema.SchemaDot;
 import io.hammerhall.data.core.schema.Table;
 
 import java.io.IOException;
@@ -30,7 +31,7 @@ import java.util.Set;
  * <p><b>Тождество выпуска</b> — содержимое, от сборки zlib не зависит:
  * <ul>
  *   <li>у каждой таблицы — число строк и {@code sha256_tsv} (sha256 разжатого TSV);</li>
- *   <li>sha256 текстов выпуска, которые пишутся без сжатия ({@link #TEXTS});</li>
+ *   <li>sha256 текстов выпуска, которые пишутся без сжатия ({@link #texts}: {@link #TEXTS} и картинки схемы);</li>
  *   <li>поля {@code manifest.json}, кроме списка файлов: версия, генератор, seed, профиль, период, модули, входы, формат;</li>
  *   <li>контрольные агрегаты таблиц ({@link Aggregate}) — не добавляют строгости к sha256, но показывают, <i>что</i>
  *       разошлось.</li>
@@ -41,13 +42,23 @@ import java.util.Set;
  * скачивания, а не тождества.
  */
 public final class Expected {
-    /** Тексты выпуска без сжатия — входят в тождество. */
+    /** Тексты выпуска без сжатия, общие для всех наборов, — входят в тождество; к ним — картинки схемы ({@link #texts}). */
     public static final List<String> TEXTS = List.of("LICENSE", "schema-tables.sql", "schema-constraints.sql", "schema.mmd",
             "load-postgres.psql");
     /** Файлы выпуска, которые зависят от байтов gzip, — справочно. */
     public static final List<String> REFERENCE_ONLY = List.of("manifest.json", "SOURCE.md");
 
     private Expected() {
+    }
+
+    /**
+     * Тексты выпуска набора: {@link #TEXTS} и картинки схемы ({@code schema.svg}, {@code schema-<группа>.svg} —
+     * {@link SchemaDot#pictures}); их сборка выпуска берёт из {@code <код>/schema/} репозитория как есть.
+     */
+    public static List<String> texts(Schema schema) {
+        List<String> out = new ArrayList<>(TEXTS);
+        out.addAll(SchemaDot.pictures(schema));
+        return out;
     }
 
     @SuppressWarnings("unchecked")
@@ -114,7 +125,7 @@ public final class Expected {
             for (int i = 0; i < specs.size(); i++) aggs.add(specs.get(i).toJson(st.values().get(i)));
             log.println("  " + name + ": " + st.rows() + " строк, агрегатов " + specs.size());
         }
-        for (String n : TEXTS) {
+        for (String n : texts(schema)) {
             Map<String, Object> e = new LinkedHashMap<>();
             e.put("name", n);
             e.put("sha256", sha256(dir.resolve(n)));

@@ -80,10 +80,12 @@ class PublicNamesTest {
     @Test
     void verbatimColumnsSkipOnlyTheirValues(@TempDir Path dir) throws IOException {
         Schema schema = new Schema("t", "t-data-v1").group("g", "Группа")
-                .add(Table.of("places", "g", "Места").col("code", ColType.TEXT, "Код").source("ext").verbatimSource()
+                .add(Table.of("places", "g", "Места").title("Места")
+                        .col("code", ColType.TEXT, "Код").source("ext").verbatimSource()
                         .col("name", ColType.TEXT, "Название").source("ext").verbatimSource()
                         .col("note", ColType.TEXT, "Своё поле").pk("code"))
-                .add(Table.of("labels", "g", "Подписи").col("code", ColType.TEXT, "Код").source("ext").verbatimSource()
+                .add(Table.of("labels", "g", "Подписи").title("Подписи")
+                        .col("code", ColType.TEXT, "Код").source("ext").verbatimSource()
                         .col("qwex_name", ColType.TEXT, "Поле с подставным словом в имени").source("ext").verbatimSource()
                         .pk("code"));
         assertEquals(List.of(), schema.validate());
@@ -121,7 +123,7 @@ class PublicNamesTest {
                 "заголовок и тексты выпуска проверяются всегда");
 
         Schema bad = new Schema("t", "t-data-v1").group("g", "Группа")
-                .add(Table.of("x", "g", "X").col("code", ColType.TEXT, "Код").verbatimSource().pk("code"));
+                .add(Table.of("x", "g", "X").title("X").col("code", ColType.TEXT, "Код").verbatimSource().pk("code"));
         assertTrue(bad.validate().getFirst().contains("verbatimSource без source"), bad.validate().toString());
     }
 }

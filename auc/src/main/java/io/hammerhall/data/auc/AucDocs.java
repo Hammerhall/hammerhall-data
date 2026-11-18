@@ -6,6 +6,7 @@ import io.hammerhall.data.auc.money.MoneyDocs;
 import io.hammerhall.data.auc.site.SiteDocs;
 import io.hammerhall.data.core.gen.Release;
 import io.hammerhall.data.core.schema.Schema;
+import io.hammerhall.data.core.schema.SchemaDot;
 import io.hammerhall.data.core.schema.SchemaExport;
 
 import java.util.ArrayList;
@@ -113,6 +114,7 @@ public final class AucDocs implements Release.Docs {
                 .append("Города — таблица `cities` выпуска `sto-data-v1` (MIT) как есть, с теми же `id`: набор соединяется с ")
                 .append("набором магазина по городу. Сам `sto-data-v1` берёт города из `air-data-v1` (MIT, Copyright (c) 2025 ")
                 .append("Postgres Professional).\n\n");
+        sb.append("## Схема\n\n").append(SchemaDot.sourceMd(schema)).append('\n');
         for (String s : sections()) sb.append(s.strip()).append("\n\n");
         sb.append("## Поля\n").append(SchemaExport.fieldsMarkdown(schema));
         return sb.toString();

@@ -36,7 +36,9 @@ public final class StoSchema {
     public static Schema build() {
         Schema s = new Schema("sto", VERSION)
                 .group("catalog", "Каталог")
-                .group("geo", "География и склады")
+                // справочник: на города, склады и перевозчиков ссылаются почти все группы — на карте схемы эти связи
+                // не рисуются (они — на картинках групп)
+                .group("geo", "География и склады", true)
                 .group("supply", "Поставки и складские движения")
                 .group("market", "Маркетплейс")
                 .group("customers", "Клиенты")
@@ -44,7 +46,8 @@ public final class StoSchema {
                 .group("site", "Сайт и приложение");
 
         // ============================================================ каталог
-        s.add(Table.of("categories", "catalog", "Категории — дерево с одним корнем, до 6 уровней").rows("≈ 600")
+        s.add(Table.of("categories", "catalog", "Категории — дерево с одним корнем, до 6 уровней").title("Категории")
+                .rows("≈ 600")
                 .col("id", INT, "Категория")
                 .col("parent_id", INT, "Родительская категория; NULL — корень").nullable().ref("categories")
                 .col("level", SMALLINT, "Уровень: 1 — корень, 6 — самый глубокий")
@@ -52,7 +55,8 @@ public final class StoSchema {
                 .col("name_en", TEXT, "Название по-английски")
                 .pk("id").check("level", "level BETWEEN 1 AND 6"));
 
-        s.add(Table.of("spec_keys", "catalog", "Справочник характеристик товаров (ключи EAV)").rows("≈ 130")
+        s.add(Table.of("spec_keys", "catalog", "Справочник характеристик товаров (ключи EAV)").title("Характеристики")
+                .rows("≈ 130")
                 .col("key", TEXT, "Код характеристики")
                 .col("name_ru", TEXT, "Название по-русски")
                 .col("name_en", TEXT, "Название по-английски")
@@ -60,7 +64,7 @@ public final class StoSchema {
                 .col("value_type", TEXT, "Тип значения").values("num", "text")
                 .pk("key"));
 
-        s.add(Table.of("brands", "catalog", "Бренды — все выдуманные").rows("≈ 150")
+        s.add(Table.of("brands", "catalog", "Бренды — все выдуманные").title("Бренды").rows("≈ 150")
                 .col("id", INT, "Бренд")
                 .col("name", TEXT, "Название (латиницей)")
                 .col("origin_country", TEXT, "Страна бренда, код ISO 3166-1 alpha-2")
@@ -69,7 +73,7 @@ public final class StoSchema {
                 .pk("id").unique("name"));
 
         s.add(Table.of("products", "catalog", "Товары: модели, их поколения и варианты; комплекты — тоже товары")
-                .rows("≈ 50 тыс.")
+                .title("Товары").rows("≈ 50 тыс.")
                 .col("id", INT, "Товар")
                 .col("sku", TEXT, "Артикул магазина")
                 .col("ean13", TEXT, "Штрихкод EAN-13 (у комплектов — внутренний, префикс 2)")
@@ -92,7 +96,7 @@ public final class StoSchema {
                 .check("ean13_format", "ean13 ~ '^[0-9]{13}$'"));
 
         s.add(Table.of("product_specs", "catalog", "Характеристики товаров (EAV): одно значение — текст или число")
-                .rows("≈ 500 тыс.")
+                .title("Значения характеристик").rows("≈ 500 тыс.")
                 .col("product_id", INT, "Товар").ref("products")
                 .col("key", TEXT, "Характеристика").ref("spec_keys")
                 .col("value_text", TEXT, "Текстовое значение").nullable()
@@ -102,7 +106,7 @@ public final class StoSchema {
                 .check("one_value", "(value_text IS NULL) <> (value_num IS NULL)"));
 
         s.add(Table.of("bundle_items", "catalog", "Состав комплектов; комплект может входить в комплект (DAG без циклов)")
-                .rows("≈ 8 тыс.")
+                .title("Состав комплектов").rows("≈ 8 тыс.")
                 .col("bundle_id", INT, "Комплект").ref("products")
                 .col("component_id", INT, "Составная часть — товар или комплект").ref("products")
                 .col("qty", SMALLINT, "Штук в комплекте")
@@ -111,7 +115,7 @@ public final class StoSchema {
 
         s.add(Table.of("prices", "catalog",
                         "История розничных цен магазина: периоды [valid_from, valid_to) без разрывов и наложений")
-                .rows("≈ 1,5 млн")
+                .title("Цены").rows("≈ 1,5 млн")
                 .col("product_id", INT, "Товар").ref("products")
                 .col("valid_from", MOMENT, "Цена действует с (включительно)")
                 .col("valid_to", MOMENT, "Цена действует по (исключая); NULL — без конца в периоде").nullable()
@@ -120,7 +124,7 @@ public final class StoSchema {
                 .check("period", "valid_to IS NULL OR valid_to > valid_from").check("price", "price > 0"));
 
         s.add(Table.of("promotions", "catalog", "Акции: скидки, промокоды, «n+m», комплекты; периоды пересекаются")
-                .rows("≈ 3 тыс.")
+                .title("Акции").rows("≈ 3 тыс.")
                 .col("id", INT, "Акция")
                 .col("kind", TEXT, "Механика").values("percent", "amount", "n_plus_m", "bundle", "promocode")
                 .col("name_ru", TEXT, "Название по-русски")
@@ -141,7 +145,7 @@ public final class StoSchema {
 
         s.add(Table.of("promotion_targets", "catalog",
                         "На что действует акция: товар или категория (с поддеревом); у акции без строк — весь заказ")
-                .rows("≈ 200 тыс.")
+                .title("Цели акций").rows("≈ 200 тыс.")
                 .col("promo_id", INT, "Акция").ref("promotions")
                 .col("seq", INT, "Номер цели в акции: 1, 2, …")
                 .col("product_id", INT, "Товар").nullable().ref("products")
@@ -150,7 +154,7 @@ public final class StoSchema {
                 .check("one_target", "(product_id IS NULL) <> (category_id IS NULL)"));
 
         // ============================================================ география и склады
-        s.add(Table.of("cities", "geo", "Города — российские города аэропортов air-data-v1").rows("149")
+        s.add(Table.of("cities", "geo", "Города — российские города аэропортов air-data-v1").title("Города").rows("149")
                 .col("id", INT, "Город")
                 .col("name_ru", TEXT, "Название по-русски").source("air-data-v1 airports.city_ru")
                 .col("name_en", TEXT, "Название по-английски (опечатки источника исправлены)").source("air-data-v1 airports.city_en")
@@ -166,7 +170,8 @@ public final class StoSchema {
                 .pk("id").unique("name_en"));
 
         s.add(Table.of("warehouses", "geo",
-                        "Склады и пункты выдачи — дерево: хаб → РЦ → городские склады → пункты выдачи").rows("≈ 3 тыс.")
+                        "Склады и пункты выдачи — дерево: хаб → РЦ → городские склады → пункты выдачи")
+                .title("Склады и пункты выдачи").rows("≈ 3 тыс.")
                 .col("id", INT, "Склад или пункт выдачи")
                 .col("parent_id", INT, "Кто снабжает; NULL — хаб").nullable().ref("warehouses")
                 .col("kind", TEXT, "Вид").values("hub", "dc", "warehouse", "pickup_point")
@@ -181,7 +186,8 @@ public final class StoSchema {
                 .pk("id").unique("code")
                 .check("dates", "closed_on IS NULL OR closed_on > opened_on"));
 
-        s.add(Table.of("storage_cells", "geo", "Ячейки хранения хаба, РЦ и городских складов").rows("≈ 290 тыс.")
+        s.add(Table.of("storage_cells", "geo", "Ячейки хранения хаба, РЦ и городских складов").title("Ячейки хранения")
+                .rows("≈ 290 тыс.")
                 .col("id", INT, "Ячейка")
                 .col("warehouse_id", INT, "Склад").ref("warehouses")
                 .col("zone", TEXT, "Зона хранения").values("pallet", "shelf", "mezzanine", "oversize", "returns")
@@ -193,7 +199,7 @@ public final class StoSchema {
                 .col("max_volume_l", INT, "Предельный объём, л")
                 .pk("id").unique("warehouse_id", "code"));
 
-        s.add(Table.of("carriers", "geo", "Перевозчики — все выдуманные").rows("8")
+        s.add(Table.of("carriers", "geo", "Перевозчики — все выдуманные").title("Перевозчики").rows("8")
                 .col("id", INT, "Перевозчик")
                 .col("name_ru", TEXT, "Название по-русски")
                 .col("name_en", TEXT, "Название по-английски")
@@ -203,7 +209,7 @@ public final class StoSchema {
 
         s.add(Table.of("delivery_zones", "geo",
                         "Зоны доставки: многоугольники вокруг склада по перевозчику; зоны одного склада и перевозчика не перекрываются")
-                .rows("≈ 1,5 тыс.")
+                .title("Зоны доставки").rows("≈ 1,5 тыс.")
                 .col("id", INT, "Зона")
                 .col("warehouse_id", INT, "Склад отгрузки").ref("warehouses")
                 .col("carrier_id", INT, "Перевозчик").ref("carriers")
@@ -213,7 +219,8 @@ public final class StoSchema {
                 .pk("id").index("warehouse_id", "carrier_id"));
 
         // ============================================================ поставки
-        s.add(Table.of("suppliers", "supply", "Поставщики магазина (1P) — все выдуманные").rows("≈ 300")
+        s.add(Table.of("suppliers", "supply", "Поставщики магазина (1P) — все выдуманные").title("Поставщики")
+                .rows("≈ 300")
                 .col("id", INT, "Поставщик")
                 .col("name_ru", TEXT, "Название по-русски")
                 .col("name_en", TEXT, "Название по-английски")
@@ -223,7 +230,7 @@ public final class StoSchema {
                 .col("reliability", DECIMAL, "Доля поставок в срок, 0–1").scale(4, 3)
                 .pk("id").unique("name_ru"));
 
-        s.add(Table.of("purchase_orders", "supply", "Заказы поставщикам").rows("≈ 60 тыс.")
+        s.add(Table.of("purchase_orders", "supply", "Заказы поставщикам").title("Заказы поставщикам").rows("≈ 60 тыс.")
                 .col("id", INT, "Заказ поставщику")
                 .col("supplier_id", INT, "Поставщик").ref("suppliers")
                 .col("warehouse_id", INT, "Склад приёмки (хаб или РЦ)").ref("warehouses")
@@ -238,7 +245,7 @@ public final class StoSchema {
 
         s.add(Table.of("batches", "supply",
                         "Партии товара на складах: закупка магазина (po_id) или поставка продавца FBO (seller_id)")
-                .rows("≈ 400 тыс.")
+                .title("Партии").rows("≈ 400 тыс.")
                 .col("id", INT, "Партия")
                 .col("po_id", INT, "Заказ поставщику; NULL — партия продавца").nullable().ref("purchase_orders")
                 .col("seller_id", INT, "Продавец FBO; NULL — партия магазина").nullable().ref("sellers")
@@ -252,7 +259,8 @@ public final class StoSchema {
                 .check("owner", "(po_id IS NULL) <> (seller_id IS NULL)").check("qty", "qty > 0")
                 .check("ordered_qty", "ordered_qty >= qty"));
 
-        s.add(Table.of("stock_movements", "supply", "Журнал складских движений: количество со знаком").rows("≈ 15 млн")
+        s.add(Table.of("stock_movements", "supply", "Журнал складских движений: количество со знаком")
+                .title("Складские движения").rows("≈ 15 млн")
                 .col("id", BIGINT, "Движение (по времени)")
                 .col("at", MOMENT, "Момент")
                 .col("warehouse_id", INT, "Склад или пункт выдачи").ref("warehouses")
@@ -268,7 +276,8 @@ public final class StoSchema {
                 .pk("id").index("product_id", "at").index("warehouse_id", "at"));
 
         // ============================================================ маркетплейс
-        s.add(Table.of("sellers", "market", "Продавцы маркетплейса (3P) — все выдуманные").rows("≈ 3 тыс.")
+        s.add(Table.of("sellers", "market", "Продавцы маркетплейса (3P) — все выдуманные").title("Продавцы")
+                .rows("≈ 3 тыс.")
                 .col("id", INT, "Продавец")
                 .col("name", TEXT, "Название магазина продавца")
                 .col("city_id", INT, "Город").ref("cities")
@@ -279,7 +288,8 @@ public final class StoSchema {
                         + "выручки, который снижается по годам; выше — 5 или 7 %)").values("osn", "usn")
                 .pk("id"));
 
-        s.add(Table.of("offers", "market", "Предложения продавцов: товар, цена, период").rows("≈ 150 тыс.")
+        s.add(Table.of("offers", "market", "Предложения продавцов: товар, цена, период").title("Предложения продавцов")
+                .rows("≈ 150 тыс.")
                 .col("id", INT, "Предложение")
                 .col("seller_id", INT, "Продавец").ref("sellers")
                 .col("product_id", INT, "Товар").ref("products")
@@ -289,7 +299,8 @@ public final class StoSchema {
                 .pk("id").index("product_id", "valid_from"));
 
         // ============================================================ клиенты
-        s.add(Table.of("customers", "customers", "Клиенты; имена и фамилии собраны генератором").rows("≈ 2 млн")
+        s.add(Table.of("customers", "customers", "Клиенты; имена и фамилии собраны генератором").title("Клиенты")
+                .rows("≈ 2 млн")
                 .col("id", INT, "Клиент")
                 .col("first_name", TEXT, "Имя")
                 .col("last_name", TEXT, "Фамилия")
@@ -303,7 +314,7 @@ public final class StoSchema {
                 .col("company_name", TEXT, "Название организации (b2b)").nullable()
                 .pk("id").index("registered_at"));
 
-        s.add(Table.of("addresses", "customers", "Адреса доставки клиентов").rows("≈ 2,5 млн")
+        s.add(Table.of("addresses", "customers", "Адреса доставки клиентов").title("Адреса").rows("≈ 2,5 млн")
                 .col("id", INT, "Адрес")
                 .col("customer_id", INT, "Клиент").ref("customers")
                 .col("city_id", INT, "Город").ref("cities")
@@ -314,7 +325,8 @@ public final class StoSchema {
                 .pk("id"));
 
         // ============================================================ заказы
-        s.add(Table.of("orders", "orders", "Заказы: воронка статусов с моментами, суммы").rows("≈ 5 млн")
+        s.add(Table.of("orders", "orders", "Заказы: воронка статусов с моментами, суммы").title("Заказы")
+                .rows("≈ 5 млн")
                 .col("id", INT, "Заказ (по времени создания)")
                 .col("customer_id", INT, "Клиент").ref("customers")
                 .col("address_id", INT, "Адрес курьерской или почтовой доставки").nullable().ref("addresses")
@@ -337,9 +349,11 @@ public final class StoSchema {
                 .col("delivery_amount", MONEY, "Доставка, руб.")
                 .col("vat_amount", MONEY, "НДС в итоге, руб.")
                 .col("total_amount", MONEY, "Итого к оплате, руб.")
-                .pk("id").index("created_at"));
+                .pk("id").index("created_at")
+                // введённый промокод — акция с этим кодом (UNIQUE, не ключ): связь только на картинке схемы
+                .link(java.util.List.of("promo_code"), "promotions", java.util.List.of("promo_code")));
 
-        s.add(Table.of("order_items", "orders", "Строки заказов").rows("≈ 12 млн")
+        s.add(Table.of("order_items", "orders", "Строки заказов").title("Строки заказов").rows("≈ 12 млн")
                 .col("order_id", INT, "Заказ").ref("orders")
                 .col("line_no", SMALLINT, "Номер строки: 1, 2, …")
                 .col("product_id", INT, "Товар").ref("products")
@@ -355,14 +369,15 @@ public final class StoSchema {
                 .pk("order_id", "line_no").check("qty", "qty > 0"));
 
         s.add(Table.of("order_status_log", "orders", "Журнал статусов заказов — все переходы, в том числе откаты")
-                .rows("≈ 20 млн")
+                .title("Статусы заказов").rows("≈ 20 млн")
                 .col("order_id", INT, "Заказ").ref("orders")
                 .col("seq", SMALLINT, "Номер перехода: 1, 2, …")
                 .col("at", MOMENT, "Момент")
                 .col("status", TEXT, "Новый статус").values(ORDER_STATUSES)
                 .pk("order_id", "seq").index("at"));
 
-        s.add(Table.of("payments", "orders", "Платежи по заказам, в том числе неуспешные и возвраты").rows("≈ 5,4 млн")
+        s.add(Table.of("payments", "orders", "Платежи по заказам, в том числе неуспешные и возвраты").title("Платежи")
+                .rows("≈ 5,4 млн")
                 .col("id", INT, "Платёж")
                 .col("order_id", INT, "Заказ").ref("orders")
                 .col("seq", SMALLINT, "Номер платежа в заказе")
@@ -374,7 +389,7 @@ public final class StoSchema {
                 .col("at", MOMENT, "Момент")
                 .pk("id").unique("order_id", "seq").index("at"));
 
-        s.add(Table.of("shipments", "orders", "Отгрузки заказов перевозчикам").rows("≈ 5,2 млн")
+        s.add(Table.of("shipments", "orders", "Отгрузки заказов перевозчикам").title("Отгрузки").rows("≈ 5,2 млн")
                 .col("id", INT, "Отгрузка")
                 .col("order_id", INT, "Заказ").ref("orders")
                 .col("warehouse_id", INT, "Склад отгрузки").ref("warehouses")
@@ -388,7 +403,7 @@ public final class StoSchema {
                 .col("boxes", SMALLINT, "Мест")
                 .pk("id"));
 
-        s.add(Table.of("returns", "orders", "Возвраты по строкам заказов").rows("≈ 0,5 млн")
+        s.add(Table.of("returns", "orders", "Возвраты по строкам заказов").title("Возвраты").rows("≈ 0,5 млн")
                 .col("id", INT, "Возврат")
                 .col("order_id", INT, "Заказ")
                 .col("line_no", SMALLINT, "Строка заказа")
@@ -402,7 +417,8 @@ public final class StoSchema {
                 .col("refund", MONEY, "Возвращено, руб.").nullable()
                 .pk("id").fk(java.util.List.of("order_id", "line_no"), "order_items"));
 
-        s.add(Table.of("reviews", "orders", "Отзывы о товарах; текст — из шаблонов фраз").rows("≈ 1,6 млн")
+        s.add(Table.of("reviews", "orders", "Отзывы о товарах; текст — из шаблонов фраз").title("Отзывы")
+                .rows("≈ 1,6 млн")
                 .col("id", INT, "Отзыв")
                 .col("order_id", INT, "Заказ").ref("orders")
                 .col("product_id", INT, "Товар").ref("products")
@@ -414,7 +430,8 @@ public final class StoSchema {
                 .pk("id").check("score", "score BETWEEN 1 AND 5"));
 
         // ============================================================ сайт
-        s.add(Table.of("sessions", "site", "Сессии сайта и приложения — посетителей, согласившихся на аналитику").rows("≈ 6 млн")
+        s.add(Table.of("sessions", "site", "Сессии сайта и приложения — посетителей, согласившихся на аналитику")
+                .title("Сессии").rows("≈ 6 млн")
                 .col("id", INT, "Сессия (по времени начала)")
                 .col("customer_id", INT, "Клиент; NULL — не вошёл").nullable().ref("customers")
                 .col("started_at", MOMENT, "Начало")
@@ -425,7 +442,8 @@ public final class StoSchema {
                 .col("city_id", INT, "Город по геолокации").nullable().ref("cities")
                 .pk("id").index("started_at"));
 
-        s.add(Table.of("session_events", "site", "События сессий: воронка от просмотра до оплаты").rows("≈ 12 млн")
+        s.add(Table.of("session_events", "site", "События сессий: воронка от просмотра до оплаты")
+                .title("События сессий").rows("≈ 12 млн")
                 .col("session_id", INT, "Сессия").ref("sessions")
                 .col("seq", INT, "Номер события в сессии")
                 .col("at", MOMENT, "Момент")

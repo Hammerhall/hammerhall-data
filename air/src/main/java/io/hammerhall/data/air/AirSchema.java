@@ -41,7 +41,8 @@ public final class AirSchema {
                 .group("network", "Сеть: аэропорты, самолёты, маршруты, рейсы")
                 .group("sales", "Продажи: брони, билеты, перелёты, посадочные талоны");
 
-        s.add(Table.of("airports", "network", "Аэропорты мира (в маршрутной сети — часть из них)").rows("≈ 5,5 тыс.")
+        s.add(Table.of("airports", "network", "Аэропорты мира (в маршрутной сети — часть из них)").title("Аэропорты")
+                .rows("≈ 5,5 тыс.")
                 .col("airport_code", TEXT, "Код аэропорта ИАТА").source(SRC).verbatimSource()
                 .col("name_en", TEXT, "Название по-английски").source(SRC).verbatimSource()
                 .col("name_ru", TEXT, "Название по-русски").source(SRC).verbatimSource()
@@ -54,7 +55,7 @@ public final class AirSchema {
                 .col("timezone", TEXT, "Часовой пояс (IANA)").source(SRC).verbatimSource()
                 .pk("airport_code"));
 
-        s.add(Table.of("airplanes", "network", "Модели самолётов парка").rows("10")
+        s.add(Table.of("airplanes", "network", "Модели самолётов парка").title("Самолёты").rows("10")
                 .col("airplane_code", TEXT, "Код модели ИАТА").source(SRC).verbatimSource()
                 .col("model_en", TEXT, "Модель по-английски").source(SRC).verbatimSource()
                 .col("model_ru", TEXT, "Модель по-русски").source(SRC).verbatimSource()
@@ -62,14 +63,14 @@ public final class AirSchema {
                 .col("speed_kmh", INT, "Крейсерская скорость, км/ч").source(SRC).verbatimSource()
                 .pk("airplane_code"));
 
-        s.add(Table.of("seats", "network", "Места в салоне модели").rows("≈ 1,7 тыс.")
+        s.add(Table.of("seats", "network", "Места в салоне модели").title("Места").rows("≈ 1,7 тыс.")
                 .col("airplane_code", TEXT, "Модель самолёта").ref("airplanes").source(SRC).verbatimSource()
                 .col("seat_no", TEXT, "Номер места").source(SRC).verbatimSource()
                 .col("fare_conditions", TEXT, "Класс обслуживания").values(FARES).source(SRC).verbatimSource()
                 .pk("airplane_code", "seat_no"));
 
         s.add(Table.of("routes", "network", "Маршруты: версия маршрута действует в периоде [valid_from, valid_to)")
-                .rows("≈ 7 тыс.")
+                .title("Маршруты").rows("≈ 7 тыс.")
                 .col("route_no", TEXT, "Номер маршрута (рейса)").source(SRC).verbatimSource()
                 .col("valid_from", MOMENT, "Начало периода действия версии").source(SRC)
                 .col("valid_to", MOMENT, "Конец периода действия (не включая)").source(SRC)
@@ -82,7 +83,8 @@ public final class AirSchema {
                 .pk("route_no", "valid_from")
                 .check("valid", "valid_from < valid_to"));
 
-        s.add(Table.of("flights", "network", "Рейсы: вылеты по расписанию и фактически").rows("≈ 136 тыс.")
+        s.add(Table.of("flights", "network", "Рейсы: вылеты по расписанию и фактически").title("Рейсы")
+                .rows("≈ 136 тыс.")
                 .col("flight_id", INT, "Рейс").source(SRC).verbatimSource()
                 .col("route_no", TEXT, "Номер маршрута; версия — та, чей период содержит плановый вылет").source(SRC).verbatimSource()
                 .col("status", TEXT, "Состояние рейса на «сейчас» выгрузки").values(STATUSES).source(SRC).verbatimSource()
@@ -91,12 +93,15 @@ public final class AirSchema {
                 .col("actual_departure", MOMENT, "Фактический вылет; NULL — ещё не вылетел или отменён").nullable().source(SRC)
                 .col("actual_arrival", MOMENT, "Фактический прилёт; NULL — ещё не прилетел или отменён").nullable().source(SRC)
                 .pk("flight_id")
+                // версия маршрута — по плановому вылету: ключ маршрута версионный (номер, начало действия), внешнего
+                // ключа нет; связь по номеру — на картинке схемы
+                .link(List.of("route_no"), "routes")
                 .unique("route_no", "scheduled_departure")
                 .index("scheduled_departure")
                 .check("schedule", "scheduled_departure < scheduled_arrival"));
 
         s.add(Table.of("bookings", "sales", "Брони; отобраны целиком по модели сезонности (см. SOURCE.md)")
-                .rows("≈ 8,5 млн")
+                .title("Бронирования").rows("≈ 8,5 млн")
                 .col("book_ref", TEXT, "Номер брони").source(SRC).verbatimSource()
                 .col("book_date", MOMENT, "Момент бронирования").source(SRC)
                 .col("total_amount", MONEY, "Сумма брони — сумма цен её перелётов").source(SRC).verbatimSource()
@@ -104,7 +109,7 @@ public final class AirSchema {
                 .orderBy("book_date", "book_ref")
                 .index("book_date"));
 
-        s.add(Table.of("tickets", "sales", "Билеты: пассажир брони и направление").rows("≈ 18 млн")
+        s.add(Table.of("tickets", "sales", "Билеты: пассажир брони и направление").title("Билеты").rows("≈ 18 млн")
                 .col("ticket_no", TEXT, "Номер билета").source(SRC).verbatimSource()
                 .col("book_ref", TEXT, "Бронь").ref("bookings").source(SRC).verbatimSource()
                 .col("passenger_id", TEXT, "Документ пассажира").source(SRC).verbatimSource()
@@ -112,14 +117,14 @@ public final class AirSchema {
                 .col("outbound", BOOL, "Туда (t) или обратно (f)").source(SRC).verbatimSource()
                 .pk("ticket_no"));
 
-        s.add(Table.of("segments", "sales", "Перелёты билета: рейс, класс, цена").rows("≈ 24 млн")
+        s.add(Table.of("segments", "sales", "Перелёты билета: рейс, класс, цена").title("Перелёты").rows("≈ 24 млн")
                 .col("ticket_no", TEXT, "Билет").ref("tickets").source(SRC).verbatimSource()
                 .col("flight_id", INT, "Рейс").ref("flights").source(SRC).verbatimSource()
                 .col("fare_conditions", TEXT, "Класс обслуживания").values(FARES).source(SRC).verbatimSource()
                 .col("price", MONEY, "Цена перелёта").source(SRC).verbatimSource()
                 .pk("ticket_no", "flight_id"));
 
-        s.add(Table.of("boarding_passes", "sales", "Посадочные талоны").rows("≈ 23 млн")
+        s.add(Table.of("boarding_passes", "sales", "Посадочные талоны").title("Посадочные талоны").rows("≈ 23 млн")
                 .col("ticket_no", TEXT, "Билет").source(SRC).verbatimSource()
                 .col("flight_id", INT, "Рейс").source(SRC).verbatimSource()
                 .col("seat_no", TEXT, "Место").source(SRC).verbatimSource()

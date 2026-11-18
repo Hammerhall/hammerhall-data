@@ -1,6 +1,8 @@
 package io.hammerhall.data.core.gen;
 
 import io.hammerhall.data.core.check.PublicNames;
+import io.hammerhall.data.core.schema.SchemaDot;
+import io.hammerhall.data.core.schema.Table;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -35,8 +37,10 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  *   }
  * </pre>
  * Проверяется: паспорт {@code <код>/dataset.properties} совпадает с генератором; {@code Main} домена — по контракту;
- * схема в git ({@code <код>/schema/}) — та, что пишет генератор; {@code small}-выпуск со всеми модулями проходит
- * самопроверку и сверку с {@code manifest.json}; ни в выпуске, ни в файлах репозитория нет внутренних имён платформы.
+ * схема в git ({@code <код>/schema/}: DDL, ER-диаграмма, поля, картинки в DOT) — та, что пишет генератор; у каждой
+ * таблицы есть короткое название; у каждого DOT — SVG, нарисованный из него (отметка sha256); {@code small}-выпуск со
+ * всеми модулями проходит самопроверку и сверку с {@code manifest.json}; ни в выпуске, ни в файлах репозитория нет
+ * внутренних имён платформы.
  * Без наследника тесты не идут: {@code TestMain} (прогон {@code build.sh}) считает это провалом.
  *
  * <p>{@link #small(Dataset)} — тот же {@code small}-выпуск для тестов домена: строится один раз на JVM.
@@ -174,13 +178,50 @@ public abstract class DatasetContract {
     void schemaInGitMatchesGenerator() throws IOException {
         Dataset d = dataset();
         Path dir = Cli.dataDir(d).resolve("schema");
-        List<String> texts = Cli.schemaTexts(d.schema());
+        Map<String, String> texts = Cli.schemaTexts(d.schema());
         List<String> stale = new ArrayList<>();
-        for (int i = 0; i < Cli.SCHEMA_FILES.size(); i++) {
-            Path f = dir.resolve(Cli.SCHEMA_FILES.get(i));
-            if (!Files.isRegularFile(f) || !Files.readString(f, StandardCharsets.UTF_8).equals(texts.get(i))) stale.add(f.toString());
+        for (Map.Entry<String, String> t : texts.entrySet()) {
+            Path f = dir.resolve(t.getKey());
+            if (!Files.isRegularFile(f) || !Files.readString(f, StandardCharsets.UTF_8).equals(t.getValue())) stale.add(f.toString());
+        }
+        for (Path f : Cli.dotFiles(dir)) {
+            if (!texts.containsKey(f.getFileName().toString())) stale.add(f + " — такой картинки генератор не пишет");
         }
         assertEquals(List.of(), stale, "схема в git не совпала с генератором: ./build.sh " + d.code() + " exec schema");
+    }
+
+    /** У каждой таблицы — короткое русское название: шапка таблицы на картинке схемы. */
+    @Test
+    void everyTableHasTitle() {
+        List<String> missing = new ArrayList<>();
+        for (Table t : dataset().schema().tables()) if (t.title() == null || t.title().isBlank()) missing.add(t.name());
+        assertEquals(List.of(), missing, "таблицы без title(\"…\") — короткого названия для картинки схемы");
+    }
+
+    /**
+     * У каждого DOT в {@code <код>/schema/} — SVG рядом, нарисованный из него: в SVG отметка sha256 этого DOT. Схема
+     * изменилась, а картинку не перерисовали — провал. Graphviz тесту не нужен: сверяется только отметка.
+     */
+    @Test
+    void schemaPicturesAreFresh() throws IOException {
+        Dataset d = dataset();
+        Path dir = Cli.dataDir(d).resolve("schema");
+        List<Path> dots = Cli.dotFiles(dir);
+        assertTrue(!dots.isEmpty(), "нет картинок схемы в " + dir + ": ./build.sh " + d.code() + " exec schema");
+        List<String> stale = new ArrayList<>();
+        for (Path dot : dots) {
+            Path svg = dir.resolve(SchemaDot.svgName(dot.getFileName().toString()));
+            if (!Files.isRegularFile(svg)) {
+                stale.add(svg.getFileName() + " — нет файла");
+                continue;
+            }
+            String want = SchemaDot.sha256(Files.readString(dot, StandardCharsets.UTF_8));
+            String have = SchemaDot.markedSha256(Files.readString(svg, StandardCharsets.UTF_8));
+            if (!want.equals(have)) {
+                stale.add(svg.getFileName() + (have == null ? " — нет отметки sha256 DOT" : " — нарисована из другого DOT"));
+            }
+        }
+        assertEquals(List.of(), stale, "картинки схемы устарели — перерисуй: tools/schema-svg.sh " + d.code());
     }
 
     @Test
@@ -193,7 +234,7 @@ public abstract class DatasetContract {
         boolean ok;
         try {
             System.setOut(new PrintStream(bo, true, StandardCharsets.UTF_8));
-            ok = Cli.verify(s.dir());
+            ok = Cli.verify(d, s.dir());
         } finally {
             System.setOut(old);
         }

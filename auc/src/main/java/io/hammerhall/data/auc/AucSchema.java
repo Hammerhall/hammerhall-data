@@ -50,7 +50,9 @@ public final class AucSchema {
 
     public static Schema build() {
         Schema s = new Schema("auc", VERSION)
-                .group("house", "Дом и правила")
+                // справочник: на отделы, офисы, сотрудников, города и шкалы ссылаются почти все группы — на карте
+                // схемы эти связи не рисуются (они — на картинках групп)
+                .group("house", "Дом и правила", true)
                 .group("catalog", "Мастера и вещи")
                 .group("clients", "Клиенты")
                 .group("auction", "Торги")
@@ -58,7 +60,7 @@ public final class AucSchema {
                 .group("site", "Сайт и уведомления");
 
         // ============================================================ дом и правила
-        s.add(Table.of("departments", "house", "Отделы дома").rows("6")
+        s.add(Table.of("departments", "house", "Отделы дома").title("Отделы").rows("6")
                 .col("id", SMALLINT, "Отдел")
                 .col("code", TEXT, "Код отдела: painting, jewelry, coins, books, decorative, collectibles")
                 .col("name_ru", TEXT, "Название по-русски")
@@ -67,7 +69,7 @@ public final class AucSchema {
                 .pk("id").unique("code"));
 
         s.add(Table.of("categories", "house", "Категории — разделы отдела и подразделы, дерево до 3 уровней")
-                .rows("18–140")
+                .title("Категории").rows("18–140")
                 .col("id", INT, "Категория")
                 .col("department_id", SMALLINT, "Отдел (у ребёнка — тот же, что у родителя)").ref("departments")
                 .col("parent_id", INT, "Родительская категория; NULL — верхний уровень отдела").nullable().ref("categories")
@@ -78,7 +80,7 @@ public final class AucSchema {
                 .pk("id").unique("code").check("level", "level BETWEEN 1 AND 3"));
 
         s.add(Table.of("cities", "house", "Города — как в sto-data-v1 (те же id): набор соединяется с «Кременъ» по городу")
-                .rows("149")
+                .title("Города").rows("149")
                 .col("id", INT, "Город (id sto-data-v1)").source("sto-data-v1 cities.id")
                 .col("name_ru", TEXT, "Название по-русски").source("sto-data-v1 cities.name_ru")
                 .col("name_en", TEXT, "Название по-английски").source("sto-data-v1 cities.name_en")
@@ -91,7 +93,7 @@ public final class AucSchema {
                 .col("population", INT, "Население, оценка — вес клиентов по городам").source("sto-data-v1 cities.population")
                 .pk("id"));
 
-        s.add(Table.of("offices", "house", "Офисы: главный, залы торгов, приёмные").rows("8")
+        s.add(Table.of("offices", "house", "Офисы: главный, залы торгов, приёмные").title("Офисы").rows("8")
                 .col("id", SMALLINT, "Офис")
                 .col("code", TEXT, "Код: msk, spb, kzn, nnv, ekb, nsk, krd, vvo")
                 .col("kind", TEXT, "Вид").values("headquarters", "saleroom", "intake")
@@ -103,7 +105,7 @@ public final class AucSchema {
                 .col("closed_on", DATE, "Закрыт; NULL — работает").nullable()
                 .pk("id").unique("code"));
 
-        s.add(Table.of("staff", "house", "Сотрудники и их роли (имена выдуманные)").rows("≈ 230")
+        s.add(Table.of("staff", "house", "Сотрудники и их роли (имена выдуманные)").title("Сотрудники").rows("≈ 230")
                 .col("id", INT, "Сотрудник; id — по дате приёма")
                 .col("office_id", SMALLINT, "Офис").ref("offices")
                 .col("department_id", SMALLINT, "Отдел; NULL — не за отделом").nullable().ref("departments")
@@ -115,14 +117,16 @@ public final class AucSchema {
                 .col("left_on", DATE, "Уволился; NULL — работает").nullable()
                 .pk("id").check("dates", "left_on IS NULL OR left_on > hired_on"));
 
-        s.add(Table.of("increment_bands", "house", "Таблица шагов ставки: от текущей цены — шаг (T1)").rows("14")
+        s.add(Table.of("increment_bands", "house", "Таблица шагов ставки: от текущей цены — шаг (T1)")
+                .title("Шаги ставки").rows("14")
                 .col("valid_from", DATE, "Версия таблицы шагов (v1 — одна, 2024-09-01)")
                 .col("from_amount", MONEY, "Цена от (включительно) — полоса до следующего порога, руб.")
                 .col("step", MONEY, "Шаг ставки в полосе, руб.")
                 .pk("valid_from", "from_amount").check("step", "step > 0"));
 
         s.add(Table.of("fee_schedules", "house",
-                        "Шкалы и сборы: премия, комиссия, площадка, страхование, каталог, снятие, пени, депозит").rows("11")
+                        "Шкалы и сборы: премия, комиссия, площадка, страхование, каталог, снятие, пени, депозит")
+                .title("Шкалы и сборы").rows("11")
                 .col("id", SMALLINT, "Шкала или сбор")
                 .col("code", TEXT, "Код: BP-2024, BP-2026, BP-COIN, SC-2024, PLT-2024, INS-2024, CAT-LIVE, CAT-TIMED, "
                         + "WDR-2024, LATE-2024, DEP-2024")
@@ -143,7 +147,7 @@ public final class AucSchema {
 
         s.add(Table.of("fee_tiers", "house",
                         "Ступени премии и комиссии: ставка — на часть суммы от from_amount (не включая) до начала "
-                                + "следующей ступени (включая)").rows("10")
+                                + "следующей ступени (включая)").title("Ступени шкал").rows("10")
                 .col("schedule_id", SMALLINT, "Шкала (ступенчатые: BP-2024, BP-2026, SC-2024)").ref("fee_schedules")
                 .col("tier_no", SMALLINT, "Ступень: 1, 2, …")
                 .col("from_amount", MONEY, "Начало части, руб.")
@@ -152,7 +156,8 @@ public final class AucSchema {
 
         // ============================================================ мастера и вещи
         s.add(Table.of("makers", "catalog",
-                        "Мастера, мастерские, мануфактуры, монетные дворы, издательства — все выдуманные").rows("≈ 3 900")
+                        "Мастера, мастерские, мануфактуры, монетные дворы, издательства — все выдуманные")
+                .title("Мастера").rows("≈ 3 900")
                 .col("id", INT, "Мастер")
                 .col("kind", TEXT, "Вид").values(MAKER_KINDS)
                 .col("department_id", SMALLINT, "Отдел вида").ref("departments")
@@ -174,7 +179,7 @@ public final class AucSchema {
                 .check("years", "active_to IS NULL OR active_to >= active_from"));
 
         s.add(Table.of("items", "catalog", "Вещи — факт приёма с описанием; при продлении периода не меняются")
-                .rows("≈ 1,33 млн")
+                .title("Вещи").rows("≈ 1,33 млн")
                 .col("id", INT, "Вещь; id — по моменту приёма")
                 .col("consignor_id", INT, "Кто принёс (при первом приёме)").ref("clients")
                 .col("office_id", SMALLINT, "Где принята").ref("offices")
@@ -214,7 +219,8 @@ public final class AucSchema {
                 .check("years", "year_to >= year_from")
                 .check("pieces", "pieces >= 1"));
 
-        s.add(Table.of("provenance", "catalog", "Происхождение вещи — звенья цепочки, литература, выставки").rows("≈ 1,0 млн")
+        s.add(Table.of("provenance", "catalog", "Происхождение вещи — звенья цепочки, литература, выставки")
+                .title("Происхождение вещей").rows("≈ 1,0 млн")
                 .col("item_id", INT, "Вещь").ref("items")
                 .col("seq", SMALLINT, "Порядок: 1 — самое раннее звено")
                 .col("kind", TEXT, "Вид звена; chain — вся цепочка одной записью").values("by_descent",
@@ -226,7 +232,8 @@ public final class AucSchema {
                 .col("owner_name_ru", TEXT, "Владелец, собрание, галерея, издание (выдуманные)").nullable()
                 .pk("item_id", "seq"));
 
-        s.add(Table.of("consignments", "catalog", "Договоры комиссии (и сдача купленного обратно)").rows("≈ 0,22 млн")
+        s.add(Table.of("consignments", "catalog", "Договоры комиссии (и сдача купленного обратно)")
+                .title("Договоры комиссии").rows("≈ 0,22 млн")
                 .col("id", INT, "Договор; id — по моменту подписания")
                 .col("consignor_id", INT, "Комитент").ref("clients")
                 .col("office_id", SMALLINT, "Офис").ref("offices")
@@ -241,7 +248,8 @@ public final class AucSchema {
                 .col("expires_on", DATE, "Срок договора (12 месяцев)")
                 .pk("id").index("consignor_id"));
 
-        s.add(Table.of("consignment_items", "catalog", "Вещи в договоре: условия приёма, итог").rows("≈ 1,27 млн")
+        s.add(Table.of("consignment_items", "catalog", "Вещи в договоре: условия приёма, итог")
+                .title("Вещи в договорах").rows("≈ 1,27 млн")
                 .col("consignment_id", INT, "Договор").ref("consignments")
                 .col("line_no", SMALLINT, "Строка договора")
                 .col("item_id", INT, "Вещь (только принятые)").ref("items")
@@ -254,7 +262,7 @@ public final class AucSchema {
 
         // ============================================================ клиенты
         s.add(Table.of("clients", "clients", "Покупатели и комитенты — одни люди и организации (все выдуманные)")
-                .rows("≈ 0,73 млн")
+                .title("Клиенты").rows("≈ 0,73 млн")
                 .col("id", INT, "Клиент; id — по моменту регистрации")
                 .col("kind", TEXT, "Человек или организация").values("person", "company")
                 .col("first_name", TEXT, "Имя (у людей)").nullable()
@@ -279,7 +287,7 @@ public final class AucSchema {
                 .check("blocked", "(blocked_at IS NULL) = (block_reason IS NULL)"));
 
         // ============================================================ торги
-        s.add(Table.of("sales", "auction", "Торги: формат, отдел, сроки, волна закрытий").rows("≈ 960")
+        s.add(Table.of("sales", "auction", "Торги: формат, отдел, сроки, волна закрытий").title("Торги").rows("≈ 960")
                 .col("id", INT, "Торги; id — по starts_at")
                 .col("code", TEXT, "Код: T-2026-0312 (онлайн), L-2026-014 (живые)")
                 .col("format", TEXT, "Формат: живые в зале или онлайн по времени").values("live", "timed")
@@ -306,7 +314,7 @@ public final class AucSchema {
                 .pk("id").unique("code")
                 .check("timed_wave", "(format = 'timed') = (lots_per_group IS NOT NULL)"));
 
-        s.add(Table.of("sale_sessions", "auction", "Сессии живых торгов").rows("≈ 190")
+        s.add(Table.of("sale_sessions", "auction", "Сессии живых торгов").title("Сессии торгов").rows("≈ 190")
                 .col("sale_id", INT, "Торги").ref("sales")
                 .col("session_no", SMALLINT, "Сессия: 1, 2, …")
                 .col("starts_at", MOMENT, "Начало")
@@ -317,7 +325,7 @@ public final class AucSchema {
                 .pk("sale_id", "session_no")
                 .check("lots", "last_lot_no >= first_lot_no"));
 
-        s.add(Table.of("lots", "auction", "Лоты: выставление вещи на торги, итог").rows("≈ 1,34 млн")
+        s.add(Table.of("lots", "auction", "Лоты: выставление вещи на торги, итог").title("Лоты").rows("≈ 1,34 млн")
                 .col("id", INT, "Лот; id — по моменту публикации")
                 .col("sale_id", INT, "Торги").ref("sales")
                 .col("lot_no", INT, "Номер в каталоге")
@@ -348,10 +356,14 @@ public final class AucSchema {
                 .col("withdrawn_at", MOMENT, "Снят").nullable()
                 .col("withdrawn_by", TEXT, "Кто снял").nullable().values("consignor", "house")
                 .pk("id").unique("sale_id", "lot_label").index("sale_id", "lot_no").index("item_id")
+                // сессия живых торгов — (торги, номер сессии); у онлайн-лотов её нет, внешнего ключа нет: связь только на
+                // картинке схемы (первым — номер сессии: стрелка идёт к нему)
+                .link(java.util.List.of("session_no", "sale_id"), "sale_sessions", java.util.List.of("session_no", "sale_id"))
                 .check("estimate", "low_estimate < high_estimate")
                 .check("closed_ms", "closed_ms BETWEEN 0 AND 999"));
 
-        s.add(Table.of("registrations", "auction", "Регистрации на торги: табличка, лимит, депозит").rows("≈ 4,0 млн")
+        s.add(Table.of("registrations", "auction", "Регистрации на торги: табличка, лимит, депозит")
+                .title("Регистрации").rows("≈ 4,0 млн")
                 .col("id", INT, "Регистрация; id — по моменту")
                 .col("sale_id", INT, "Торги").ref("sales")
                 .col("client_id", INT, "Клиент").ref("clients")
@@ -370,7 +382,8 @@ public final class AucSchema {
                 .pk("id").unique("sale_id", "client_id").unique("sale_id", "paddle_no"));
 
         s.add(Table.of("bid_orders", "auction",
-                        "Поручения и их редакции: максимум (онлайн), заочная, телефон со страховочной").rows("≈ 2,0 млн")
+                        "Поручения и их редакции: максимум (онлайн), заочная, телефон со страховочной")
+                .title("Поручения").rows("≈ 2,0 млн")
                 .col("id", INT, "Редакция поручения; id — по моменту подачи")
                 .col("lot_id", INT, "Лот").ref("lots")
                 .col("registration_id", INT, "Регистрация участника").ref("registrations")
@@ -395,7 +408,7 @@ public final class AucSchema {
                 .check("placed_ms", "placed_ms BETWEEN 0 AND 999"));
 
         s.add(Table.of("bids", "auction", "Все попытки ставок — принятые и отклонённые, с миллисекундой и причиной")
-                .rows("≈ 9,9 млн")
+                .title("Ставки").rows("≈ 9,9 млн")
                 .col("id", BIGINT, "Ставка; id — по (placed_at, placed_ms, lot_id, seq)")
                 .col("lot_id", INT, "Лот").ref("lots")
                 .col("seq", INT, "Порядок поступления в лоте, с 1 (T15)")
@@ -422,7 +435,8 @@ public final class AucSchema {
                 .check("order", "kind NOT IN ('max', 'auto', 'absentee') OR bid_order_id IS NOT NULL"));
 
         s.add(Table.of("lot_events", "auction",
-                        "Журнал лота: публикация, открытие, резерв достигнут, продление, предупреждение, итог").rows("≈ 5,0 млн")
+                        "Журнал лота: публикация, открытие, резерв достигнут, продление, предупреждение, итог")
+                .title("События лотов").rows("≈ 5,0 млн")
                 .col("lot_id", INT, "Лот").ref("lots")
                 .col("seq", SMALLINT, "Порядок в лоте")
                 .col("at", MOMENT, "Момент")
@@ -438,7 +452,7 @@ public final class AucSchema {
                 .check("at_ms", "at_ms BETWEEN 0 AND 999"));
 
         s.add(Table.of("item_status_log", "auction", "Журнал вещи: от приёма до передачи покупателю или возврата")
-                .rows("≈ 6,8 млн")
+                .title("Статусы вещей").rows("≈ 6,8 млн")
                 .col("item_id", INT, "Вещь").ref("items")
                 .col("seq", SMALLINT, "Порядок")
                 .col("at", MOMENT, "Момент")
@@ -448,7 +462,7 @@ public final class AucSchema {
                 .pk("item_id", "seq"));
 
         // ============================================================ деньги
-        s.add(Table.of("invoices", "money", "Счета покупателям").rows("≈ 0,67 млн")
+        s.add(Table.of("invoices", "money", "Счета покупателям").title("Счета").rows("≈ 0,67 млн")
                 .col("id", INT, "Счёт; id — по моменту выставления")
                 .col("number", TEXT, "Номер: INV-2026-000123")
                 .col("sale_id", INT, "Торги").ref("sales")
@@ -473,7 +487,8 @@ public final class AucSchema {
                         + "счёт неплательщика").nullable().ref("invoices")
                 .pk("id").unique("number").index("client_id"));
 
-        s.add(Table.of("invoice_lines", "money", "Строки счёта: цена, премия, сбор площадки, НДС").rows("≈ 1,06 млн")
+        s.add(Table.of("invoice_lines", "money", "Строки счёта: цена, премия, сбор площадки, НДС")
+                .title("Строки счетов").rows("≈ 1,06 млн")
                 .col("invoice_id", INT, "Счёт").ref("invoices")
                 .col("line_no", SMALLINT, "Строка")
                 .col("lot_id", INT, "Лот").ref("lots")
@@ -487,7 +502,7 @@ public final class AucSchema {
                 .pk("invoice_id", "line_no").index("lot_id"));
 
         s.add(Table.of("payments", "money", "Платежи, депозиты, возвраты, выплаты комитентам, неудачные попытки")
-                .rows("≈ 1,27 млн")
+                .title("Платежи").rows("≈ 1,27 млн")
                 .col("id", INT, "Платёж; id — по моменту")
                 .col("client_id", INT, "Клиент").ref("clients")
                 .col("kind", TEXT, "Вид (направление — по виду)").values("deposit", "deposit_applied", "deposit_refund",
@@ -505,7 +520,8 @@ public final class AucSchema {
                 .check("amount", "amount > 0")
                 .check("failure", "(status = 'failed') = (failure_reason IS NOT NULL)"));
 
-        s.add(Table.of("settlements", "money", "Отчёты комитентам по торгам").rows("≈ 0,37 млн")
+        s.add(Table.of("settlements", "money", "Отчёты комитентам по торгам").title("Отчёты комитентам")
+                .rows("≈ 0,37 млн")
                 .col("id", INT, "Отчёт; id — по created_at")
                 .col("sale_id", INT, "Торги").ref("sales")
                 .col("consignor_id", INT, "Комитент").ref("clients")
@@ -520,7 +536,8 @@ public final class AucSchema {
                 .pk("id").unique("sale_id", "consignor_id"));
 
         s.add(Table.of("settlement_lines", "money",
-                        "Строки отчёта: лот, комиссия, сборы, НДС, выплата — итог лота на «сейчас»").rows("≈ 1,30 млн")
+                        "Строки отчёта: лот, комиссия, сборы, НДС, выплата — итог лота на «сейчас»")
+                .title("Строки отчётов").rows("≈ 1,30 млн")
                 .col("settlement_id", INT, "Отчёт").ref("settlements")
                 .col("line_no", SMALLINT, "Строка")
                 .col("lot_id", INT, "Лот").ref("lots")
@@ -538,7 +555,7 @@ public final class AucSchema {
                 .pk("settlement_id", "line_no").index("lot_id"));
 
         // ============================================================ сайт и уведомления
-        s.add(Table.of("watchlist", "site", "Наблюдение за лотами").rows("≈ 4,3 млн")
+        s.add(Table.of("watchlist", "site", "Наблюдение за лотами").title("Наблюдения за лотами").rows("≈ 4,3 млн")
                 .col("client_id", INT, "Клиент").ref("clients")
                 .col("lot_id", INT, "Лот").ref("lots")
                 .col("added_at", MOMENT, "Добавил")
@@ -547,7 +564,7 @@ public final class AucSchema {
                 .pk("client_id", "lot_id").index("lot_id"));
 
         s.add(Table.of("sessions", "site", "Визиты сайта и приложения — посетители с согласием на аналитику")
-                .rows("≈ 8,0 млн")
+                .title("Визиты").rows("≈ 8,0 млн")
                 .col("id", BIGINT, "Визит; id — по started_at")
                 .col("client_id", INT, "Клиент; NULL — не вошёл").nullable().ref("clients")
                 .col("device_key", TEXT, "Отпечаток устройства (16 hex), постоянный у устройства")
@@ -560,7 +577,8 @@ public final class AucSchema {
                 .check("time", "ended_at >= started_at"));
 
         s.add(Table.of("session_events", "site",
-                        "События визита: поиск, страница каталога, просмотр лота, наблюдение, ставка").rows("≈ 58,7 млн")
+                        "События визита: поиск, страница каталога, просмотр лота, наблюдение, ставка")
+                .title("События визитов").rows("≈ 58,7 млн")
                 .col("session_id", BIGINT, "Визит").ref("sessions")
                 .col("seq", SMALLINT, "Порядок")
                 .col("at", MOMENT, "Момент")
@@ -576,7 +594,8 @@ public final class AucSchema {
                 .pk("session_id", "seq"));
 
         s.add(Table.of("notifications", "site",
-                        "Уведомления: перебита ставка, лот закрывается, выигрыш, счёт, оплата, выплата").rows("≈ 13,7 млн")
+                        "Уведомления: перебита ставка, лот закрывается, выигрыш, счёт, оплата, выплата")
+                .title("Уведомления").rows("≈ 13,7 млн")
                 .col("id", BIGINT, "Уведомление; id — по created_at")
                 .col("client_id", INT, "Получатель").ref("clients")
                 .col("kind", TEXT, "Вид").values(NOTIFICATION_KINDS)

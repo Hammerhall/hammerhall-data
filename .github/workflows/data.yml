@@ -126,10 +126,12 @@ jobs:
         run: ./build.sh "$CODE"
 
       - name: Схема в git совпадает с генератором
+        # DDL, ER-диаграмма, поля и картинки схемы в DOT; что SVG нарисованы из этих DOT, проверяет тест набора
+        # (отметка sha256 в SVG) — Graphviz в CI не нужен
         run: |
           ./build.sh "$CODE" exec schema --out work/schema
-          for f in schema-tables.sql schema-constraints.sql schema.mmd schema-fields.md; do
-            diff -u "$CODE/schema/$f" "work/schema/$f"
+          for f in work/schema/*; do
+            diff -u "$CODE/schema/$(basename "$f")" "$f"
           done
 
       - name: small — два прогона

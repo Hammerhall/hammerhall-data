@@ -2,6 +2,7 @@ package io.hammerhall.data.sto;
 
 import io.hammerhall.data.core.gen.Release;
 import io.hammerhall.data.core.schema.Schema;
+import io.hammerhall.data.core.schema.SchemaDot;
 import io.hammerhall.data.core.schema.SchemaExport;
 import io.hammerhall.data.core.schema.Table;
 
@@ -42,6 +43,8 @@ public final class StoDocs implements Release.Docs {
                 .append("(ключи, проверки, связи, индексы — после загрузки); ER-диаграмма — `schema.mmd` (Mermaid). Загрузка в\n")
                 .append("Postgres: `psql -v ON_ERROR_STOP=1 -d БАЗА -f schema-tables.sql -f load-postgres.psql -f schema-constraints.sql`\n")
                 .append("из папки выпуска (моменты переводятся `to_timestamp`).\n\n");
+
+        sb.append("## Схема\n\n").append(SchemaDot.sourceMd(schema)).append('\n');
 
         sb.append("## Файлы\n\n| файл | строк | МБ |\n|---|---|---|\n");
         for (Map<String, Object> f : files) {

@@ -11,6 +11,8 @@
 *.md text eol=lf
 *.sql text eol=lf
 *.mmd text eol=lf
+*.dot text eol=lf
+*.svg text eol=lf
 *.tsv text eol=lf
 *.txt text eol=lf
 *.properties text eol=lf

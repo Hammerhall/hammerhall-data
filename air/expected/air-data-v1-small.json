@@ -515,6 +515,10 @@
   {
    "name": "load-postgres.psql",
    "sha256": "77f72017ec62269a36857f397aade6b705f80a63c8c84bf42021febba2f2a330"
+  },
+  {
+   "name": "schema.svg",
+   "sha256": "3a258c0c8e5fd5717b436fa6b0a5d35705cc655e3203fe34d2869279dc9aa84d"
   }
  ],
  "reference_only": [

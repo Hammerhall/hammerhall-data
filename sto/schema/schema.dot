@@ -1,0 +1,103 @@
+// sto-data-v1 — карта схемы: таблицы по группам без полей, связи между таблицами (одна на пару; в справочные группы — не рисуются).
+// Сгенерировано из описания схемы; руками не править. Картинка (SVG): tools/schema-svg.sh sto.
+digraph schema {
+  graph [rankdir=LR, fontname="DejaVu Sans", fontsize=13, nodesep=0.35, ranksep=0.9, pad=0.3, splines=true, newrank=true];
+  node [shape=plain, fontname="DejaVu Sans", fontsize=11];
+  edge [dir=both, arrowtail=none, arrowhead=crow, arrowsize=0.9, color="#333333"];
+  subgraph "cluster_catalog" {
+    label=<<B>Каталог</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "categories" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>categories</B><BR/>Категории</TD></TR></TABLE>>];
+    "spec_keys" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>spec_keys</B><BR/>Характеристики</TD></TR></TABLE>>];
+    "brands" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>brands</B><BR/>Бренды</TD></TR></TABLE>>];
+    "products" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>products</B><BR/>Товары</TD></TR></TABLE>>];
+    "product_specs" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>product_specs</B><BR/>Значения характеристик</TD></TR></TABLE>>];
+    "bundle_items" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>bundle_items</B><BR/>Состав комплектов</TD></TR></TABLE>>];
+    "prices" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>prices</B><BR/>Цены</TD></TR></TABLE>>];
+    "promotions" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>promotions</B><BR/>Акции</TD></TR></TABLE>>];
+    "promotion_targets" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>promotion_targets</B><BR/>Цели акций</TD></TR></TABLE>>];
+  }
+  subgraph "cluster_geo" {
+    label=<<B>География и склады</B><BR/><FONT POINT-SIZE="10">справочник: связи с ним — на картинках групп</FONT>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "cities" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>cities</B><BR/>Города</TD></TR></TABLE>>];
+    "warehouses" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>warehouses</B><BR/>Склады и пункты выдачи</TD></TR></TABLE>>];
+    "storage_cells" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>storage_cells</B><BR/>Ячейки хранения</TD></TR></TABLE>>];
+    "carriers" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>carriers</B><BR/>Перевозчики</TD></TR></TABLE>>];
+    "delivery_zones" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>delivery_zones</B><BR/>Зоны доставки</TD></TR></TABLE>>];
+  }
+  subgraph "cluster_supply" {
+    label=<<B>Поставки и складские движения</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "suppliers" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>suppliers</B><BR/>Поставщики</TD></TR></TABLE>>];
+    "purchase_orders" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>purchase_orders</B><BR/>Заказы поставщикам</TD></TR></TABLE>>];
+    "batches" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>batches</B><BR/>Партии</TD></TR></TABLE>>];
+    "stock_movements" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>stock_movements</B><BR/>Складские движения</TD></TR></TABLE>>];
+  }
+  subgraph "cluster_market" {
+    label=<<B>Маркетплейс</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "sellers" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>sellers</B><BR/>Продавцы</TD></TR></TABLE>>];
+    "offers" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>offers</B><BR/>Предложения продавцов</TD></TR></TABLE>>];
+  }
+  subgraph "cluster_customers" {
+    label=<<B>Клиенты</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "customers" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>customers</B><BR/>Клиенты</TD></TR></TABLE>>];
+    "addresses" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>addresses</B><BR/>Адреса</TD></TR></TABLE>>];
+  }
+  subgraph "cluster_orders" {
+    label=<<B>Заказы</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "orders" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>orders</B><BR/>Заказы</TD></TR></TABLE>>];
+    "order_items" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>order_items</B><BR/>Строки заказов</TD></TR></TABLE>>];
+    "order_status_log" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>order_status_log</B><BR/>Статусы заказов</TD></TR></TABLE>>];
+    "payments" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>payments</B><BR/>Платежи</TD></TR></TABLE>>];
+    "shipments" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>shipments</B><BR/>Отгрузки</TD></TR></TABLE>>];
+    "returns" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>returns</B><BR/>Возвраты</TD></TR></TABLE>>];
+    "reviews" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>reviews</B><BR/>Отзывы</TD></TR></TABLE>>];
+  }
+  subgraph "cluster_site" {
+    label=<<B>Сайт и приложение</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "sessions" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>sessions</B><BR/>Сессии</TD></TR></TABLE>>];
+    "session_events" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>session_events</B><BR/>События сессий</TD></TR></TABLE>>];
+  }
+  "brands" -> "products";
+  "categories" -> "products";
+  "products" -> "product_specs";
+  "spec_keys" -> "product_specs";
+  "products" -> "bundle_items";
+  "products" -> "prices";
+  "promotions" -> "promotion_targets";
+  "products" -> "promotion_targets" [style=dashed];
+  "categories" -> "promotion_targets" [style=dashed];
+  "suppliers" -> "purchase_orders";
+  "purchase_orders" -> "batches" [style=dashed];
+  "sellers" -> "batches" [style=dashed];
+  "products" -> "batches";
+  "products" -> "stock_movements";
+  "batches" -> "stock_movements" [style=dashed];
+  "sellers" -> "offers";
+  "products" -> "offers";
+  "customers" -> "addresses";
+  "customers" -> "orders";
+  "addresses" -> "orders" [style=dashed];
+  "sessions" -> "orders" [style=dashed];
+  "promotions" -> "orders" [style=dashed];
+  "orders" -> "order_items";
+  "products" -> "order_items";
+  "sellers" -> "order_items" [style=dashed];
+  "offers" -> "order_items" [style=dashed];
+  "promotions" -> "order_items" [style=dashed];
+  "orders" -> "order_status_log";
+  "orders" -> "payments";
+  "orders" -> "shipments";
+  "order_items" -> "returns";
+  "orders" -> "reviews";
+  "products" -> "reviews";
+  "customers" -> "reviews";
+  "customers" -> "sessions" [style=dashed];
+  "sessions" -> "session_events";
+  "products" -> "session_events" [style=dashed];
+}

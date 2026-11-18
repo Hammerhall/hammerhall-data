@@ -10,7 +10,7 @@ import java.util.List;
  * SOURCE.md. Описывается цепочкой:
  *
  * <pre>{@code
- * Table.of("products", "каталог", "Товары")
+ * Table.of("products", "каталог", "Товары: модели, их поколения и варианты").title("Товары")
  *     .col("id", INT, "Товар")
  *     .col("brand_id", INT, "Бренд").ref("brands")
  *     .col("discontinued_on", DATE, "Снят с продажи").nullable()
@@ -20,6 +20,10 @@ import java.util.List;
  * Модификаторы ({@code nullable}, {@code ref}, {@code values}, {@code scale}, {@code source}, {@code verbatimSource})
  * относятся к последнему полю. Порядок строк в TSV — {@link #orderBy()}, по умолчанию — первичный ключ. NULL в поле порядка идёт первым
  * ({@code NULLS FIRST}), в полях из {@link #nullsLast(String...)} — последним ({@code NULLS LAST}).
+ *
+ * <p>{@link #title(String)} — короткое русское название во множественном числе («Товары», «Бронирования»): шапка
+ * таблицы на картинке схемы; обязательно. {@link #link(List, String)} — смысловая связь без внешнего ключа (ссылка есть
+ * по смыслу, но ключа в DDL нет: например, на версионный ключ): только для картинки, пунктиром.
  */
 public final class Table {
     public record ForeignKey(List<String> columns, String refTable, List<String> refColumns) {
@@ -28,14 +32,24 @@ public final class Table {
     public record Check(String name, String sql) {
     }
 
+    /**
+     * Смысловая связь без внешнего ключа: поля {@code columns} указывают на {@code refColumns} таблицы
+     * {@code refTable}, но в DDL ключа нет. Рисуется на картинке схемы пунктиром; в DDL, проверки ссылок и Mermaid не
+     * идёт.
+     */
+    public record Link(List<String> columns, String refTable, List<String> refColumns) {
+    }
+
     private final String name;
     private final String group;
     private final String descRu;
+    private String title;
     private final List<Column> columns = new ArrayList<>();
     private List<String> primaryKey = List.of();
     private final List<List<String>> uniques = new ArrayList<>();
     private final List<List<String>> indexes = new ArrayList<>();
     private final List<ForeignKey> compositeFks = new ArrayList<>();
+    private final List<Link> links = new ArrayList<>();
     private final List<Check> checks = new ArrayList<>();
     private List<String> orderBy = null;
     private List<String> nullsLast = List.of();
@@ -52,6 +66,12 @@ public final class Table {
     }
 
     // ---------------------------------------------------------------- построение
+
+    /** Короткое русское название во множественном числе — шапка таблицы на картинке схемы («Товары»). */
+    public Table title(String titleRu) {
+        title = titleRu;
+        return this;
+    }
 
     public Table col(String name, ColType type, String descRu) {
         int prec = type == ColType.DECIMAL ? 12 : 0, sc = type == ColType.DOUBLE ? 6 : (type == ColType.DECIMAL ? 2 : 0);
@@ -116,6 +136,21 @@ public final class Table {
         return this;
     }
 
+    /**
+     * Смысловая связь без внешнего ключа (см. {@link Link}) — на первые {@code cols.size()} полей первичного ключа
+     * {@code refTable}: например, номер маршрута рейса → маршрут с версионным ключом (номер, начало действия).
+     */
+    public Table link(List<String> cols, String refTable) {
+        links.add(new Link(List.copyOf(cols), refTable, null));
+        return this;
+    }
+
+    /** Смысловая связь без внешнего ключа на поля {@code refCols} таблицы {@code refTable} (например, на UNIQUE). */
+    public Table link(List<String> cols, String refTable, List<String> refCols) {
+        links.add(new Link(List.copyOf(cols), refTable, List.copyOf(refCols)));
+        return this;
+    }
+
     public Table check(String checkName, String sql) {
         checks.add(new Check(checkName, sql));
         return this;
@@ -150,6 +185,11 @@ public final class Table {
 
     public String descRu() {
         return descRu;
+    }
+
+    /** Короткое русское название ({@link #title(String)}); {@code null} — не задано. */
+    public String title() {
+        return title;
     }
 
     public String rowsHint() {
@@ -209,6 +249,23 @@ public final class Table {
         }
         for (ForeignKey f : compositeFks) {
             out.add(new ForeignKey(f.columns(), f.refTable(), schema.table(f.refTable()).primaryKey()));
+        }
+        return out;
+    }
+
+    /**
+     * Смысловые связи без внешнего ключа ({@link #link}), в порядке описания; поля цели — заданные или начало первичного
+     * ключа цели.
+     */
+    public List<Link> links(Schema schema) {
+        List<Link> out = new ArrayList<>();
+        for (Link l : links) {
+            List<String> ref = l.refColumns();
+            if (ref == null) {
+                List<String> pk = schema.table(l.refTable()).primaryKey();
+                ref = pk.subList(0, Math.min(pk.size(), l.columns().size()));
+            }
+            out.add(new Link(l.columns(), l.refTable(), List.copyOf(ref)));
         }
         return out;
     }

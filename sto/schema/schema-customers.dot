@@ -1,0 +1,17 @@
+// sto-data-v1 — группа «Клиенты»: все поля её таблиц; таблицы других групп, на которые они ссылаются, — серой рамкой.
+// Сгенерировано из описания схемы; руками не править. Картинка (SVG): tools/schema-svg.sh sto.
+digraph schema {
+  graph [rankdir=LR, fontname="DejaVu Sans", fontsize=13, nodesep=0.35, ranksep=0.9, pad=0.3, splines=true, newrank=true];
+  node [shape=plain, fontname="DejaVu Sans", fontsize=11];
+  edge [dir=both, arrowtail=none, arrowhead=crow, arrowsize=0.9, color="#333333"];
+  subgraph "cluster_customers" {
+    label=<<B>Клиенты</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "customers" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>customers</B><BR/>Клиенты</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="id"><FONT FACE="DejaVu Sans Mono"># </FONT>id</TD></TR><TR><TD ALIGN="LEFT" PORT="first_name"><FONT FACE="DejaVu Sans Mono">∗ </FONT>first_name</TD></TR><TR><TD ALIGN="LEFT" PORT="last_name"><FONT FACE="DejaVu Sans Mono">∗ </FONT>last_name</TD></TR><TR><TD ALIGN="LEFT" PORT="gender"><FONT FACE="DejaVu Sans Mono">∗ </FONT>gender</TD></TR><TR><TD ALIGN="LEFT" PORT="birth_year"><FONT FACE="DejaVu Sans Mono">∗ </FONT>birth_year</TD></TR><TR><TD ALIGN="LEFT" PORT="registered_at"><FONT FACE="DejaVu Sans Mono">∗ </FONT>registered_at</TD></TR><TR><TD ALIGN="LEFT" PORT="city_id"><FONT FACE="DejaVu Sans Mono">∗ </FONT>city_id</TD></TR><TR><TD ALIGN="LEFT" PORT="acquired_via"><FONT FACE="DejaVu Sans Mono">∗ </FONT>acquired_via</TD></TR><TR><TD ALIGN="LEFT" PORT="is_b2b"><FONT FACE="DejaVu Sans Mono">∗ </FONT>is_b2b</TD></TR><TR><TD ALIGN="LEFT" PORT="company_name"><FONT FACE="DejaVu Sans Mono">○ </FONT>company_name</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
+    "addresses" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>addresses</B><BR/>Адреса</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="id"><FONT FACE="DejaVu Sans Mono"># </FONT>id</TD></TR><TR><TD ALIGN="LEFT" PORT="customer_id"><FONT FACE="DejaVu Sans Mono">∗ </FONT>customer_id</TD></TR><TR><TD ALIGN="LEFT" PORT="city_id"><FONT FACE="DejaVu Sans Mono">∗ </FONT>city_id</TD></TR><TR><TD ALIGN="LEFT" PORT="lat"><FONT FACE="DejaVu Sans Mono">∗ </FONT>lat</TD></TR><TR><TD ALIGN="LEFT" PORT="lon"><FONT FACE="DejaVu Sans Mono">∗ </FONT>lon</TD></TR><TR><TD ALIGN="LEFT" PORT="kind"><FONT FACE="DejaVu Sans Mono">∗ </FONT>kind</TD></TR><TR><TD ALIGN="LEFT" PORT="created_at"><FONT FACE="DejaVu Sans Mono">∗ </FONT>created_at</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
+  }
+  "cities" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#999999" BGCOLOR="white"><TR><TD><FONT COLOR="#666666">cities<BR/>Города</FONT></TD></TR></TABLE>>];
+  "cities" -> "customers":"city_id";
+  "customers":"id" -> "addresses":"customer_id";
+  "cities" -> "addresses":"city_id";
+}

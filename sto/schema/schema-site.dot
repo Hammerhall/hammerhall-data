@@ -1,0 +1,20 @@
+// sto-data-v1 — группа «Сайт и приложение»: все поля её таблиц; таблицы других групп, на которые они ссылаются, — серой рамкой.
+// Сгенерировано из описания схемы; руками не править. Картинка (SVG): tools/schema-svg.sh sto.
+digraph schema {
+  graph [rankdir=LR, fontname="DejaVu Sans", fontsize=13, nodesep=0.35, ranksep=0.9, pad=0.3, splines=true, newrank=true];
+  node [shape=plain, fontname="DejaVu Sans", fontsize=11];
+  edge [dir=both, arrowtail=none, arrowhead=crow, arrowsize=0.9, color="#333333"];
+  subgraph "cluster_site" {
+    label=<<B>Сайт и приложение</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "sessions" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>sessions</B><BR/>Сессии</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="id"><FONT FACE="DejaVu Sans Mono"># </FONT>id</TD></TR><TR><TD ALIGN="LEFT" PORT="customer_id"><FONT FACE="DejaVu Sans Mono">○ </FONT>customer_id</TD></TR><TR><TD ALIGN="LEFT" PORT="started_at"><FONT FACE="DejaVu Sans Mono">∗ </FONT>started_at</TD></TR><TR><TD ALIGN="LEFT" PORT="ended_at"><FONT FACE="DejaVu Sans Mono">∗ </FONT>ended_at</TD></TR><TR><TD ALIGN="LEFT" PORT="device"><FONT FACE="DejaVu Sans Mono">∗ </FONT>device</TD></TR><TR><TD ALIGN="LEFT" PORT="source"><FONT FACE="DejaVu Sans Mono">∗ </FONT>source</TD></TR><TR><TD ALIGN="LEFT" PORT="city_id"><FONT FACE="DejaVu Sans Mono">○ </FONT>city_id</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
+    "session_events" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>session_events</B><BR/>События сессий</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="session_id"><FONT FACE="DejaVu Sans Mono"># </FONT>session_id</TD></TR><TR><TD ALIGN="LEFT" PORT="seq"><FONT FACE="DejaVu Sans Mono"># </FONT>seq</TD></TR><TR><TD ALIGN="LEFT" PORT="at"><FONT FACE="DejaVu Sans Mono">∗ </FONT>at</TD></TR><TR><TD ALIGN="LEFT" PORT="kind"><FONT FACE="DejaVu Sans Mono">∗ </FONT>kind</TD></TR><TR><TD ALIGN="LEFT" PORT="product_id"><FONT FACE="DejaVu Sans Mono">○ </FONT>product_id</TD></TR><TR><TD ALIGN="LEFT" PORT="query"><FONT FACE="DejaVu Sans Mono">○ </FONT>query</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
+  }
+  "products" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#999999" BGCOLOR="white"><TR><TD><FONT COLOR="#666666">products<BR/>Товары</FONT></TD></TR></TABLE>>];
+  "cities" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#999999" BGCOLOR="white"><TR><TD><FONT COLOR="#666666">cities<BR/>Города</FONT></TD></TR></TABLE>>];
+  "customers" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#999999" BGCOLOR="white"><TR><TD><FONT COLOR="#666666">customers<BR/>Клиенты</FONT></TD></TR></TABLE>>];
+  "customers" -> "sessions":"customer_id" [style=dashed];
+  "cities" -> "sessions":"city_id" [style=dashed];
+  "sessions":"id" -> "session_events":"session_id";
+  "products" -> "session_events":"product_id" [style=dashed];
+}
