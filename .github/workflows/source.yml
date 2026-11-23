@@ -40,7 +40,7 @@ jobs:
   snapshot:
     name: Снимок
     runs-on: ubuntu-24.04
-    timeout-minutes: 150
+    timeout-minutes: 300
     outputs:
       code: ${{ steps.tag.outputs.code }}
       environment: ${{ steps.tag.outputs.environment }}
