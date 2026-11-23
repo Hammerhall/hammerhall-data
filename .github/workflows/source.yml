@@ -1,0 +1,163 @@
+# Снимок источников набора (<код>-source-YYYYMMDD): всё, из чего собирается набор, скачивается одним архивом и
+# выкладывается выпуском GitHub с тем же именем. Как скачивать, знает сам набор: <код>/source/fetch.py (только
+# стандартная библиотека Python; запуск — --snapshot ТЕГ --out ПАПКА [--work ПАПКА], итог — <тег>.zip, SOURCE.md,
+# SHA256SUMS), рядом — его тесты без сети <код>/source/test_*.py.
+#
+#   тег wld-source-20261123   → тесты fetch.py без сети, затем скачивание (Wikidata — частями, это самое долгое);
+#                               сверка архива с его SHA256SUMS; в выпуске — wld-source-20261123.zip, SOURCE.md и
+#                               SHA256SUMS (копии из архива), заметки — SOURCE.md; выпуск — после одобрения в окружении
+#                               набора <код>-data-release (одно окружение на набор: правила тегов <код>-data-v* и
+#                               <код>-source-*)
+#   набор без <код>/source/fetch.py (например, air-source-20250901 — тот снимок собран вручную) → задача «Снимок»
+#                               падает с причиной, выпуск не трогается
+#
+# Снимок — вход сборки набора: sha256 архива (в сводке запуска) идёт в паспорт набора (input.<имя>.sha256). Повторный
+# запуск по тому же тегу скачивает всё заново и переписывает файлы выпуска — у архива будет другая сумма.
+# Теги <код>-data-v* этот workflow не берёт — их собирает data.yml, а data.yml не берёт <код>-source-*.
+#
+# Версии actions — те же, что в data.yml (Node 24): checkout v5, setup-python v6, upload-artifact v6, download-artifact v7.
+name: source
+
+on:
+  push:
+    tags: ['*-source-*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: source-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  PYTHON_VERSION: '3.12'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  snapshot:
+    name: Снимок
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    outputs:
+      code: ${{ steps.tag.outputs.code }}
+      environment: ${{ steps.tag.outputs.environment }}
+    env:
+      TAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Набор и дата снимка — из тега
+        id: tag
+        run: |
+          . tools/ci/passport.sh
+          [[ "$TAG" =~ ^([a-z][a-z0-9]*)-source-([0-9]{8})$ ]] \
+            || fail "тег «$TAG» — не <код>-source-YYYYMMDD (например, wld-source-20261123)"
+          CODE="${BASH_REMATCH[1]}"
+          DAY="${BASH_REMATCH[2]}"
+          [ "$(date -u -d "$DAY" +%Y%m%d 2>/dev/null)" = "$DAY" ] || fail "тег $TAG: даты $DAY нет в календаре"
+          [ -f "$CODE/source/fetch.py" ] \
+            || fail "у набора $CODE нет $CODE/source/fetch.py — этим workflow снимок $TAG не собрать; снимок без fetch.py собирают вручную (так собран air-source-20250901)"
+          compgen -G "$CODE/source/test_*.py" >/dev/null \
+            || fail "у $CODE/source/fetch.py нет тестов без сети ($CODE/source/test_*.py)"
+          TODAY="$(date -u +%Y%m%d)"
+          [ "$DAY" = "$TODAY" ] || echo "::warning::дата в теге — $DAY, сегодня (UTC) — $TODAY; источники всё равно скачиваются сейчас"
+          {
+            echo "code=$CODE"
+            echo "environment=$CODE-data-release"
+          } >> "$GITHUB_OUTPUT"
+          echo "Снимок **$TAG** — набор \`$CODE\`, \`$CODE/source/fetch.py\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "снимок $TAG: набор $CODE, окружение выпуска $CODE-data-release"
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Тесты fetch.py без сети
+        env:
+          CODE: ${{ steps.tag.outputs.code }}
+          # локальный сервер тестов — мимо прокси, если он у раннера есть (no_proxy тесты ставят сами)
+          NO_PROXY: 127.0.0.1,localhost
+        run: |
+          python --version
+          python -X utf8 -I -m unittest discover -s "$CODE/source" -p 'test_*.py' -v
+
+      - name: Скачивание снимка
+        env:
+          CODE: ${{ steps.tag.outputs.code }}
+        run: python -X utf8 -I "$CODE/source/fetch.py" --snapshot "$TAG" --out work/out --work work/fetch
+
+      - name: Архив сходится со своими суммами; суммы — в сводку
+        run: |
+          for f in "$TAG.zip" SOURCE.md SHA256SUMS; do
+            [ -s "work/out/$f" ] || { echo "::error::нет work/out/$f"; exit 1; }
+          done
+          python -X utf8 -I -m zipfile -e "work/out/$TAG.zip" work/check
+          (cd work/check && sha256sum --quiet --strict -c SHA256SUMS)
+          [ "$(find work/check -type f | wc -l)" -eq "$(($(wc -l < work/check/SHA256SUMS) + 1))" ] \
+            || { echo "::error::в архиве есть файлы, которых нет в SHA256SUMS"; exit 1; }
+          cmp work/check/SHA256SUMS work/out/SHA256SUMS
+          cmp work/check/SOURCE.md work/out/SOURCE.md
+          {
+            echo
+            echo "### Файлы выпуска"
+            echo
+            echo '```'
+            (cd work/out && sha256sum "$TAG.zip" SOURCE.md SHA256SUMS)
+            echo "$(stat -c %s "work/out/$TAG.zip") байт, файлов в архиве: $(find work/check -type f | wc -l)"
+            echo '```'
+            echo
+            cat work/out/SOURCE.md
+          } >> "$GITHUB_STEP_SUMMARY"
+          (cd work/out && sha256sum "$TAG.zip" SOURCE.md SHA256SUMS)
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: snapshot
+          path: work/out/
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+
+  publish:
+    name: Выпуск снимка
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    needs: snapshot
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    # Окружение набора (<код>-data-release, из тега) — то же, что у выпуска набора в data.yml: правила тегов <код>-data-v*
+    # и <код>-source-* и обязательное одобрение.
+    # Ключ — секрет окружения RELEASE_TOKEN (если GITHUB_TOKEN организации не может писать в Releases); секретов
+    # репозитория workflow не берёт.
+    environment: ${{ needs.snapshot.outputs.environment }}
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          name: snapshot
+          path: work/out
+      - name: Файлы выпуска
+        run: |
+          ls -l work/out
+          (cd work/out && sha256sum "$TAG.zip" SOURCE.md SHA256SUMS)
+      - name: Создать выпуск и выложить файлы
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || github.token }}
+        # Выпуск уже есть (повторный запуск) — сначала файлы, потом название и заметки: название выпуска — всегда его
+        # тег, заметки — SOURCE.md этого снимка.
+        run: |
+          FILES=("work/out/$TAG.zip" work/out/SOURCE.md work/out/SHA256SUMS)
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber "${FILES[@]}"
+            gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --title "$TAG" --notes-file work/out/SOURCE.md
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --verify-tag --title "$TAG" --notes-file work/out/SOURCE.md
+            gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber "${FILES[@]}"
+          fi
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json name,assets \
+            --jq '"выпуск «\(.name)»: файлов \(.assets | length)"'
