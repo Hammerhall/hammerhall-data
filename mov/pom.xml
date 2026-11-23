@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Генератор набора «Кино» (mov-data-v*): импорт из снимка Wikidata, исходники — mov/src/…,
+         сборка без Maven — ./build.sh mov из корня репозитория. Вход — снимок: путь — -Dmov.source=…, MOV_SOURCE или
+         mov/work/mov-source-20261123.zip; без него тесты берут крошечный снимок, который пишут сами. -->
+    <parent>
+        <groupId>io.hammerhall</groupId>
+        <artifactId>hammerhall-data</artifactId>
+        <version>0.1.0</version>
+    </parent>
+    <artifactId>mov-gen</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.hammerhall</groupId>
+            <artifactId>data-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.hammerhall</groupId>
+            <artifactId>data-core</artifactId>
+            <type>test-jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>io.hammerhall.data.mov.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

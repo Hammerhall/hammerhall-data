@@ -1,0 +1,64 @@
+%% mov-data-v1 — ER-диаграмма; сгенерировано из описания схемы
+erDiagram
+    genres {
+        int id PK "Жанр"
+        text name "Название по-английски"
+    }
+    movies {
+        int id PK "Фильм — номер элемента Wikidata (Q42 → 42)"
+        text title "Название: метка en, иначе mul, иначе P1476, иначе метка запасного языка"
+        text title_ru "Название по-русски (метка ru)"
+        smallint year "Год выхода: самая ранняя дата P577 с точностью не ниже года"
+        date release_date "Дата выхода: самая ранняя дата P577 с точностью до дня"
+        int runtime "Хронометраж, минуты (P2047)"
+        decimal rank "Рейтинг 1.0–9.9 — синтетический: из открытых признаков Wikidata и шума от seed, не оценка качества"
+    }
+    actors {
+        int id PK "Актёр — номер элемента Wikidata"
+        text first_name "Имя (у мононима — пусто)"
+        text last_name "Фамилия (у мононима — имя целиком)"
+        text gender "Пол: по P21, иначе по первому имени P735, иначе от seed и id"
+        text name_ru "Имя по-русски (метка ru целиком)"
+    }
+    directors {
+        int id PK "Режиссёр — номер элемента Wikidata"
+        text first_name "Имя (у мононима — пусто)"
+        text last_name "Фамилия (у мононима — имя целиком)"
+        text name_ru "Имя по-русски (метка ru целиком)"
+    }
+    roles {
+        int actor_id PK, FK "Актёр"
+        int movie_id PK, FK "Фильм"
+        text role "Роль: P4633, иначе метка персонажа P453; нет — пусто"
+    }
+    movies_directors {
+        int director_id PK, FK "Режиссёр"
+        int movie_id PK, FK "Фильм"
+    }
+    movies_genres {
+        int movie_id PK, FK "Фильм"
+        int genre_id PK, FK "Жанр"
+    }
+    directors_genres {
+        int director_id PK, FK "Режиссёр"
+        int genre_id PK, FK "Жанр"
+        decimal prob "Доля фильмов режиссёра с этим жанром, 4 знака"
+    }
+    movies_countries {
+        int movie_id PK, FK "Фильм"
+        text country_code PK "Страна — ISO 3166-1 alpha-3"
+    }
+    movies_languages {
+        int movie_id PK, FK "Фильм"
+        text language_code PK "Язык — ISO 639-1, иначе ISO 639-3"
+    }
+    actors ||--o{ roles : "actor_id"
+    movies ||--o{ roles : "movie_id"
+    directors ||--o{ movies_directors : "director_id"
+    movies ||--o{ movies_directors : "movie_id"
+    movies ||--o{ movies_genres : "movie_id"
+    genres ||--o{ movies_genres : "genre_id"
+    directors ||--o{ directors_genres : "director_id"
+    genres ||--o{ directors_genres : "genre_id"
+    movies ||--o{ movies_countries : "movie_id"
+    movies ||--o{ movies_languages : "movie_id"

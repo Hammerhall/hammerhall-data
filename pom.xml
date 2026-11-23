@@ -18,6 +18,7 @@
         <module>air</module>
         <module>auc</module>
         <module>wld</module>
+        <module>mov</module>
     </modules>
 
     <properties>

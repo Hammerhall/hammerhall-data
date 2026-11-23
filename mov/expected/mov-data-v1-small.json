@@ -1,0 +1,286 @@
+{
+ "version": "mov-data-v1",
+ "profile": "small",
+ "identity": "manifest (без files) + rows и sha256_tsv каждой таблицы + sha256 texts + aggregates; sha256 и bytes файлов .tsv.gz, manifest.json и SOURCE.md — справочно (зависят от сборки zlib)",
+ "manifest": {
+  "version": "mov-data-v1",
+  "generator": "mov-gen 0.1.0",
+  "seed": 20261123,
+  "profile": "small",
+  "scale": "0.01",
+  "period": {
+   "from": "1874-01-01",
+   "to": "2026-11-23",
+   "now": "2026-11-23T00:00:00Z",
+   "business_timezone": "UTC"
+  },
+  "modules": [
+   "cinema"
+  ],
+  "inputs": [
+   {
+    "name": "mov-source-20261123.zip",
+    "release": "mov-source-20261123",
+    "fetched_at": "2026-11-23T21:35:51Z",
+    "license": "Wikidata (CC0 1.0)",
+    "sha256": "4bf07971ce78c22a9bd67338e6405acfd5cf0898a35dcf4d05add1c1890c1c4d"
+   }
+  ],
+  "source": "Wikidata (CC0 1.0)",
+  "selection": {
+   "order": "popularity desc, then id",
+   "share": "1 %, rounded up",
+   "movies_full": 356088,
+   "movies": 3561
+  },
+  "rank": {
+   "kind": "synthetic: popularity signals of Wikidata and seeded noise, not a rating of the film",
+   "popularity": "ln(1+sitelinks) + 0.5 ln(1+awards) + 0.25 ln(1+nominations) + 0.1 ln(1+cast in full)",
+   "score": "0.6 z(popularity) + 0.4 N(0,1) noise of stream movies.rank by movie id",
+   "scale": "quantile (i+0.5)/N of score over full, piecewise-linear inverse CDF, half-even to 0.1",
+   "same_in_all_profiles": true
+  },
+  "actors_gender": {
+   "p21": 33419,
+   "given_name": 3,
+   "seeded": 15,
+   "seeded_female_share": "0.3795",
+   "not_taken_other_p21": 55
+  },
+  "format": {
+   "encoding": "UTF-8",
+   "delimiter": "TAB",
+   "header": true,
+   "null": "empty field",
+   "date": "ISO 8601, YYYY-MM-DD",
+   "decimal": "point, no trailing zeros",
+   "compression": "gzip, mtime=0"
+  }
+ },
+ "files": [
+  {
+   "name": "genres.tsv.gz",
+   "table": "genres",
+   "rows": 24,
+   "sha256_tsv": "b1eb8bb3c7a816b7ab265ce967216cce229dd2139dd8838d6d0b36fd9d7fd08e",
+   "sha256_gz_reference": "f326c09176d32248ea14247fd4b2a155748162f203e79fa5ce2e2e8221d352b8"
+  },
+  {
+   "name": "movies.tsv.gz",
+   "table": "movies",
+   "rows": 3561,
+   "sha256_tsv": "90100d901f4e5bdd828a58734a5eaee848c25970aa44de77c58874432ddf43e7",
+   "sha256_gz_reference": "c3a0fcf707eafba0a19461e99d27b1fe1a53080fe87369e2531a7f963bd9dbf0"
+  },
+  {
+   "name": "actors.tsv.gz",
+   "table": "actors",
+   "rows": 33437,
+   "sha256_tsv": "7861cf4087d5acad318c0035e8c4413d44c9cb50f3003a3620bdac5ced69256d",
+   "sha256_gz_reference": "4c2e6bb9779250b64127099e902acd4632e4266c35d069a87eb56a35f15c4c5f"
+  },
+  {
+   "name": "directors.tsv.gz",
+   "table": "directors",
+   "rows": 1692,
+   "sha256_tsv": "85a28dd5d2be17782af86c83da7e568c0ff1cee4056a7021d042c1e19dd22ee3",
+   "sha256_gz_reference": "b22e950515061c2019ad4a538ceebde8d6e32fbea32054be67b8512e7d037718"
+  },
+  {
+   "name": "roles.tsv.gz",
+   "table": "roles",
+   "rows": 71207,
+   "sha256_tsv": "37649c24ae7b0eff332b4fa176d96a4bda9c386ba2736483918d9a1154cfa5ca",
+   "sha256_gz_reference": "bd8fbca0cb4c8f292166506ddc62c17795700e1f13a4bd96f5120b84f6d04a04"
+  },
+  {
+   "name": "movies_directors.tsv.gz",
+   "table": "movies_directors",
+   "rows": 4004,
+   "sha256_tsv": "f30e157cc9fdcfc068c05029434939c7f66dcbd595e81913aa33057b8d2210c0",
+   "sha256_gz_reference": "74400a2bb63dbcea0d2f345293de9e718dc74e1e032cb52c058e6e9c086a1f7d"
+  },
+  {
+   "name": "movies_genres.tsv.gz",
+   "table": "movies_genres",
+   "rows": 10565,
+   "sha256_tsv": "7593ce8180d9ea2a7625fa82b1294306c50e752482c4a05c0cfc18758d894105",
+   "sha256_gz_reference": "73a068d7c622e39970bf0e30230a7af696230324a50bf7b1884a93b0f15d2a02"
+  },
+  {
+   "name": "directors_genres.tsv.gz",
+   "table": "directors_genres",
+   "rows": 7169,
+   "sha256_tsv": "0a9ed91b46f1be9e141d6753ee13913183948ffb1a3ec7f14dbaed7fa9cfcfe2",
+   "sha256_gz_reference": "072c529df34cc5e222928abfe384e37575459b24f6b1e9e57ec8eac1e3470d1f"
+  },
+  {
+   "name": "movies_countries.tsv.gz",
+   "table": "movies_countries",
+   "rows": 5300,
+   "sha256_tsv": "10c81da61a61e3d7603f63a581e2251567a364922471c66625709eda5817361f",
+   "sha256_gz_reference": "6f41a64a48872533acc90a9234bb85b3f93d8abfdcd8d8cb6d74e319e6bb5a1d"
+  },
+  {
+   "name": "movies_languages.tsv.gz",
+   "table": "movies_languages",
+   "rows": 4231,
+   "sha256_tsv": "43c5558fc0a3c3ed53cb262d36e17ba51e6931ac0934a529247b38fb85d4b55d",
+   "sha256_gz_reference": "0bfe218d9ae8548c4ba9d65cf1b972f3cadad098921f84bf3074e973af30b6e8"
+  }
+ ],
+ "texts": [
+  {
+   "name": "LICENSE",
+   "sha256": "7c68170d5bb317a19daa881ab06aa57c9bdcc93e5dbe575cd7017812bf52ba0f"
+  },
+  {
+   "name": "schema-tables.sql",
+   "sha256": "d3b0db59390d3d9ba21a5b228610a762c9cb5e00505c56103f3ffa3b2638c34e"
+  },
+  {
+   "name": "schema-constraints.sql",
+   "sha256": "00bba38ee5c6940d19e9eb53f280a06a0e318351996cd146d5e46953f8274e98"
+  },
+  {
+   "name": "schema.mmd",
+   "sha256": "e05a792c859e2a01b1a29248221ed3d1dc634b1f4e1eb1918c6aaa239a8bb77d"
+  },
+  {
+   "name": "load-postgres.psql",
+   "sha256": "aba1f26ecb5a235151639e51fd7d57d75a9da8f48aac0ac5556b787be42d82a7"
+  },
+  {
+   "name": "schema.svg",
+   "sha256": "1e31344c1ce6b8185661ad17f336fdbd9d506d8bbbe472d839d0fdf09146a5db"
+  }
+ ],
+ "reference_only": [
+  "manifest.json",
+  "SOURCE.md"
+ ],
+ "aggregates": [
+  {
+   "table": "movies",
+   "op": "nulls",
+   "column": "title_ru",
+   "value": 55
+  },
+  {
+   "table": "movies",
+   "op": "nulls",
+   "column": "release_date",
+   "value": 301
+  },
+  {
+   "table": "movies",
+   "op": "nulls",
+   "column": "runtime",
+   "value": 7
+  },
+  {
+   "table": "movies",
+   "op": "min",
+   "column": "year",
+   "scale": 0,
+   "value": "1902"
+  },
+  {
+   "table": "movies",
+   "op": "max",
+   "column": "year",
+   "scale": 0,
+   "value": "2026"
+  },
+  {
+   "table": "movies",
+   "op": "sum",
+   "column": "rank",
+   "scale": 1,
+   "value": "33510.8"
+  },
+  {
+   "table": "movies",
+   "op": "min",
+   "column": "rank",
+   "scale": 1,
+   "value": "7.6"
+  },
+  {
+   "table": "movies",
+   "op": "max",
+   "column": "rank",
+   "scale": 1,
+   "value": "9.9"
+  },
+  {
+   "table": "movies",
+   "op": "sum",
+   "column": "runtime",
+   "scale": 0,
+   "value": "412799"
+  },
+  {
+   "table": "actors",
+   "op": "nulls",
+   "column": "first_name",
+   "value": 226
+  },
+  {
+   "table": "actors",
+   "op": "nulls",
+   "column": "name_ru",
+   "value": 3966
+  },
+  {
+   "table": "actors",
+   "op": "count_eq",
+   "column": "gender",
+   "arg": "F",
+   "value": 10983
+  },
+  {
+   "table": "directors",
+   "op": "nulls",
+   "column": "first_name",
+   "value": 7
+  },
+  {
+   "table": "directors",
+   "op": "nulls",
+   "column": "name_ru",
+   "value": 21
+  },
+  {
+   "table": "roles",
+   "op": "nulls",
+   "column": "role",
+   "value": 45090
+  },
+  {
+   "table": "movies_genres",
+   "op": "distinct",
+   "column": "genre_id",
+   "value": 23
+  },
+  {
+   "table": "directors_genres",
+   "op": "sum",
+   "column": "prob",
+   "scale": 4,
+   "value": "4937.1806"
+  },
+  {
+   "table": "movies_countries",
+   "op": "distinct",
+   "column": "country_code",
+   "value": 83
+  },
+  {
+   "table": "movies_languages",
+   "op": "distinct",
+   "column": "language_code",
+   "value": 101
+  }
+ ]
+}
