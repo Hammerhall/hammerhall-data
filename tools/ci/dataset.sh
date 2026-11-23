@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Какой набор собирает workflow data.yml и годится ли он: код — из тега <код>-data-vN (push) или из поля «dataset»
 # ручного запуска; дальше — паспорт <код>/dataset.properties. Итог — строки «ключ=значение» в $GITHUB_OUTPUT (без
-# него — на экран): code, version, title, environment, xmx, budget_minutes. Набор, который этот workflow не собирает
+# него — на экран): code, version, title, environment, xmx, budget_minutes, medium («1» — в паспорте есть профиль
+# medium). Набор, который этот workflow не собирает
 # (нет паспорта, нет генератора на Java, версия ≠ тег), — ошибка с причиной, остальные задачи не идут.
 # Переменные: EVENT — github.event_name, TAG — github.ref_name, DATASET — inputs.dataset.
 set -euo pipefail
@@ -31,6 +32,17 @@ XMX="$(passport "$CODE" full.xmx)"
 BUDGET="$(passport "$CODE" full.budget_minutes)"
 [[ "$XMX" =~ ^[0-9]+[gm]$ ]] || fail "$CODE/dataset.properties: full.xmx=$XMX — не вида 4g"
 [[ "$BUDGET" =~ ^[0-9]+$ ]] || fail "$CODE/dataset.properties: full.budget_minutes=$BUDGET — не число"
+PROFILES="$(passport "$CODE" profiles)"
+MEDIUM=""
+for P in $PROFILES; do
+  case "$P" in
+    small | full) ;;
+    medium) MEDIUM=1 ;;
+    *) fail "$CODE/dataset.properties: profiles=$PROFILES — профиль «$P» неизвестен (бывают small, medium, full)" ;;
+  esac
+done
+[[ " $PROFILES " == *" small "* && " $PROFILES " == *" full "* ]] \
+  || fail "$CODE/dataset.properties: profiles=$PROFILES — small и full обязательны"
 
 {
   echo "code=$CODE"
@@ -39,6 +51,7 @@ BUDGET="$(passport "$CODE" full.budget_minutes)"
   echo "environment=$ENVIRONMENT"
   echo "xmx=$XMX"
   echo "budget_minutes=$BUDGET"
+  echo "medium=$MEDIUM"
 } >> "${GITHUB_OUTPUT:-/dev/stdout}"
 if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
   echo "Набор **$CODE** — $(passport "$CODE" title), \`$VERSION\`" >> "$GITHUB_STEP_SUMMARY"

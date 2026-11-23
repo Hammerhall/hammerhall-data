@@ -30,11 +30,15 @@ def main(argv):
     p = passport(code)
     m = json.loads((full / 'manifest.json').read_text(encoding='utf-8'))
     rows = f"{sum(f['rows'] for f in m['files']):,}".replace(',', ' ')
-    size = f"{sum(f['bytes'] for f in m['files']) / 1e9:.2f}".replace('.', ',')
+    total = sum(f['bytes'] for f in m['files'])
+    size = (f"{total / 1e9:.2f}".replace('.', ',') + ' ГБ') if total >= 1e8 else (f"{total / 1e6:.1f}".replace('.', ',') + ' МБ')
     print(f"{p['title']} — {p['summary']}, `{m['version']}`.")
     print()
-    print(f"* `full`: {len(m['files'])} таблиц, {rows} строк, {size} ГБ сжатого (файлы `*.tsv.gz` ниже);")
-    print(f"* `small` (масштаб 1 %) — архив `{tag}-small.tar`;")
+    print(f"* `full`: {len(m['files'])} таблиц, {rows} строк, {size} сжатого (файлы `*.tsv.gz` ниже);")
+    # что такое профиль у набора — profile.<профиль> в паспорте; нет — масштаб, как у генераторов
+    for prof, scale in (('small', 'масштаб 1 %'), ('medium', 'масштаб 10 %')):
+        if prof in p.get('profiles', 'small full').split():
+            print(f"* `{prof}` ({p.get('profile.' + prof, scale)}) — архив `{tag}-{prof}.tar`;")
     print(f"* seed `{m['seed']}`, генератор `{m['generator']}`; период {m['period']['from']} … {m['period']['to']}.")
     print()
     print("Тождество выпуска — содержимое: число строк и `sha256_tsv` (sha256 разжатого TSV) каждой таблицы.")

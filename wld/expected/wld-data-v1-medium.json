@@ -1,0 +1,290 @@
+{
+ "version": "wld-data-v1",
+ "profile": "medium",
+ "identity": "manifest (без files) + rows и sha256_tsv каждой таблицы + sha256 texts + aggregates; sha256 и bytes файлов .tsv.gz, manifest.json и SOURCE.md — справочно (зависят от сборки zlib)",
+ "manifest": {
+  "version": "wld-data-v1",
+  "generator": "wld-gen 0.1.0",
+  "seed": 20261123,
+  "profile": "medium",
+  "scale": "0.1",
+  "period": {
+   "from": "1960-01-01",
+   "to": "2026-11-23",
+   "now": "2026-11-23T00:00:00Z",
+   "business_timezone": "UTC"
+  },
+  "modules": [
+   "world"
+  ],
+  "inputs": [
+   {
+    "name": "wld-source-20261123.zip",
+    "release": "wld-source-20261123",
+    "fetched_at": "2026-11-23T15:10:25Z",
+    "license": "GeoNames (CC BY 4.0), World Bank Open Data (CC BY 4.0), Unicode CLDR 49 (Unicode License v3), Wikidata (CC0)",
+    "sha256": "c1dbea75bb4d06b11724ddb7e27135d3cf4667867a74e78fc99e635342babac9"
+   }
+  ],
+  "source": "GeoNames (CC BY 4.0), World Bank Open Data (CC BY 4.0), Unicode CLDR 49 (Unicode License v3), Wikidata (CC0)",
+  "cities": {
+   "min_population": 15000,
+   "capitals": "all capitals, whatever their population"
+  },
+  "world_bank_years": "1960-2025",
+  "format": {
+   "encoding": "UTF-8",
+   "delimiter": "TAB",
+   "header": true,
+   "null": "empty field",
+   "decimal": "point, no trailing zeros",
+   "money": "millions of current US dollars, 2 digits, half-even",
+   "boolean": "t / f",
+   "compression": "gzip, mtime=0"
+  }
+ },
+ "files": [
+  {
+   "name": "countries.tsv.gz",
+   "table": "countries",
+   "rows": 244,
+   "sha256_tsv": "d1092f7e875d2cc9146b212529e36a242ed770a8bcbf72d7481832682419c1d1",
+   "sha256_gz_reference": "e78bf3545175eb67a2c022c0984eddb29705c4b0c8b6d51bb04c0a93483bc9b9"
+  },
+  {
+   "name": "cities.tsv.gz",
+   "table": "cities",
+   "rows": 31623,
+   "sha256_tsv": "cc3af5e1e4eae423e023352308049cc7d939dff0e4fe0f2cf7149bc0983ecd58",
+   "sha256_gz_reference": "09a713e4334e75624e43351137767b7fd4ff3202bb45dba284252c02ffc786cb"
+  },
+  {
+   "name": "country_languages.tsv.gz",
+   "table": "country_languages",
+   "rows": 1607,
+   "sha256_tsv": "bc160975fb58dd26ec03c19755ce8162076be4901fa0dd2fc4e969f0b1846eee",
+   "sha256_gz_reference": "37dca83ea58ef51a65acc60be247d8fd7b4f272a4e593df8e506942001164ed7"
+  },
+  {
+   "name": "country_borders.tsv.gz",
+   "table": "country_borders",
+   "rows": 624,
+   "sha256_tsv": "fc72884c37656b86cf6db3a43293072408ba46f0f88ee2e317dbf942947762e4",
+   "sha256_gz_reference": "ec87118b7467578ba2418ffd9aed6ac84666bbccbf30ab3dac26157ae6540145"
+  },
+  {
+   "name": "country_years.tsv.gz",
+   "table": "country_years",
+   "rows": 14058,
+   "sha256_tsv": "ef2fd80450815ae7599ac7cf75848ef2f2446bfe23ad1e438291afcf67875b5e",
+   "sha256_gz_reference": "c78c671260632fe3522540f8ab22c424cf206e673f8285b94e2a00c01448b7a2"
+  }
+ ],
+ "texts": [
+  {
+   "name": "LICENSE",
+   "sha256": "d7e64057f9506d601ee787e1c854dfb8661d1e59bdcbf0d496e0f00404cfa0ab"
+  },
+  {
+   "name": "schema-tables.sql",
+   "sha256": "55089ee6597cd423153f268b35e9eca252a38914ddeaef8334427f7bc68caea5"
+  },
+  {
+   "name": "schema-constraints.sql",
+   "sha256": "7b23a1af160a7c6ba8cafa81434117d097d6f8434c97959a7edc17ac13c71f3e"
+  },
+  {
+   "name": "schema.mmd",
+   "sha256": "b74c5ca889fe4c4204d7d965b06cdb079fe911e3c4d2d08951df0a6763569409"
+  },
+  {
+   "name": "load-postgres.psql",
+   "sha256": "de9ece4cb8e1cb3681704d883a44ccd290bce551d4270e28ecb149eaf98349d5"
+  },
+  {
+   "name": "schema.svg",
+   "sha256": "d7e4fb083120e26843098eef6349431eea3f5624ddc18e76b49e28a03c8e461d"
+  }
+ ],
+ "reference_only": [
+  "manifest.json",
+  "SOURCE.md"
+ ],
+ "aggregates": [
+  {
+   "table": "countries",
+   "op": "nulls",
+   "column": "name_ru",
+   "value": 0
+  },
+  {
+   "table": "countries",
+   "op": "nulls",
+   "column": "local_name",
+   "value": 5
+  },
+  {
+   "table": "countries",
+   "op": "nulls",
+   "column": "region",
+   "value": 0
+  },
+  {
+   "table": "countries",
+   "op": "nulls",
+   "column": "region_ru",
+   "value": 0
+  },
+  {
+   "table": "countries",
+   "op": "nulls",
+   "column": "surface_area",
+   "value": 1
+  },
+  {
+   "table": "countries",
+   "op": "nulls",
+   "column": "population",
+   "value": 4
+  },
+  {
+   "table": "countries",
+   "op": "nulls",
+   "column": "life_expectancy",
+   "value": 31
+  },
+  {
+   "table": "countries",
+   "op": "nulls",
+   "column": "gnp",
+   "value": 38
+  },
+  {
+   "table": "countries",
+   "op": "nulls",
+   "column": "gnp_old",
+   "value": 38
+  },
+  {
+   "table": "countries",
+   "op": "nulls",
+   "column": "capital",
+   "value": 6
+  },
+  {
+   "table": "countries",
+   "op": "sum",
+   "column": "population",
+   "scale": 0,
+   "value": "8187305881"
+  },
+  {
+   "table": "countries",
+   "op": "distinct",
+   "column": "continent",
+   "value": 7
+  },
+  {
+   "table": "countries",
+   "op": "distinct",
+   "column": "region",
+   "value": 23
+  },
+  {
+   "table": "cities",
+   "op": "nulls",
+   "column": "name_ru",
+   "value": 16701
+  },
+  {
+   "table": "cities",
+   "op": "nulls",
+   "column": "district",
+   "value": 60
+  },
+  {
+   "table": "cities",
+   "op": "nulls",
+   "column": "timezone",
+   "value": 0
+  },
+  {
+   "table": "cities",
+   "op": "sum",
+   "column": "population",
+   "scale": 0,
+   "value": "3856669231"
+  },
+  {
+   "table": "cities",
+   "op": "distinct",
+   "column": "country_code",
+   "value": 238
+  },
+  {
+   "table": "country_languages",
+   "op": "nulls",
+   "column": "language_ru",
+   "value": 86
+  },
+  {
+   "table": "country_languages",
+   "op": "count_eq",
+   "column": "official",
+   "arg": "t",
+   "value": 346
+  },
+  {
+   "table": "country_languages",
+   "op": "sum",
+   "column": "percentage",
+   "scale": 4,
+   "value": "32336.9265"
+  },
+  {
+   "table": "country_years",
+   "op": "nulls",
+   "column": "population",
+   "value": 0
+  },
+  {
+   "table": "country_years",
+   "op": "nulls",
+   "column": "gnp",
+   "value": 2900
+  },
+  {
+   "table": "country_years",
+   "op": "nulls",
+   "column": "gdp",
+   "value": 2369
+  },
+  {
+   "table": "country_years",
+   "op": "nulls",
+   "column": "life_expectancy",
+   "value": 217
+  },
+  {
+   "table": "country_years",
+   "op": "min",
+   "column": "year",
+   "scale": 0,
+   "value": "1960"
+  },
+  {
+   "table": "country_years",
+   "op": "max",
+   "column": "year",
+   "scale": 0,
+   "value": "2025"
+  },
+  {
+   "table": "country_years",
+   "op": "sum",
+   "column": "gdp",
+   "scale": 2,
+   "value": "2362962327.17"
+  }
+ ]
+}

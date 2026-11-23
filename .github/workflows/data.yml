@@ -1,5 +1,7 @@
 # Выпуск любого набора репозитория (<код>-data-v*): сборка и тесты, small дважды на Ubuntu и на Windows, сверка
 # манифестов, full на Ubuntu с замером времени и памяти, проверка выпуска против <код>/expected/, выгрузка в GitHub Release.
+# Профиль medium — только у наборов, у которых он есть в паспорте (profiles=small medium full): собирается там же, где
+# full, сверяется со своими ожиданиями и идёт в выпуск архивом <тег>-medium.tar, как small.
 # Всё доменное — из паспорта набора <код>/dataset.properties (tools/ci/dataset.sh, tools/ci/inputs.sh).
 #
 #   тег sto-data-v1         → набор sto, всё выше; проверка против ожиданий — обязательна; выпуск — после одобрения
@@ -61,6 +63,7 @@ jobs:
       environment: ${{ steps.passport.outputs.environment }}
       xmx: ${{ steps.passport.outputs.xmx }}
       budget_minutes: ${{ steps.passport.outputs.budget_minutes }}
+      medium: ${{ steps.passport.outputs.medium }}
     steps:
       - uses: actions/checkout@v5
       - name: Паспорт набора (код — из тега или поля «dataset»)
@@ -253,9 +256,22 @@ jobs:
           if [ -n "$STRICT" ]; then exit 1; fi
           echo "::warning::full не совпал с $CODE/expected/ — для ручного запуска это справка"
 
+      - name: medium — если он есть в паспорте
+        if: needs.dataset.outputs.medium == '1'
+        run: |
+          ./build.sh "$CODE" exec generate --profile medium --out work/medium --inputs strict \
+            | { grep -v '^  OK ' || true; }
+          if python -X utf8 -I tools/check_data.py work/medium; then exit 0; fi
+          if [ -n "$STRICT" ]; then exit 1; fi
+          echo "::warning::medium не совпал с $CODE/expected/ — для ручного запуска это справка"
+
       - name: Новые ожидания (freeze)
         if: github.event_name == 'workflow_dispatch'
-        run: ./build.sh "$CODE" exec freeze work/full --out "work/expected/$VERSION-full.json"
+        run: |
+          ./build.sh "$CODE" exec freeze work/full --out "work/expected/$VERSION-full.json"
+          if [ -d work/medium ]; then
+            ./build.sh "$CODE" exec freeze work/medium --out "work/expected/$VERSION-medium.json"
+          fi
       - uses: actions/upload-artifact@v6
         if: github.event_name == 'workflow_dispatch'
         with:
@@ -268,6 +284,14 @@ jobs:
         with:
           name: full
           path: work/full/
+          retention-days: 3
+          compression-level: 0
+
+      - uses: actions/upload-artifact@v6
+        if: github.event_name == 'push' && needs.dataset.outputs.medium == '1'
+        with:
+          name: medium
+          path: work/medium/
           retention-days: 3
           compression-level: 0
 
@@ -300,11 +324,19 @@ jobs:
         with:
           name: small-Linux
           path: work/${{ github.ref_name }}-small
-      - name: small — одним архивом (tar без отметок времени и владельцев)
+      - uses: actions/download-artifact@v7
+        if: needs.dataset.outputs.medium == '1'
+        with:
+          name: medium
+          path: work/${{ github.ref_name }}-medium
+      - name: small (и medium, если есть) — одним архивом каждый (tar без отметок времени и владельцев)
         run: |
-          tar --sort=name --owner=0 --group=0 --numeric-owner --mtime='1970-01-01 00:00Z' --mode='u=rwX,go=rX' \
-            -C work -cf "work/$TAG-small.tar" "$TAG-small"
-          sha256sum "work/$TAG-small.tar"
+          for p in small medium; do
+            [ -d "work/$TAG-$p" ] || continue
+            tar --sort=name --owner=0 --group=0 --numeric-owner --mtime='1970-01-01 00:00Z' --mode='u=rwX,go=rX' \
+              -C work -cf "work/$TAG-$p.tar" "$TAG-$p"
+            sha256sum "work/$TAG-$p.tar"
+          done
       - name: Заметки к выпуску
         run: |
           python3 -X utf8 -I tools/ci/notes.py "$CODE" "$TAG" work/full > work/notes.md
@@ -316,11 +348,11 @@ jobs:
         # выпуска — всегда его тег, заметки — от этой сборки.
         run: |
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber work/full/* "work/$TAG-small.tar"
+            gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber work/full/* "work/$TAG"-*.tar
             gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --title "$TAG" --notes-file work/notes.md
           else
             gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --verify-tag --title "$TAG" --notes-file work/notes.md
-            gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber work/full/* "work/$TAG-small.tar"
+            gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber work/full/* "work/$TAG"-*.tar
           fi
           gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json name,assets \
             --jq '"выпуск «\(.name)»: файлов \(.assets | length)"'

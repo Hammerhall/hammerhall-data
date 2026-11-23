@@ -50,6 +50,8 @@ public abstract class DatasetContract {
     static final Set<String> PASSPORT_KEYS = Set.of("code", "title", "summary", "version", "build", "profiles", "license",
             "release.environment", "full.xmx", "full.budget_minutes", "inputs");
     static final Set<String> INPUT_KEYS = Set.of("file", "release", "url", "sha256_tsv", "sha256");
+    /** Необязательное {@code profile.<профиль>=…} — что такое профиль у набора (для заметок к выпуску); профиль — из {@code profiles}. */
+    static final String PROFILE_NOTE = "profile.";
     /** Строка паспорта — «ключ=значение» без экранирования (так его одинаково читают bash, Python и Java) или комментарий. */
     static final Pattern LINE = Pattern.compile("^(#.*|[a-z][a-z0-9_.]*=[^\\\\]*|\\s*)$");
 
@@ -155,6 +157,8 @@ public abstract class DatasetContract {
         for (String key : p.stringPropertyNames()) {
             boolean known = PASSPORT_KEYS.contains(key);
             for (String n : names) known |= key.startsWith("input." + n + ".") && INPUT_KEYS.contains(key.substring(("input." + n + ".").length()));
+            known |= key.startsWith(PROFILE_NOTE) && profiles.contains(key.substring(PROFILE_NOTE.length()))
+                    && !p.getProperty(key).isBlank();
             if (!known) problems.add("неизвестный ключ паспорта: " + key);
         }
         assertEquals(List.of(), problems, "паспорт " + dir.resolve(Cli.PASSPORT));

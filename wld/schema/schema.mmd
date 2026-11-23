@@ -1,0 +1,55 @@
+%% wld-data-v1 — ER-диаграмма; сгенерировано из описания схемы
+erDiagram
+    countries {
+        text code PK "Код ISO 3166-1 alpha-3"
+        text code2 "Код ISO 3166-1 alpha-2"
+        text name "Название по-английски"
+        text name_ru "Название по-русски"
+        text local_name "Название на главном официальном языке страны"
+        text continent "Часть света"
+        text region "Подрегион ООН (M49) по-английски"
+        text region_ru "Подрегион ООН (M49) по-русски"
+        decimal surface_area "Площадь, км², последний год с данными"
+        bigint population "Население, последний год с данными"
+        decimal life_expectancy "Ожидаемая продолжительность жизни при рождении, лет, последний год с данными"
+        decimal gnp "ВНП (GNI), млн долларов США в текущих ценах, последний год с данными"
+        decimal gnp_old "ВНП (GNI) за год до последнего, млн долларов США"
+        int capital FK "Столица"
+    }
+    cities {
+        int id PK "Город — geonameid GeoNames"
+        text name "Название (GeoNames, латиница)"
+        text name_ru "Название по-русски"
+        text country_code FK "Страна"
+        text district "Регион первого уровня (GeoNames admin1)"
+        int population "Население"
+        decimal latitude "Широта, градусы (WGS 84), как в источнике"
+        decimal longitude "Долгота, градусы (WGS 84), как в источнике"
+        text timezone "Часовой пояс (IANA)"
+    }
+    country_languages {
+        text country_code PK, FK "Страна"
+        text language_code PK "Код языка CLDR (ISO 639; с письменностью — через дефис: zh-Hant)"
+        text language "Язык по-английски"
+        text language_ru "Язык по-русски"
+        bool official "Официальный: статус CLDR official или de_facto_official"
+        decimal percentage "Доля населения страны, %"
+    }
+    country_borders {
+        text country_code PK, FK "Страна"
+        text neighbour_code PK, FK "Соседняя страна"
+    }
+    country_years {
+        text country_code PK, FK "Страна"
+        smallint year PK "Год"
+        bigint population "Население"
+        decimal gnp "ВНП (GNI), млн долларов США в текущих ценах"
+        decimal gdp "ВВП (GDP), млн долларов США в текущих ценах"
+        decimal life_expectancy "Ожидаемая продолжительность жизни при рождении, лет"
+    }
+    cities |o--o{ countries : "capital"
+    countries ||--o{ cities : "country_code"
+    countries ||--o{ country_languages : "country_code"
+    countries ||--o{ country_borders : "country_code"
+    countries ||--o{ country_borders : "neighbour_code"
+    countries ||--o{ country_years : "country_code"

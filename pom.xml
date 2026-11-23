@@ -17,6 +17,7 @@
         <module>sto</module>
         <module>air</module>
         <module>auc</module>
+        <module>wld</module>
     </modules>
 
     <properties>
