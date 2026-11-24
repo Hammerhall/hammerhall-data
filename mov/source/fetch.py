@@ -20,8 +20,13 @@ mov-source-YYYYMMDD.zip (выпуск mov-source-YYYYMMDD этого репоз�
   3. genre_items: жанры и классы фильмов и их надклассы (P279) — вширь вверх, пока есть новые, не глубже GENRE_DEPTH;
   4. фильм, у которого класс или жанр — в замыкании P279 элемента ADULT_ROOT (фильмы для взрослых), дальше не идёт и
      из всех файлов снимка убирается;
-  5. даты, метки, названия, длительность, признаки популярности, состав — по оставшимся фильмам;
-  6. люди (P57 и состав): P31, P21, sitelinks, метки, имена; затем элементы имён, персонажи, страны, языки.
+  5. по оставшимся фильмам: даты, метки, названия, длительность, признаки популярности, состав; затем запасные даты
+     (P1191, P571, P2754), выход по местам (P577 с квалификатором P291), все метки фильмов, у которых нет ни метки на
+     языках LABEL_LANGS, ни P1476 (по меткам и названиям выше), съёмочная группа, студии, прокатчики, места съёмок и
+     соседние фильмы, серии, бюджет и сборы, награды и номинации;
+  6. люди (P57, состав и съёмочная группа): P31, P21, sitelinks, метки, имена, даты рождения и смерти, место рождения
+     и гражданство; затем элементы имён, персонажи, места (P19, P915), метки студий, прокатчиков, серий и наград,
+     страны студий и прокатчиков, страны (P495, P291, P27, P17 мест и студий), языки.
 Шаги 2–6 — частями VALUES по MOV_FETCH_CHUNK элементов, до MOV_FETCH_WORKERS запросов одновременно. Часть, на которую
 сервис не ответил (тайм-аут, 5xx, оборванный или не-JSON ответ, в том числе HTTP 200), делится пополам, пока половины
 не меньше MIN_CHUNK; меньшая — с обычными повторами. В конце шага — проверка, что ответила каждая часть.
@@ -124,6 +129,21 @@ YEARS_FROM = 1870
 
 LABEL_LANGS = ('en', 'mul', 'ru', 'de', 'fr', 'es', 'it', 'pt', 'nl', 'sv', 'pl')
 LINK_PROPS = ('P136', 'P57', 'P495', 'P364')
+# запасные даты фильма: первый показ, создание, дата производства
+EXTRA_DATE_PROPS = ('P1191', 'P571', 'P2754')
+# съёмочная группа: сценарист, композитор, оператор, продюсер, монтажёр
+CREW_PROPS = ('P58', 'P86', 'P344', 'P162', 'P1040')
+# ещё связи фильма: студия, прокатчик, место съёмок, предыдущий и следующий фильм; студия и прокатчик — компании
+LINK2_PROPS = ('P272', 'P750', 'P915', 'P155', 'P156')
+COMPANY_PROPS = ('P272', 'P750')
+# бюджет и сборы; награда и номинация
+MONEY_PROPS = ('P2130', 'P2142')
+AWARD_PROPS = ('P166', 'P1411')
+# у людей: рождение и смерть; место рождения и гражданство
+PERSON_DATE_PROPS = ('P569', 'P570')
+PERSON_LINK_PROPS = ('P19', 'P27')
+# метки студий, прокатчиков, серий и наград — на этих языках
+ITEM_LANGS = ('en', 'mul', 'ru')
 HUMAN = 'Q5'
 # вид элемента имени по P31
 NAME_MALE = 'Q12308941'
@@ -154,6 +174,7 @@ CLASS = '%CLASS%'
 DATE_FROM = '%FROM%'
 DATE_TO = '%TO%'
 LANGS_IN = ', '.join(f'"{lang}"' for lang in LABEL_LANGS)
+ITEM_LANGS_IN = ', '.join(f'"{lang}"' for lang in ITEM_LANGS)
 QUERIES = {
     'films_by_class': '''\
 # Фильмы одного класса — item'ы, у которых P31 (instance of, лучший ранг) — %CLASS%: по запросу на каждый класс из
@@ -300,9 +321,151 @@ SELECT ?film ?prop ?person ?ordinal ?character ?name WHERE {
     OPTIONAL { ?st pq:P4633 ?name } }
 }
 ''',
+    'film_dates_extra': '''\
+# Запасные даты фильмов, кроме deprecated: P1191 (date of first performance — первый показ), P571 (inception —
+# создание), P2754 (production date — дата производства); значение, точность и ранг — как в film_dates. Ранг, фильтр
+# и BIND — внутри каждой ветки.
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX psv: <http://www.wikidata.org/prop/statement/value/>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+SELECT ?film ?prop ?date ?precision ?rank WHERE {
+  VALUES ?film { %VALUES% }
+  { ?film p:P1191 ?st . ?st wikibase:rank ?rank .
+    FILTER(?rank != wikibase:DeprecatedRank)
+    ?st psv:P1191 ?v . ?v wikibase:timeValue ?date ; wikibase:timePrecision ?precision .
+    BIND("P1191" AS ?prop) }
+  UNION
+  { ?film p:P571 ?st . ?st wikibase:rank ?rank .
+    FILTER(?rank != wikibase:DeprecatedRank)
+    ?st psv:P571 ?v . ?v wikibase:timeValue ?date ; wikibase:timePrecision ?precision .
+    BIND("P571" AS ?prop) }
+  UNION
+  { ?film p:P2754 ?st . ?st wikibase:rank ?rank .
+    FILTER(?rank != wikibase:DeprecatedRank)
+    ?st psv:P2754 ?v . ?v wikibase:timeValue ?date ; wikibase:timePrecision ?precision .
+    BIND("P2754" AS ?prop) }
+}
+''',
+    'film_releases': '''\
+# Выход фильмов по местам: даты публикации (P577), кроме deprecated, с квалификатором P291 (place of publication) —
+# значение, точность и место; по строке на решение SPARQL, то есть на (утверждение, P291). Утверждение без P291 сюда
+# не попадает. Ранг — только для отбора.
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX psv: <http://www.wikidata.org/prop/statement/value/>
+PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+SELECT ?film ?date ?precision ?place ?rank WHERE {
+  VALUES ?film { %VALUES% }
+  ?film p:P577 ?st .
+  ?st wikibase:rank ?rank .
+  FILTER(?rank != wikibase:DeprecatedRank)
+  ?st pq:P291 ?place .
+  ?st psv:P577 ?v .
+  ?v wikibase:timeValue ?date ;
+     wikibase:timePrecision ?precision .
+}
+''',
+    'film_labels_all': '''\
+# Все метки (rdfs:label, на любом языке) фильмов, у которых нет ни метки на языках film_labels, ни названия P1476
+# (film_titles): в VALUES — только такие фильмы.
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?film ?lang ?label WHERE {
+  VALUES ?film { %VALUES% }
+  ?film rdfs:label ?label .
+  BIND(LANG(?label) AS ?lang)
+}
+''',
+    'film_crew': '''\
+# Съёмочная группа фильмов (лучший ранг): P58 — сценарист, P86 — композитор, P344 — оператор, P162 — продюсер,
+# P1040 — монтажёр.
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+SELECT ?film ?prop ?person WHERE {
+  VALUES ?film { %VALUES% }
+  { ?film wdt:P58 ?person . BIND("P58" AS ?prop) }
+  UNION { ?film wdt:P86 ?person . BIND("P86" AS ?prop) }
+  UNION { ?film wdt:P344 ?person . BIND("P344" AS ?prop) }
+  UNION { ?film wdt:P162 ?person . BIND("P162" AS ?prop) }
+  UNION { ?film wdt:P1040 ?person . BIND("P1040" AS ?prop) }
+}
+''',
+    'film_links2': '''\
+# Ещё связи фильмов (лучший ранг): P272 — студия, P750 — прокатчик, P915 — место съёмок, P155 — предыдущий фильм
+# (follows), P156 — следующий (followed by).
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+SELECT ?film ?prop ?value WHERE {
+  VALUES ?film { %VALUES% }
+  { ?film wdt:P272 ?value . BIND("P272" AS ?prop) }
+  UNION { ?film wdt:P750 ?value . BIND("P750" AS ?prop) }
+  UNION { ?film wdt:P915 ?value . BIND("P915" AS ?prop) }
+  UNION { ?film wdt:P155 ?value . BIND("P155" AS ?prop) }
+  UNION { ?film wdt:P156 ?value . BIND("P156" AS ?prop) }
+}
+''',
+    'film_series': '''\
+# Серии фильмов (P179 part of the series), кроме deprecated, с порядком в серии (квалификатор P1545, OPTIONAL): по
+# строке на решение SPARQL — у утверждения с несколькими P1545 по строке на каждый, без него — одна с пустым.
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
+PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+SELECT ?film ?series ?ordinal WHERE {
+  VALUES ?film { %VALUES% }
+  ?film p:P179 ?st .
+  ?st ps:P179 ?series ;
+      wikibase:rank ?rank .
+  FILTER(?rank != wikibase:DeprecatedRank)
+  OPTIONAL { ?st pq:P1545 ?ordinal }
+}
+''',
+    'film_money': '''\
+# Бюджет (P2130) и сборы (P2142) фильмов, кроме deprecated: сумма (psv: wikibase:quantityAmount — как в утверждении,
+# без пересчёта), единица (wikibase:quantityUnit — item валюты) и ранг. Ранг, фильтр и BIND — внутри каждой ветки.
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX psv: <http://www.wikidata.org/prop/statement/value/>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+SELECT ?film ?prop ?amount ?unit ?rank WHERE {
+  VALUES ?film { %VALUES% }
+  { ?film p:P2130 ?st . ?st wikibase:rank ?rank .
+    FILTER(?rank != wikibase:DeprecatedRank)
+    ?st psv:P2130 ?v . ?v wikibase:quantityAmount ?amount ; wikibase:quantityUnit ?unit .
+    BIND("P2130" AS ?prop) }
+  UNION
+  { ?film p:P2142 ?st . ?st wikibase:rank ?rank .
+    FILTER(?rank != wikibase:DeprecatedRank)
+    ?st psv:P2142 ?v . ?v wikibase:quantityAmount ?amount ; wikibase:quantityUnit ?unit .
+    BIND("P2142" AS ?prop) }
+}
+''',
+    'film_awards': '''\
+# Награды (P166 award received) и номинации (P1411 nominated for) фильмов, кроме deprecated, с датой (квалификатор
+# P585 point in time — значение и точность, OPTIONAL): по строке на решение SPARQL — у утверждения с несколькими P585
+# по строке на каждый, без него — одна с пустыми. Ранг, фильтр, BIND и OPTIONAL — внутри каждой ветки.
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX ps: <http://www.wikidata.org/prop/statement/>
+PREFIX pqv: <http://www.wikidata.org/prop/qualifier/value/>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+SELECT ?film ?prop ?award ?date ?precision WHERE {
+  VALUES ?film { %VALUES% }
+  { ?film p:P166 ?st . ?st ps:P166 ?award ; wikibase:rank ?rank .
+    FILTER(?rank != wikibase:DeprecatedRank) BIND("P166" AS ?prop)
+    OPTIONAL { ?st pqv:P585 ?t . ?t wikibase:timeValue ?date ; wikibase:timePrecision ?precision } }
+  UNION
+  { ?film p:P1411 ?st . ?st ps:P1411 ?award ; wikibase:rank ?rank .
+    FILTER(?rank != wikibase:DeprecatedRank) BIND("P1411" AS ?prop)
+    OPTIONAL { ?st pqv:P585 ?t . ?t wikibase:timeValue ?date ; wikibase:timePrecision ?precision } }
+}
+''',
     'people': '''\
-# Люди — режиссёры (P57) и состав (P161, P725) оставшихся фильмов: человек ли (P31 = Q5), пол (P21, лучший ранг),
-# число ссылок на вики-проекты (двумя путями, как в film_signals).
+# Люди — режиссёры (P57), состав (P161, P725) и съёмочная группа (P58, P86, P344, P162, P1040) оставшихся фильмов:
+# человек ли (P31 = Q5), пол (P21, лучший ранг), число ссылок на вики-проекты (на самом item'е, как в film_signals).
 PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 PREFIX wikibase: <http://wikiba.se/ontology#>
@@ -343,6 +506,36 @@ SELECT ?person ?kind ?item ?ordinal WHERE {
     OPTIONAL { ?st pq:P1545 ?ordinal } }
 }
 ''',
+    'people_dates': '''\
+# Даты рождения (P569) и смерти (P570) людей, кроме deprecated: значение, точность и ранг — как в film_dates. Ранг,
+# фильтр и BIND — внутри каждой ветки.
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX psv: <http://www.wikidata.org/prop/statement/value/>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+SELECT ?person ?prop ?date ?precision ?rank WHERE {
+  VALUES ?person { %VALUES% }
+  { ?person p:P569 ?st . ?st wikibase:rank ?rank .
+    FILTER(?rank != wikibase:DeprecatedRank)
+    ?st psv:P569 ?v . ?v wikibase:timeValue ?date ; wikibase:timePrecision ?precision .
+    BIND("P569" AS ?prop) }
+  UNION
+  { ?person p:P570 ?st . ?st wikibase:rank ?rank .
+    FILTER(?rank != wikibase:DeprecatedRank)
+    ?st psv:P570 ?v . ?v wikibase:timeValue ?date ; wikibase:timePrecision ?precision .
+    BIND("P570" AS ?prop) }
+}
+''',
+    'people_links': '''\
+# Место рождения (P19) и гражданство (P27) людей, лучший ранг.
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+SELECT ?person ?prop ?value WHERE {
+  VALUES ?person { %VALUES% }
+  { ?person wdt:P19 ?value . BIND("P19" AS ?prop) }
+  UNION { ?person wdt:P27 ?value . BIND("P27" AS ?prop) }
+}
+''',
     'name_items': '''\
 # Элементы имён и фамилий (значения P735 и P734 людей): метки en и mul, P31 (по нему — вид имени).
 PREFIX wd: <http://www.wikidata.org/entity/>
@@ -365,8 +558,41 @@ SELECT ?item ?kind ?value WHERE {
   BIND(LANG(?value) AS ?kind)
 }
 ''',
+    'places': '''\
+# Места (значения P19 людей и P915 фильмов): GeoNames ID (P1566), страна (P17) — лучший ранг, и метка en.
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?item ?kind ?value WHERE {
+  VALUES ?item { %VALUES% }
+  { ?item wdt:P1566 ?value . BIND("P1566" AS ?kind) }
+  UNION { ?item wdt:P17 ?value . BIND("P17" AS ?kind) }
+  UNION { ?item rdfs:label ?value . FILTER(LANG(?value) = "en") BIND("en" AS ?kind) }
+}
+''',
+    'item_labels': '''\
+# Метки студий и прокатчиков (значения P272, P750), серий (P179) и наград (P166, P1411) на языках %LANGS%.
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?item ?lang ?label WHERE {
+  VALUES ?item { %VALUES% }
+  ?item rdfs:label ?label .
+  FILTER(LANG(?label) IN (%LANGS%))
+  BIND(LANG(?label) AS ?lang)
+}
+'''.replace('%LANGS%', ITEM_LANGS_IN),
+    'companies': '''\
+# Страны студий и прокатчиков (значения P272, P750): P17 (country), лучший ранг.
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+SELECT ?item ?country WHERE {
+  VALUES ?item { %VALUES% }
+  ?item wdt:P17 ?country .
+}
+''',
     'countries': '''\
-# Страны происхождения фильмов (значения P495): коды ISO 3166-1 alpha-2 (P297) и alpha-3 (P298), лучший ранг.
+# Страны — значения P495 фильмов, места публикации (P291 в film_releases), гражданство (P27) людей, страны (P17) мест
+# и студий: коды ISO 3166-1 alpha-2 (P297) и alpha-3 (P298), лучший ранг.
 PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 SELECT ?item ?kind ?value WHERE {
@@ -659,16 +885,23 @@ def integer(text, what):
     return int(text)
 
 
-def seconds_text(text):
-    """Число секунд из wikibase:quantityAmount: без знака «+» и лишних нулей («+5400.0» → «5400», «90.50» → «90.5»)."""
+def decimal_text(text, stage):
+    """Число из wikibase:quantityAmount — точно, без знака «+», показателя и лишних нулей («+5400.0» → «5400»,
+    «90.50» → «90.5», «1.2E+7» → «12000000»)."""
     try:
         d = decimal.Decimal(text.strip())
     except decimal.InvalidOperation:
-        raise FetchError(f'Wikidata film_durations: «{text}» — не число') from None
+        raise FetchError(f'Wikidata {stage}: «{text}» — не число') from None
     if not d.is_finite():
-        raise FetchError(f'Wikidata film_durations: «{text}» — не число')
-    s = format(d.normalize(), 'f')
+        raise FetchError(f'Wikidata {stage}: «{text}» — не число')
+    exact = decimal.Context(prec=max(decimal.getcontext().prec, len(d.as_tuple().digits)))
+    s = format(d.normalize(exact), 'f')
     return '0' if s in ('-0', '0') else s
+
+
+def seconds_text(text):
+    """Число секунд из wikibase:quantityAmount (как decimal_text)."""
+    return decimal_text(text, 'film_durations')
 
 
 def name_kind(classes):
@@ -922,44 +1155,161 @@ def kinds_parser(stage, var, kinds):
     return parse
 
 
-def labels_parser(stage, var):
+def labels_parser(stage, var, langs=LABEL_LANGS):
+    """Разбор меток ?var ?lang ?label: строки (item, язык, метка) — на языках langs (None — на любом)."""
     def parse(wd, bindings, part):
         out = []
         for b in bindings:
             x = own_qid(b, var, part, stage)
             lang = value_of(b, 'lang', required=False) or str(b.get('label', {}).get('xml:lang', ''))
-            if lang in LABEL_LANGS:
+            if (lang in langs) if langs is not None else lang:
                 out.append((x, lang, value_of(b, 'label')))
         return out
     return parse
 
 
-def parse_links(wd, bindings, part):
-    out = []
-    for b in bindings:
-        film = own_qid(b, 'film', part, 'film_links')
-        prop = value_of(b, 'prop')
-        if prop != 'P31' and prop not in LINK_PROPS:
-            raise FetchError(f'Wikidata film_links: ?prop = «{prop}» — такого свойства в запросе нет')
-        v = qid(value_of(b, 'value'))
-        if v is None:
-            wd.not_item('film_links')
-            continue
-        out.append((film, prop, v))
-    return out
+def prop_of(b, stage, props):
+    """?prop строки ответа — одно из свойств запроса; иначе ответ не по запросу — FetchError."""
+    prop = value_of(b, 'prop')
+    if prop not in props:
+        raise FetchError(f'Wikidata {stage}: ?prop = «{prop}» — такого свойства в запросе нет')
+    return prop
+
+
+def rank_of(b, stage):
+    rank = RANKS.get(value_of(b, 'rank'))
+    if rank is None:
+        raise FetchError(f'Wikidata {stage}: ?rank = «{value_of(b, "rank")}» — неизвестный ранг')
+    return rank
+
+
+def dated(b, stage):
+    """Дата утверждения: (значение как отдал сервис, точность, ранг); deprecated (если сервис его всё же отдал) —
+    None."""
+    rank = rank_of(b, stage)
+    if rank == 'deprecated':
+        return None
+    precision = integer(value_of(b, 'precision'), f'{stage}: ?precision')
+    return value_of(b, 'date'), str(precision), rank
+
+
+def links_parser(stage, var, value, props):
+    """Разбор ответов вида ?var ?prop ?value, где значение — item: строки (item, свойство, Q-id значения). Значение
+    не item (неизвестное значение и т. п.) не пишется — считается в not_items шага."""
+    def parse(wd, bindings, part):
+        out = []
+        for b in bindings:
+            x = own_qid(b, var, part, stage)
+            prop = prop_of(b, stage, props)
+            v = qid(value_of(b, value))
+            if v is None:
+                wd.not_item(stage)
+                continue
+            out.append((x, prop, v))
+        return out
+    return parse
+
+
+parse_links = links_parser('film_links', 'film', 'value', ('P31',) + LINK_PROPS)
+
+
+def dates_parser(stage, var, props):
+    """Разбор дат вида ?var ?prop ?date ?precision ?rank: строки (item, свойство, значение, точность, ранг)."""
+    def parse(wd, bindings, part):
+        out = []
+        for b in bindings:
+            x = own_qid(b, var, part, stage)
+            prop = prop_of(b, stage, props)
+            d = dated(b, stage)
+            if d is not None:
+                out.append((x, prop) + d)
+        return out
+    return parse
 
 
 def parse_dates(wd, bindings, part):
     out = []
     for b in bindings:
         film = own_qid(b, 'film', part, 'film_dates')
-        rank = RANKS.get(value_of(b, 'rank'))
-        if rank is None:
-            raise FetchError(f'Wikidata film_dates: ?rank = «{value_of(b, "rank")}» — неизвестный ранг')
+        d = dated(b, 'film_dates')
+        if d is not None:
+            out.append((film,) + d)
+    return out
+
+
+def parse_releases(wd, bindings, part):
+    """film_releases: строки (фильм, дата, точность, место P291)."""
+    out = []
+    for b in bindings:
+        film = own_qid(b, 'film', part, 'film_releases')
+        d = dated(b, 'film_releases')
+        if d is None:
+            continue
+        place = qid(value_of(b, 'place'))
+        if place is None:
+            wd.not_item('film_releases')
+            continue
+        out.append((film, d[0], d[1], place))
+    return out
+
+
+def parse_series(wd, bindings, part):
+    """film_series: строки (фильм, серия, P1545 как строка или пусто)."""
+    out = []
+    for b in bindings:
+        film = own_qid(b, 'film', part, 'film_series')
+        series = qid(value_of(b, 'series'))
+        if series is None:
+            wd.not_item('film_series')
+            continue
+        out.append((film, series, value_of(b, 'ordinal', required=False)))
+    return out
+
+
+def parse_money(wd, bindings, part):
+    """film_money: строки (фильм, свойство, сумма, Q-id валюты, ранг); единица не item — пусто (и в not_items)."""
+    out = []
+    for b in bindings:
+        film = own_qid(b, 'film', part, 'film_money')
+        prop = prop_of(b, 'film_money', MONEY_PROPS)
+        rank = rank_of(b, 'film_money')
         if rank == 'deprecated':
             continue
-        precision = integer(value_of(b, 'precision'), 'film_dates: ?precision')
-        out.append((film, value_of(b, 'date'), str(precision), rank))
+        unit = qid(value_of(b, 'unit'))
+        if unit is None:
+            wd.not_item('film_money: unit')
+        out.append((film, prop, decimal_text(value_of(b, 'amount'), 'film_money'), unit or '', rank))
+    return out
+
+
+def parse_awards(wd, bindings, part):
+    """film_awards: строки (фильм, свойство, награда, дата P585 и её точность — или пусто)."""
+    out = []
+    for b in bindings:
+        film = own_qid(b, 'film', part, 'film_awards')
+        prop = prop_of(b, 'film_awards', AWARD_PROPS)
+        award = qid(value_of(b, 'award'))
+        if award is None:
+            wd.not_item('film_awards')
+            continue
+        date = value_of(b, 'date', required=False)
+        precision = value_of(b, 'precision', required=False)
+        if precision:
+            precision = str(integer(precision, 'film_awards: ?precision'))
+        out.append((film, prop, award, date, precision))
+    return out
+
+
+def parse_companies(wd, bindings, part):
+    """companies: строки (студия или прокатчик, страна P17)."""
+    out = []
+    for b in bindings:
+        item = own_qid(b, 'item', part, 'companies')
+        country = qid(value_of(b, 'country'))
+        if country is None:
+            wd.not_item('companies')
+            continue
+        out.append((item, country))
     return out
 
 
@@ -1198,10 +1548,10 @@ def fetch_wikidata(snap):
     # 5. свойства оставшихся фильмов
     rows = in_parts(wd, 'film_dates', kept, parse_dates, 'фильмов')
     snap.table('wikidata/film_dates.csv.gz', ('film', 'date', 'precision', 'rank'), rows, 'qsns')
-    rows = in_parts(wd, 'film_labels', kept, labels_parser('film_labels', 'film'), 'фильмов')
-    snap.table('wikidata/film_labels.csv.gz', ('film', 'lang', 'label'), rows, 'qss')
-    rows = in_parts(wd, 'film_titles', kept, parse_titles, 'фильмов')
-    snap.table('wikidata/film_titles.csv.gz', ('film', 'lang', 'title'), rows, 'qss')
+    film_labels = in_parts(wd, 'film_labels', kept, labels_parser('film_labels', 'film'), 'фильмов')
+    snap.table('wikidata/film_labels.csv.gz', ('film', 'lang', 'label'), film_labels, 'qss')
+    titles = in_parts(wd, 'film_titles', kept, parse_titles, 'фильмов')
+    snap.table('wikidata/film_titles.csv.gz', ('film', 'lang', 'title'), titles, 'qss')
     rows = in_parts(wd, 'film_durations', kept, parse_durations, 'фильмов')
     snap.table('wikidata/film_durations.csv.gz', ('film', 'seconds'), rows, 'qd')
     signals = {f: {'sitelinks': 0, 'P166': 0, 'P1411': 0, 'P345': ''} for f in kept}
@@ -1225,8 +1575,31 @@ def fetch_wikidata(snap):
                cast, 'qsqsqs')
     snap.at_least('Wikidata: строк состава (film_cast)', len(cast), MIN_CAST)
 
-    # 6. люди и справочники
-    people = sorted({v for _, p, v in links if p == 'P57'} | {r[2] for r in cast}, key=qnum)
+    # 5б. запасные даты, выход по местам, все метки фильмов без названия, съёмочная группа, студии и места, серии,
+    # деньги, награды — тоже только по оставшимся фильмам
+    rows = in_parts(wd, 'film_dates_extra', kept, dates_parser('film_dates_extra', 'film', EXTRA_DATE_PROPS),
+                    'фильмов')
+    snap.table('wikidata/film_dates_extra.csv.gz', ('film', 'prop', 'date', 'precision', 'rank'), rows, 'qssns')
+    releases = in_parts(wd, 'film_releases', kept, parse_releases, 'фильмов')
+    snap.table('wikidata/film_releases.csv.gz', ('film', 'date', 'precision', 'place'), releases, 'qsnq')
+    named = {r[0] for r in film_labels} | {r[0] for r in titles}
+    untitled = [f for f in kept if f not in named]
+    rows = in_parts(wd, 'film_labels_all', untitled, labels_parser('film_labels_all', 'film', None),
+                    'фильмов без метки и названия')
+    snap.table('wikidata/film_labels_all.csv.gz', ('film', 'lang', 'label'), rows, 'qss')
+    crew = in_parts(wd, 'film_crew', kept, links_parser('film_crew', 'film', 'person', CREW_PROPS), 'фильмов')
+    snap.table('wikidata/film_crew.csv.gz', ('film', 'prop', 'person'), crew, 'qsq')
+    links2 = in_parts(wd, 'film_links2', kept, links_parser('film_links2', 'film', 'value', LINK2_PROPS), 'фильмов')
+    snap.table('wikidata/film_links2.csv.gz', ('film', 'prop', 'value'), links2, 'qsq')
+    series = in_parts(wd, 'film_series', kept, parse_series, 'фильмов')
+    snap.table('wikidata/film_series.csv.gz', ('film', 'series', 'ordinal'), series, 'qqs')
+    rows = in_parts(wd, 'film_money', kept, parse_money, 'фильмов')
+    snap.table('wikidata/film_money.csv.gz', ('film', 'prop', 'amount', 'unit', 'rank'), rows, 'qsdqs')
+    awards = in_parts(wd, 'film_awards', kept, parse_awards, 'фильмов')
+    snap.table('wikidata/film_awards.csv.gz', ('film', 'prop', 'award', 'date', 'precision'), awards, 'qsqsn')
+
+    # 6. люди (режиссёры, состав, съёмочная группа) и справочники
+    people = sorted({v for _, p, v in links if p == 'P57'} | {r[2] for r in cast} | {r[2] for r in crew}, key=qnum)
     facts = {q: {'human': '0', 'gender': [], 'sitelinks': 0} for q in people}
     for person, kind, value in in_parts(wd, 'people', people,
                                         kinds_parser('people', 'person', ('sitelinks', 'P31', 'P21')), 'людей'):
@@ -1250,6 +1623,11 @@ def fetch_wikidata(snap):
     snap.table('wikidata/people_labels.csv.gz', ('person', 'lang', 'label'), rows, 'qss')
     names = in_parts(wd, 'people_names', people, parse_names, 'людей')
     snap.table('wikidata/people_names.csv.gz', ('person', 'kind', 'item', 'ordinal'), names, 'qsqs')
+    rows = in_parts(wd, 'people_dates', people, dates_parser('people_dates', 'person', PERSON_DATE_PROPS), 'людей')
+    snap.table('wikidata/people_dates.csv.gz', ('person', 'prop', 'date', 'precision', 'rank'), rows, 'qssns')
+    person_links = in_parts(wd, 'people_links', people,
+                            links_parser('people_links', 'person', 'value', PERSON_LINK_PROPS), 'людей')
+    snap.table('wikidata/people_links.csv.gz', ('person', 'prop', 'value'), person_links, 'qsq')
 
     name_items = sorted({r[2] for r in names}, key=qnum)
     found = {q: {'en': [], 'mul': [], 'P31': set()} for q in name_items}
@@ -1269,7 +1647,27 @@ def fetch_wikidata(snap):
     found = lookup(wd, 'characters', characters, ('en', 'mul'))
     snap.table('wikidata/characters.csv.gz', ('item', 'label_en', 'label_mul'),
                [(q, f['en'], f['mul']) for q, f in found.items()], 'qss')
-    countries = sorted({v for _, p, v in links if p == 'P495'}, key=qnum)
+
+    places = sorted({v for _, p, v in person_links if p == 'P19'} | {v for _, p, v in links2 if p == 'P915'},
+                    key=qnum)
+    place_rows = fetch_places(wd, places)
+    snap.table('wikidata/places.csv.gz', ('item', 'geonames', 'country', 'label_en'), place_rows, 'qnqs')
+    companies = sorted({v for _, p, v in links2 if p in COMPANY_PROPS}, key=qnum)
+    labelled = sorted(set(companies) | {r[1] for r in series} | {r[2] for r in awards}, key=qnum)
+    rows = in_parts(wd, 'item_labels', labelled, labels_parser('item_labels', 'item', ITEM_LANGS), 'элементов')
+    snap.table('wikidata/item_labels.csv.gz', ('item', 'lang', 'label'), rows, 'qss')
+    found = {q: [] for q in companies}
+    for item, country in in_parts(wd, 'companies', companies, parse_companies, 'элементов'):
+        found[item].append(country)
+    company_rows = [(q, min(cs, key=qnum) if cs else '') for q, cs in found.items()]
+    snap.table('wikidata/companies.csv', ('item', 'country'), company_rows, 'qq')
+
+    # страны — всё, что сборщик может спросить как страну: P495, места публикации (P291), гражданство (P27), страна
+    # места и студии (P17 — то, что записано в places и companies)
+    countries = {v for _, p, v in links if p == 'P495'} | {r[3] for r in releases}
+    countries |= {v for _, p, v in person_links if p == 'P27'}
+    countries |= {r[2] for r in place_rows if r[2]} | {r[1] for r in company_rows if r[1]}
+    countries = sorted(countries, key=qnum)
     found = lookup(wd, 'countries', countries, ('P297', 'P298'))
     snap.table('wikidata/countries.csv', ('item', 'iso2', 'iso3'),
                [(q, f['P297'], f['P298']) for q, f in found.items()], 'qss')
@@ -1280,7 +1678,7 @@ def fetch_wikidata(snap):
 
     snap.info['wikidata'] = {
         'classes': class_info, 'labels': labels, 'films': len(films), 'adult': len(adult), 'kept': len(kept),
-        'people': len(people), 'top': len(top), 'parts': wd.parts, 'splits': wd.splits,
+        'untitled': len(untitled), 'people': len(people), 'top': len(top), 'parts': wd.parts, 'splits': wd.splits,
         'not_items': dict(wd.not_items),
     }
 
@@ -1291,6 +1689,30 @@ def lookup(wd, stage, items, kinds):
     for item, kind, value in in_parts(wd, stage, items, kinds_parser(stage, 'item', kinds), 'элементов'):
         found[item][kind].append(value)
     return {q: {k: min(v, default='') for k, v in f.items()} for q, f in found.items()}
+
+
+def fetch_places(wd, places):
+    """Места: строки (item, GeoNames ID — наименьший по числу, страна P17 — первая по номеру, метка en); чего нет —
+    пусто. GeoNames ID не из цифр и страна не item не пишутся (считаются в not_items)."""
+    found = {q: {'P1566': [], 'P17': [], 'en': []} for q in places}
+    for item, kind, value in in_parts(wd, 'places', places, kinds_parser('places', 'item', ('P1566', 'P17', 'en')),
+                                      'элементов'):
+        f = found[item]
+        if kind == 'P1566':
+            if re.fullmatch(r'[0-9]+', value):
+                f['P1566'].append(int(value))
+            else:
+                wd.not_item('places: P1566')
+        elif kind == 'P17':
+            c = qid(value)
+            if c is None:
+                wd.not_item('places: P17')
+            else:
+                f['P17'].append(c)
+        else:
+            f['en'].append(value)
+    return [(q, str(min(f['P1566'])) if f['P1566'] else '', min(f['P17'], key=qnum) if f['P17'] else '',
+             min(f['en'], default='')) for q, f in found.items()]
 
 
 # ---- SOURCE.md, fetch.json, SHA256SUMS, архив ----
@@ -1313,19 +1735,48 @@ FILE_NOTES = (
     ('wikidata/film_cast.csv.gz', '`film,prop,person,ordinal,character,character_name` — роли (P161) и озвучивание '
      '(P725), кроме deprecated: по строке на решение SPARQL — перекрёсток значений P453 × P4633 (× P1545) '
      'утверждения; без них — одна строка с пустыми'),
+    ('wikidata/film_dates_extra.csv.gz', '`film,prop,date,precision,rank` — запасные даты, кроме deprecated: первый '
+     'показ (P1191), создание (P571), дата производства (P2754); значение, точность и ранг — как в `film_dates`'),
+    ('wikidata/film_releases.csv.gz', '`film,date,precision,place` — даты публикации (P577), кроме deprecated, с '
+     'местом публикации (квалификатор P291): по строке на утверждение и место; утверждений без P291 здесь нет'),
+    ('wikidata/film_labels_all.csv.gz', '`film,lang,label` — все метки (на любом языке) фильмов, у которых нет ни '
+     'метки на языках `film_labels`, ни P1476'),
+    ('wikidata/film_crew.csv.gz', '`film,prop,person` — съёмочная группа, лучший ранг: сценарист (P58), композитор '
+     '(P86), оператор (P344), продюсер (P162), монтажёр (P1040)'),
+    ('wikidata/film_links2.csv.gz', '`film,prop,value` — студия (P272), прокатчик (P750), место съёмок (P915), '
+     'предыдущий (P155) и следующий (P156) фильм, лучший ранг'),
+    ('wikidata/film_series.csv.gz', '`film,series,ordinal` — серия (P179), кроме deprecated, и порядок в ней '
+     '(квалификатор P1545 как строка): по строке на решение SPARQL — у нескольких P1545 по строке на каждый, без '
+     'него — пусто'),
+    ('wikidata/film_money.csv.gz', '`film,prop,amount,unit,rank` — бюджет (P2130) и сборы (P2142), кроме deprecated: '
+     'сумма как в утверждении (без «+», показателя и лишних нулей), единица — item валюты, ранг'),
+    ('wikidata/film_awards.csv.gz', '`film,prop,award,date,precision` — награды (P166) и номинации (P1411), кроме '
+     'deprecated, с датой (квалификатор P585: значение и точность): по строке на решение SPARQL — у нескольких P585 '
+     'по строке на каждый, без него — пусто'),
     ('wikidata/genre_items.csv', f'`item,label_en,parent` — жанры (P136) и классы (P31) фильмов и их надклассы '
      f'(P279, лучший ранг) вверх до корня, не глубже {GENRE_DEPTH} уровней: по строке на пару, у корня `parent` пуст'),
-    ('wikidata/people.csv.gz', '`person,human,gender,sitelinks` — люди из P57 и состава: `human` — 1, если P31 = Q5; '
-     '`gender` — P21 (лучший ранг; если их несколько — первый по номеру)'),
+    ('wikidata/people.csv.gz', '`person,human,gender,sitelinks` — люди из P57, состава и съёмочной группы: `human` — '
+     '1, если P31 = Q5; `gender` — P21 (лучший ранг; если их несколько — первый по номеру)'),
     ('wikidata/people_labels.csv.gz', '`person,lang,label` — метки людей на тех же языках'),
     ('wikidata/people_names.csv.gz', '`person,kind,item,ordinal` — имя (P735, `given`) и фамилия (P734, `family`), '
      'кроме deprecated, с порядком P1545'),
+    ('wikidata/people_dates.csv.gz', '`person,prop,date,precision,rank` — даты рождения (P569) и смерти (P570), '
+     'кроме deprecated; значение, точность и ранг — как в `film_dates`'),
+    ('wikidata/people_links.csv.gz', '`person,prop,value` — место рождения (P19) и гражданство (P27), лучший ранг'),
     ('wikidata/name_items.csv.gz', f'`item,label_en,label_mul,kind` — элементы имён и фамилий: метки и вид по P31 '
      f'({NAME_MALE} — `male`, {NAME_FEMALE} — `female`, {NAME_UNISEX} или оба — `unisex`, {NAME_FAMILY} — `family`, '
      f'иначе `other`)'),
     ('wikidata/characters.csv.gz', '`item,label_en,label_mul` — персонажи (значения P453)'),
-    ('wikidata/countries.csv', '`item,iso2,iso3` — значения P495: P297 и P298 (лучший ранг; несколько — первый по '
-     'алфавиту; нет — пусто)'),
+    ('wikidata/places.csv.gz', '`item,geonames,country,label_en` — места (значения P19 и P915): GeoNames ID (P1566; '
+     'несколько — наименьший по числу), страна (P17; несколько — первая по номеру), метка en; лучший ранг, нет — '
+     'пусто'),
+    ('wikidata/item_labels.csv.gz', '`item,lang,label` — метки ' + ', '.join(ITEM_LANGS) + ' студий и прокатчиков '
+     '(значения P272, P750), серий (P179) и наград (P166, P1411)'),
+    ('wikidata/companies.csv', '`item,country` — студии и прокатчики (значения P272, P750): страна (P17, лучший ранг; '
+     'несколько — первая по номеру; нет — пусто)'),
+    ('wikidata/countries.csv', '`item,iso2,iso3` — страны: значения P495, места публикации (P291 в `film_releases`), '
+     'гражданство (P27), страны мест и компаний (`places.country`, `companies.country`): P297 и P298 (лучший ранг; '
+     'несколько — первый по алфавиту; нет — пусто)'),
     ('wikidata/languages.csv', '`item,iso1,iso3,label_en` — значения P364: P218, P220 (так же) и метка en'),
 )
 
@@ -1344,8 +1795,9 @@ def source_md(snap):
     out = [
         f'# {snap.name} — снимок источника набора Movie',
         '',
-        'Снимок Wikidata, из которого собирается набор `mov-data-v1`: фильмы, их даты, названия, жанры, режиссёры и',
-        f'состав, люди и справочники. Время снимка — **{snap.fetched_at}** (UTC).',
+        'Снимок Wikidata, из которого собирается набор `mov-data-v1`: фильмы, их даты, названия, жанры, режиссёры,',
+        'состав и съёмочная группа, студии, серии, бюджеты и сборы, награды, люди, места и справочники. Время снимка —',
+        f'**{snap.fetched_at}** (UTC).',
         '',
         f'Архив `{snap.name}.zip` — без общей папки. Ответы Wikidata — в CSV (UTF-8, LF, заголовок первой строкой,',
         'кавычки — где нужно; item — номером `Q…`; строки — по столбцам слева направо, номера `Q` — как числа),',
@@ -1386,7 +1838,9 @@ def source_md(snap):
         f'Фильмы для взрослых (класс или жанр — в замыкании P279 элемента {ADULT_ROOT}) в снимок не вошли: '
         f'{num(wd["adult"])}.',
         '',
-        f'В снимке фильмов — {num(wd["kept"])}, людей — {num(wd["people"])}.',
+        f'В снимке фильмов — {num(wd["kept"])}, людей — {num(wd["people"])} (режиссёры, состав и съёмочная группа).',
+        f'Фильмов без метки на языках {" ".join(LABEL_LANGS)} и без P1476 — {num(wd["untitled"])}: все их метки — в',
+        '`wikidata/film_labels_all.csv.gz`.',
         '',
         '| файл | что | строк | байт |',
         '|---|---|---:|---:|',
@@ -1395,7 +1849,7 @@ def source_md(snap):
         out.append(f'| `{rel}` | {what} | {num(f[rel]["rows"])} | {num(f[rel]["bytes"])} |')
     out.append('')
     if wd['not_items']:
-        out += ['Значения, которые не item (неизвестное значение и т. п.), в файлы не записаны: '
+        out += ['Значения, которые не item (неизвестное значение и т. п.; у P1566 — не число), в файлы не записаны: '
                 + ', '.join(f'{k} — {num(v)}' for k, v in sorted(wd['not_items'].items())) + '.', '']
     if wd['top']:
         out += [f'Надклассы выше {GENRE_DEPTH}-го уровня не запрашивались — элементов, которые есть в '
