@@ -23,10 +23,11 @@ mov-source-YYYYMMDD.zip (выпуск mov-source-YYYYMMDD этого репоз�
   5. по оставшимся фильмам: даты, метки, названия, длительность, признаки популярности, состав; затем запасные даты
      (P1191, P571, P2754), выход по местам (P577 с квалификатором P291), все метки фильмов, у которых нет ни метки на
      языках LABEL_LANGS, ни P1476 (по меткам и названиям выше), съёмочная группа, студии, прокатчики, места съёмок и
-     соседние фильмы, серии, бюджет и сборы, награды и номинации;
+     действия, соседние фильмы, серии, бюджет и сборы, награды и номинации;
   6. люди (P57, состав и съёмочная группа): P31, P21, sitelinks, метки, имена, даты рождения и смерти, место рождения
-     и гражданство; затем элементы имён, персонажи, места (P19, P915), метки студий, прокатчиков, серий и наград,
-     страны студий и прокатчиков, страны (P495, P291, P27, P17 мест и студий), языки.
+     и гражданство; затем элементы имён, персонажи, метки студий, прокатчиков, серий и наград, страны и
+     штаб-квартиры студий и прокатчиков, места (P19, P915, P840, штаб-квартиры) с координатами, страны (P495, P291,
+     P27, P17 мест и студий), языки.
 Шаги 2–6 — частями VALUES по MOV_FETCH_CHUNK элементов, до MOV_FETCH_WORKERS запросов одновременно. Часть, на которую
 сервис не ответил (тайм-аут, 5xx, оборванный или не-JSON ответ, в том числе HTTP 200), делится пополам, пока половины
 не меньше MIN_CHUNK; меньшая — с обычными повторами. В конце шага — проверка, что ответила каждая часть.
@@ -133,9 +134,13 @@ LINK_PROPS = ('P136', 'P57', 'P495', 'P364')
 EXTRA_DATE_PROPS = ('P1191', 'P571', 'P2754')
 # съёмочная группа: сценарист, композитор, оператор, продюсер, монтажёр
 CREW_PROPS = ('P58', 'P86', 'P344', 'P162', 'P1040')
-# ещё связи фильма: студия, прокатчик, место съёмок, предыдущий и следующий фильм; студия и прокатчик — компании
-LINK2_PROPS = ('P272', 'P750', 'P915', 'P155', 'P156')
+# ещё связи фильма: студия, прокатчик, место съёмок, место действия, предыдущий и следующий фильм; студия и
+# прокатчик — компании; места съёмок и действия — места (places.csv.gz)
+LINK2_PROPS = ('P272', 'P750', 'P915', 'P840', 'P155', 'P156')
 COMPANY_PROPS = ('P272', 'P750')
+PLACE_PROPS = ('P915', 'P840')
+# координаты мест (P625) — только на этом глобусе (Земля)
+EARTH = 'Q2'
 # бюджет и сборы; награда и номинация
 MONEY_PROPS = ('P2130', 'P2142')
 AWARD_PROPS = ('P166', 'P1411')
@@ -393,8 +398,8 @@ SELECT ?film ?prop ?person WHERE {
 }
 ''',
     'film_links2': '''\
-# Ещё связи фильмов (лучший ранг): P272 — студия, P750 — прокатчик, P915 — место съёмок, P155 — предыдущий фильм
-# (follows), P156 — следующий (followed by).
+# Ещё связи фильмов (лучший ранг): P272 — студия, P750 — прокатчик, P915 — место съёмок, P840 — место действия
+# (narrative location), P155 — предыдущий фильм (follows), P156 — следующий (followed by).
 PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 SELECT ?film ?prop ?value WHERE {
@@ -402,6 +407,7 @@ SELECT ?film ?prop ?value WHERE {
   { ?film wdt:P272 ?value . BIND("P272" AS ?prop) }
   UNION { ?film wdt:P750 ?value . BIND("P750" AS ?prop) }
   UNION { ?film wdt:P915 ?value . BIND("P915" AS ?prop) }
+  UNION { ?film wdt:P840 ?value . BIND("P840" AS ?prop) }
   UNION { ?film wdt:P155 ?value . BIND("P155" AS ?prop) }
   UNION { ?film wdt:P156 ?value . BIND("P156" AS ?prop) }
 }
@@ -559,15 +565,25 @@ SELECT ?item ?kind ?value WHERE {
 }
 ''',
     'places': '''\
-# Места (значения P19 людей и P915 фильмов): GeoNames ID (P1566), страна (P17) — лучший ранг, и метка en.
+# Места (значения P19 людей, P915 и P840 фильмов, штаб-квартиры P159 студий и прокатчиков): GeoNames ID (P1566),
+# страна (P17) — лучший ранг; метки en, mul и ru; координаты (P625), кроме deprecated, — широта, долгота, глобус и ранг
+# (psv: → wikibase:geoLatitude, wikibase:geoLongitude, wikibase:geoGlobe; глобус отбирает загрузчик). Ранг, фильтр
+# и BIND — внутри ветки P625; ?lat ?lon ?globe ?rank есть только в её строках, ?value — только в строках остальных.
 PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX p: <http://www.wikidata.org/prop/>
+PREFIX psv: <http://www.wikidata.org/prop/statement/value/>
+PREFIX wikibase: <http://wikiba.se/ontology#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-SELECT ?item ?kind ?value WHERE {
+SELECT ?item ?kind ?value ?lat ?lon ?globe ?rank WHERE {
   VALUES ?item { %VALUES% }
   { ?item wdt:P1566 ?value . BIND("P1566" AS ?kind) }
   UNION { ?item wdt:P17 ?value . BIND("P17" AS ?kind) }
-  UNION { ?item rdfs:label ?value . FILTER(LANG(?value) = "en") BIND("en" AS ?kind) }
+  UNION { ?item rdfs:label ?value . FILTER(LANG(?value) IN ("en", "mul", "ru")) BIND(LANG(?value) AS ?kind) }
+  UNION { ?item p:P625 ?st . ?st wikibase:rank ?rank .
+          FILTER(?rank != wikibase:DeprecatedRank)
+          ?st psv:P625 ?v . ?v wikibase:geoLatitude ?lat ; wikibase:geoLongitude ?lon ; wikibase:geoGlobe ?globe .
+          BIND("P625" AS ?kind) }
 }
 ''',
     'item_labels': '''\
@@ -582,12 +598,14 @@ SELECT ?item ?lang ?label WHERE {
 }
 '''.replace('%LANGS%', ITEM_LANGS_IN),
     'companies': '''\
-# Страны студий и прокатчиков (значения P272, P750): P17 (country), лучший ранг.
+# Студии и прокатчики (значения P272, P750): страна (P17 country) и штаб-квартира (P159 headquarters location),
+# лучший ранг.
 PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-SELECT ?item ?country WHERE {
+SELECT ?item ?kind ?value WHERE {
   VALUES ?item { %VALUES% }
-  ?item wdt:P17 ?country .
+  { ?item wdt:P17 ?value . BIND("P17" AS ?kind) }
+  UNION { ?item wdt:P159 ?value . BIND("P159" AS ?kind) }
 }
 ''',
     'countries': '''\
@@ -1300,16 +1318,26 @@ def parse_awards(wd, bindings, part):
     return out
 
 
-def parse_companies(wd, bindings, part):
-    """companies: строки (студия или прокатчик, страна P17)."""
+def parse_places(wd, bindings, part):
+    """places: строки (место, вид, значение). У P625 значение — (ранг, широта, долгота) точной десятичной записью;
+    координаты не на глобусе Земли (EARTH) не берутся (считаются в not_items)."""
     out = []
     for b in bindings:
-        item = own_qid(b, 'item', part, 'companies')
-        country = qid(value_of(b, 'country'))
-        if country is None:
-            wd.not_item('companies')
-            continue
-        out.append((item, country))
+        item = own_qid(b, 'item', part, 'places')
+        kind = value_of(b, 'kind')
+        if kind == 'P625':
+            rank = rank_of(b, 'places')
+            if rank == 'deprecated':
+                continue
+            if qid(value_of(b, 'globe')) != EARTH:
+                wd.not_item('places: P625')
+                continue
+            out.append((item, kind, (rank, decimal_text(value_of(b, 'lat'), 'places: ?lat'),
+                                     decimal_text(value_of(b, 'lon'), 'places: ?lon'))))
+        elif kind in ('P1566', 'P17', 'en', 'mul', 'ru'):
+            out.append((item, kind, value_of(b, 'value')))
+        else:
+            raise FetchError(f'Wikidata places: ?kind = «{kind}» — ждали одно из P1566, P17, en, mul, ru, P625')
     return out
 
 
@@ -1648,19 +1676,28 @@ def fetch_wikidata(snap):
     snap.table('wikidata/characters.csv.gz', ('item', 'label_en', 'label_mul'),
                [(q, f['en'], f['mul']) for q, f in found.items()], 'qss')
 
-    places = sorted({v for _, p, v in person_links if p == 'P19'} | {v for _, p, v in links2 if p == 'P915'},
-                    key=qnum)
-    place_rows = fetch_places(wd, places)
-    snap.table('wikidata/places.csv.gz', ('item', 'geonames', 'country', 'label_en'), place_rows, 'qnqs')
     companies = sorted({v for _, p, v in links2 if p in COMPANY_PROPS}, key=qnum)
     labelled = sorted(set(companies) | {r[1] for r in series} | {r[2] for r in awards}, key=qnum)
     rows = in_parts(wd, 'item_labels', labelled, labels_parser('item_labels', 'item', ITEM_LANGS), 'элементов')
     snap.table('wikidata/item_labels.csv.gz', ('item', 'lang', 'label'), rows, 'qss')
-    found = {q: [] for q in companies}
-    for item, country in in_parts(wd, 'companies', companies, parse_companies, 'элементов'):
-        found[item].append(country)
-    company_rows = [(q, min(cs, key=qnum) if cs else '') for q, cs in found.items()]
-    snap.table('wikidata/companies.csv', ('item', 'country'), company_rows, 'qq')
+    found = {q: {'P17': [], 'P159': []} for q in companies}
+    for item, kind, value in in_parts(wd, 'companies', companies,
+                                      kinds_parser('companies', 'item', ('P17', 'P159')), 'элементов'):
+        v = qid(value)
+        if v is None:
+            wd.not_item(f'companies: {kind}')
+        else:
+            found[item][kind].append(v)
+    company_rows = [(q, min(f['P17'], key=qnum, default=''), min(f['P159'], key=qnum, default=''))
+                    for q, f in found.items()]
+    snap.table('wikidata/companies.csv', ('item', 'country', 'hq'), company_rows, 'qqq')
+
+    # места — P19 людей, P915 и P840 фильмов, штаб-квартиры (то, что записано в companies.hq)
+    places = {v for _, p, v in person_links if p == 'P19'} | {v for _, p, v in links2 if p in PLACE_PROPS}
+    places = sorted(places | {r[2] for r in company_rows if r[2]}, key=qnum)
+    place_rows = fetch_places(wd, places)
+    snap.table('wikidata/places.csv.gz', ('item', 'geonames', 'country', 'label_en', 'label_mul', 'label_ru', 'lat',
+                                           'lon'), place_rows, 'qnqsssdd')
 
     # страны — всё, что сборщик может спросить как страну: P495, места публикации (P291), гражданство (P27), страна
     # места и студии (P17 — то, что записано в places и companies)
@@ -1692,11 +1729,11 @@ def lookup(wd, stage, items, kinds):
 
 
 def fetch_places(wd, places):
-    """Места: строки (item, GeoNames ID — наименьший по числу, страна P17 — первая по номеру, метка en); чего нет —
-    пусто. GeoNames ID не из цифр и страна не item не пишутся (считаются в not_items)."""
-    found = {q: {'P1566': [], 'P17': [], 'en': []} for q in places}
-    for item, kind, value in in_parts(wd, 'places', places, kinds_parser('places', 'item', ('P1566', 'P17', 'en')),
-                                      'элементов'):
+    """Места: строки (item, GeoNames ID — наименьший по числу, страна P17 — первая по номеру, метки en, mul и ru, широта и
+    долгота); чего нет — пусто. Координаты — P625 на глобусе Земли: из набора preferred, иначе normal, — первые по
+    (широта, долгота) как числам. GeoNames ID не из цифр и страна не item не пишутся (считаются в not_items)."""
+    found = {q: {'P1566': [], 'P17': [], 'en': [], 'mul': [], 'ru': [], 'P625': []} for q in places}
+    for item, kind, value in in_parts(wd, 'places', places, parse_places, 'элементов'):
         f = found[item]
         if kind == 'P1566':
             if re.fullmatch(r'[0-9]+', value):
@@ -1710,9 +1747,16 @@ def fetch_places(wd, places):
             else:
                 f['P17'].append(c)
         else:
-            f['en'].append(value)
-    return [(q, str(min(f['P1566'])) if f['P1566'] else '', min(f['P17'], key=qnum) if f['P17'] else '',
-             min(f['en'], default='')) for q, f in found.items()]
+            f[kind].append(value)
+    rows = []
+    for q, f in found.items():
+        coords = [c for c in f['P625'] if c[0] == 'preferred'] or f['P625']
+        lat, lon = min(((c[1], c[2]) for c in coords), key=lambda c: (decimal.Decimal(c[0]), decimal.Decimal(c[1])),
+                       default=('', ''))
+        rows.append((q, str(min(f['P1566'])) if f['P1566'] else '', min(f['P17'], key=qnum, default=''),
+                     min(f['en'], default=''), min(f['mul'], default=''), min(f['ru'], default=''), lat,
+                     lon))
+    return rows
 
 
 # ---- SOURCE.md, fetch.json, SHA256SUMS, архив ----
@@ -1744,7 +1788,7 @@ FILE_NOTES = (
     ('wikidata/film_crew.csv.gz', '`film,prop,person` — съёмочная группа, лучший ранг: сценарист (P58), композитор '
      '(P86), оператор (P344), продюсер (P162), монтажёр (P1040)'),
     ('wikidata/film_links2.csv.gz', '`film,prop,value` — студия (P272), прокатчик (P750), место съёмок (P915), '
-     'предыдущий (P155) и следующий (P156) фильм, лучший ранг'),
+     'место действия (P840), предыдущий (P155) и следующий (P156) фильм, лучший ранг'),
     ('wikidata/film_series.csv.gz', '`film,series,ordinal` — серия (P179), кроме deprecated, и порядок в ней '
      '(квалификатор P1545 как строка): по строке на решение SPARQL — у нескольких P1545 по строке на каждый, без '
      'него — пусто'),
@@ -1767,13 +1811,14 @@ FILE_NOTES = (
      f'({NAME_MALE} — `male`, {NAME_FEMALE} — `female`, {NAME_UNISEX} или оба — `unisex`, {NAME_FAMILY} — `family`, '
      f'иначе `other`)'),
     ('wikidata/characters.csv.gz', '`item,label_en,label_mul` — персонажи (значения P453)'),
-    ('wikidata/places.csv.gz', '`item,geonames,country,label_en` — места (значения P19 и P915): GeoNames ID (P1566; '
-     'несколько — наименьший по числу), страна (P17; несколько — первая по номеру), метка en; лучший ранг, нет — '
-     'пусто'),
     ('wikidata/item_labels.csv.gz', '`item,lang,label` — метки ' + ', '.join(ITEM_LANGS) + ' студий и прокатчиков '
      '(значения P272, P750), серий (P179) и наград (P166, P1411)'),
-    ('wikidata/companies.csv', '`item,country` — студии и прокатчики (значения P272, P750): страна (P17, лучший ранг; '
-     'несколько — первая по номеру; нет — пусто)'),
+    ('wikidata/companies.csv', '`item,country,hq` — студии и прокатчики (значения P272, P750): страна (P17) и '
+     'штаб-квартира (P159), лучший ранг; несколько — первое по номеру; нет — пусто'),
+    ('wikidata/places.csv.gz', '`item,geonames,country,label_en,label_mul,label_ru,lat,lon` — места (значения P19, P915, P840 и '
+     '`companies.hq`): GeoNames ID (P1566; несколько — наименьший по числу), страна (P17; несколько — первая по '
+     'номеру) — лучший ранг; метки en, mul и ru; координаты (P625, кроме deprecated, только глобус Земли; из preferred, '
+     f'иначе normal, — первые по широте, затем долготе, как числам; глобус — {EARTH}); нет — пусто'),
     ('wikidata/countries.csv', '`item,iso2,iso3` — страны: значения P495, места публикации (P291 в `film_releases`), '
      'гражданство (P27), страны мест и компаний (`places.country`, `companies.country`): P297 и P298 (лучший ранг; '
      'несколько — первый по алфавиту; нет — пусто)'),
@@ -1796,8 +1841,8 @@ def source_md(snap):
         f'# {snap.name} — снимок источника набора Movie',
         '',
         'Снимок Wikidata, из которого собирается набор `mov-data-v1`: фильмы, их даты, названия, жанры, режиссёры,',
-        'состав и съёмочная группа, студии, серии, бюджеты и сборы, награды, люди, места и справочники. Время снимка —',
-        f'**{snap.fetched_at}** (UTC).',
+        'состав и съёмочная группа, студии, серии, бюджеты и сборы, награды, люди, места (съёмок, действия, рождения,',
+        f'штаб-квартиры — с координатами) и справочники. Время снимка — **{snap.fetched_at}** (UTC).',
         '',
         f'Архив `{snap.name}.zip` — без общей папки. Ответы Wikidata — в CSV (UTF-8, LF, заголовок первой строкой,',
         'кавычки — где нужно; item — номером `Q…`; строки — по столбцам слева направо, номера `Q` — как числа),',
@@ -1849,7 +1894,8 @@ def source_md(snap):
         out.append(f'| `{rel}` | {what} | {num(f[rel]["rows"])} | {num(f[rel]["bytes"])} |')
     out.append('')
     if wd['not_items']:
-        out += ['Значения, которые не item (неизвестное значение и т. п.; у P1566 — не число), в файлы не записаны: '
+        out += ['Значения, которые не item (неизвестное значение и т. п.; у P1566 — не число, у P625 — не глобус '
+                'Земли), в файлы не записаны: '
                 + ', '.join(f'{k} — {num(v)}' for k, v in sorted(wd['not_items'].items())) + '.', '']
     if wd['top']:
         out += [f'Надклассы выше {GENRE_DEPTH}-го уровня не запрашивались — элементов, которые есть в '

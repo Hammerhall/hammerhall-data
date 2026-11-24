@@ -191,6 +191,7 @@ DB = {
              'P58': ['Q1001', 'Q1010'], 'P86': ['Q1011'], 'P344': [GENID + 'w1'], 'P162': ['Q1010'],
              'P1040': ['Q1012'],
              'P272': ['Q5001'], 'P750': ['Q5002', 'Q5003'], 'P915': ['Q2001', 'Q90', GENID + 'l1'], 'P156': ['Q101'],
+             'P840': ['Q36'],
              'P179': [('Q6001', 'normal', ['1']), ('Q6002', 'deprecated', ['9'])],
              'P2130': [('+15000000', 'Q4917', 'normal'), ('1.2E+7', 'Q4917', 'preferred'),
                        ('9', 'Q4917', 'deprecated')],
@@ -199,6 +200,7 @@ DB = {
              'label': {'mul': 'Beta'}, 'P577': [('1995-06-01T00:00:00Z', 11, 'normal', ['Q30', 'Q90', GENID + 'r1'])],
              'sitelinks': 3, 'P345': ['tt0000102', 'tt0000101'], 'cast': [st('Q1001', character=[GENID + 'c2'])],
              'P86': ['Q1002'], 'P155': ['Q100'], 'P750': ['Q5002'], 'P179': [('Q6001', 'normal', ['2', '2a'])],
+             'P840': ['Q2005', 'Q2006'],
              'P2142': [('2500000.50', 'Q4917', 'normal')]},
     'Q102': {'P31': ['Q24869'], 'label': {'de': 'Gamma (Film)'}, 'P577': [('2012-01-01T00:00:00Z', 9, 'normal')],
              'sitelinks': 1, 'P2754': [('2010-06-01T00:00:00Z', 10, 'normal')], 'P179': [('Q6002', 'normal', [])]},
@@ -220,7 +222,8 @@ DB = {
     'Q110': {'P31': ['Q11424'], 'P136': ['Q1400'], 'P57': ['Q2901'], 'label': {'en': 'X1'},
              'P577': [('2003-01-01T00:00:00Z', 9, 'normal', ['Q2903'])], 'cast': [st('Q2900')],
              'P1191': [('2002-01-01T00:00:00Z', 9, 'normal')], 'P58': ['Q2902'], 'P272': ['Q5009'],
-             'P179': [('Q6009', 'normal', [])], 'P166': [aw('Q7009')], 'P2130': [('5', 'Q4917', 'normal')]},
+             'P179': [('Q6009', 'normal', [])], 'P166': [aw('Q7009')], 'P2130': [('5', 'Q4917', 'normal')],
+             'P840': ['Q2909']},
     'Q111': {'P31': ['Q11424', ADULT], 'label': {'en': 'X2'}, 'cast': [st('Q2900')]},
     'Q112': {'P31': ['Q11424'], 'P136': ['Q1401'], 'label': {'en': 'X3'}},
     'Q113': {'P31': ['Q226730', 'Q11424'], 'P495': ['Q1300'], 'P364': ['Q1301'],
@@ -289,15 +292,30 @@ DB = {
     'Q29': {'P297': ['ES'], 'P298': ['ESP']},   # страна места (P17)
     'Q31': {'P297': ['BE'], 'P298': ['BEL']},   # страна прокатчика (P17)
     'Q145': {'P297': ['GB'], 'P298': ['GBR']},  # страна студии (P17)
-    # места (P19, P915; город Q90 — ещё и место публикации)
-    'Q90': {'label': {'en': 'Rivertown'}, 'P1566': ['3000001'], 'P17': ['Q142']},
-    'Q2001': {'label': {'en': 'Northport', 'ru': 'Нортпорт'}, 'P1566': ['900', '10000'], 'P17': ['Q183', 'Q29']},
-    'Q2002': {'label': {'de': 'Südtal'}},
-    'Q2003': {'label': {'en': 'Old Mill, "East"'}, 'P1566': ['x12'], 'P17': [GENID + 'p2']},
+    'Q32': {'P297': ['LU'], 'P298': ['LUX']},   # страна места действия (P17 нового места)
+    'Q34': {'P297': ['SE'], 'P298': ['SWE']},   # страна штаб-квартиры (P17 нового места)
+    # места (P19, P915, P840, P159; город Q90 — ещё и место публикации); P625 — (широта, долгота, глобус, ранг)
+    'Q36': {'P297': ['PL'], 'P298': ['POL'], 'label': {'en': 'Poland', 'ru': 'Польша'}, 'P17': ['Q36'],
+            'P1566': ['3000036'], 'P625': [('52.25', '21.0', 'Q2', 'normal')]},  # место действия — сама страна
+    'Q90': {'label': {'en': 'Rivertown'}, 'P1566': ['3000001'], 'P17': ['Q142'],
+            'P625': [('48.85', '10.5', 'Q2', 'normal'), ('48.85', '9.25', 'Q2', 'normal'),
+                     ('-10.0', '5', 'Q2', 'deprecated')]},
+    'Q2001': {'label': {'en': 'Northport', 'ru': 'Нортпорт'}, 'P1566': ['900', '10000'], 'P17': ['Q183', 'Q29'],
+              'P625': [('10.5', '20.25', 'Q2', 'normal'), ('11.0', '21.0', 'Q2', 'preferred')]},
+    'Q2002': {'label': {'de': 'Südtal'}},  # без координат
+    'Q2003': {'label': {'en': 'Old Mill, "East"'}, 'P1566': ['x12'], 'P17': [GENID + 'p2'],
+              'P625': [('12.5', '45.25', 'Q405', 'normal')]},  # координаты только на другом глобусе
+    'Q2005': {'label': {'en': 'Lake Town', 'ru': 'Озёрный'}, 'P17': ['Q32'],
+              'P625': [('4.8856944E1', '2.3522219E0', 'Q2', 'normal')]},
+    'Q2006': {'label': {'en': 'Far Mesa'},
+              'P625': [('1', '1', 'Q405', 'preferred'), ('30.5', '31.5', 'Q2', 'normal')]},
+    'Q2007': {'label': {'ru': 'Гавань', 'mul': 'Havn'}, 'P17': ['Q34']},
+    'Q2008': {'label': {'en': 'Back Office'}, 'P17': ['Q30']},  # вторая штаб-квартира — не первая по номеру
     # студии и прокатчики, серии, награды
-    'Q5001': {'label': {'en': 'Northwind Pictures', 'ru': 'Нордвинд', 'de': 'Nordwind'}, 'P17': ['Q145']},
-    'Q5002': {'label': {'mul': 'Lumen'}, 'P17': ['Q183', 'Q31']},
-    'Q5003': {},
+    'Q5001': {'label': {'en': 'Northwind Pictures', 'ru': 'Нордвинд', 'de': 'Nordwind'}, 'P17': ['Q145'],
+              'P159': ['Q2008', 'Q90']},
+    'Q5002': {'label': {'mul': 'Lumen'}, 'P17': ['Q183', 'Q31'], 'P159': ['Q2007']},
+    'Q5003': {'P159': [GENID + 'h1']},
     'Q6001': {'label': {'en': 'Alpha saga', 'ru': 'Сага об Альфе'}},
     'Q6002': {'label': {'fr': 'Série Gamma'}},
     'Q7001': {'label': {'en': 'Golden Reel', 'mul': 'Golden Reel', 'de': 'Goldene Rolle'}},
@@ -313,7 +331,7 @@ for _i in range(15):  # длинная цепочка P279 — глубже, ч�
 KEPT = ['Q100', 'Q101', 'Q102', 'Q104', 'Q105', 'Q106', 'Q107', 'Q108', 'Q109', 'Q113', 'Q114', 'Q115', 'Q116']
 ADULT_FILMS = ('Q110', 'Q111', 'Q112')
 # только у фильмов для взрослых: люди, место публикации, студия, серия, награда
-ADULT_ONLY = ('Q2900', 'Q2901', 'Q2902', 'Q2903', 'Q5009', 'Q6009', 'Q7009')
+ADULT_ONLY = ('Q2900', 'Q2901', 'Q2902', 'Q2903', 'Q2909', 'Q5009', 'Q6009', 'Q7009')
 CREW_ONLY = ['Q1010', 'Q1011', 'Q1012', 'Q1013']
 PEOPLE = [f'Q{1001 + i}' for i in range(8)] + CREW_ONLY
 
@@ -327,7 +345,7 @@ MARKERS = {
     'person': (('psv:P569', 'people_dates'), ('wdt:P19 ', 'people_links'),
                ('ps:P735', 'names'), ('wdt:P21', 'people'), ('rdfs:label', 'people_labels')),
     'item': (('wdt:P279', 'genres'), ('wdt:P297', 'countries'), ('wdt:P218', 'languages'), ('wdt:P1566', 'places'),
-             ('wdt:P17 ', 'companies'), ('wdt:P31', 'name_items'), ('rdfs:label ?label', 'item_labels'),
+             ('wdt:P159', 'companies'), ('wdt:P31', 'name_items'), ('rdfs:label ?label', 'item_labels'),
              ('rdfs:label', 'characters')),
 }
 
@@ -504,7 +522,7 @@ class FakeWikidata:
         return self.links(films, 'film', ('P58', 'P86', 'P344', 'P162', 'P1040'), 'person')
 
     def q_links2(self, code, films):
-        return self.links(films, 'film', ('P272', 'P750', 'P915', 'P155', 'P156'), 'value')
+        return self.links(films, 'film', ('P272', 'P750', 'P915', 'P840', 'P155', 'P156'), 'value')
 
     def q_people_links(self, code, people):
         return self.links(people, 'person', ('P19', 'P27'), 'value')
@@ -694,17 +712,23 @@ class FakeWikidata:
         return self.codes(items, ('P218', 'P220'), en=True)
 
     def q_places(self, code, items):
+        langs = allowed_langs(code) or ['en']
         out = []
         for q in items:
             d = self.item(q)
             out += [{'item': uri(q), 'kind': lit('P1566'), 'value': lit(v)} for v in d.get('P1566', ())]
             out += [{'item': uri(q), 'kind': lit('P17'), 'value': uri(v)} for v in d.get('P17', ())]
-            if 'en' in d.get('label', {}):
-                out.append({'item': uri(q), 'kind': lit('en'), 'value': lit(d['label']['en'], 'en')})
+            out += [{'item': uri(q), 'kind': lit(lang), 'value': lit(text, lang)}
+                    for lang, text in d.get('label', {}).items() if lang in langs]
+            # ветка P625: свои переменные (?lat ?lon ?globe ?rank), без ?value
+            out += [{'item': uri(q), 'kind': lit('P625'), 'lat': lit(lat, dtype='double'),
+                     'lon': lit(lon, dtype='double'), 'globe': uri(globe), 'rank': rank_uri(rank)}
+                    for lat, lon, globe, rank in d.get('P625', ()) if self.keep(code, rank) and 'psv:P625' in code]
         return out
 
     def q_companies(self, code, items):
-        return [{'item': uri(q), 'country': uri(c)} for q in items for c in self.item(q).get('P17', ())]
+        return [{'item': uri(q), 'kind': lit(p), 'value': uri(v)}
+                for q in items for p in ('P17', 'P159') for v in self.item(q).get(p, ())]
 
     def requested(self, kind):
         """Части, которые спрашивали (ключ — кортеж Q-id), со счётом."""
@@ -821,6 +845,9 @@ EXPECTED = {
         'Q29,ES,ESP',                  # P17 места Q2001 (первая по номеру, не по алфавиту)
         'Q30,US,USA',                  # P291 фильма Q101 (у deprecated-утверждения Q100 — не в счёт)
         'Q31,BE,BEL',                  # P17 прокатчика Q5002 (так же)
+        'Q32,LU,LUX',                  # P17 места действия Q2005 (снимок v3)
+        'Q34,SE,SWE',                  # P17 штаб-квартиры Q2007 (снимок v3)
+        'Q36,PL,POL',                  # место действия — сама страна: её P17 — она же
         'Q38,IT,ITA',                  # P27
         'Q90,,',                       # P291 — город: строка с пустыми кодами
         'Q142,FR,FRA',
@@ -862,7 +889,8 @@ EXPECTED = {
         'Q100,P86,Q1011', 'Q101,P86,Q1002', 'Q115,P58,Q1013'),  # P344 Q100 — «неизвестное значение»: строки нет
     'wikidata/film_links2.csv.gz': lines(
         'film,prop,value', 'Q100,P156,Q101', 'Q100,P272,Q5001', 'Q100,P750,Q5002', 'Q100,P750,Q5003',
-        'Q100,P915,Q90', 'Q100,P915,Q2001', 'Q101,P155,Q100', 'Q101,P750,Q5002', 'Q106,P915,Q2003'),
+        'Q100,P840,Q36', 'Q100,P915,Q90', 'Q100,P915,Q2001', 'Q101,P155,Q100', 'Q101,P750,Q5002',
+        'Q101,P840,Q2005', 'Q101,P840,Q2006', 'Q106,P915,Q2003'),
     'wikidata/film_series.csv.gz': lines(
         'film,series,ordinal',
         'Q100,Q6001,1',                                  # deprecated Q6002 — нет
@@ -896,17 +924,28 @@ EXPECTED = {
         'person,prop,value', 'Q1001,P19,Q90', 'Q1001,P27,Q142', 'Q1002,P19,Q2002', 'Q1002,P27,Q38',
         'Q1002,P27,Q142', 'Q1013,P19,Q2001'),            # P27 Q1010 — «неизвестное значение»: строки нет
     'wikidata/places.csv.gz': lines(
-        'item,geonames,country,label_en',
-        'Q90,3000001,Q142,Rivertown',
-        'Q2001,900,Q29,Northport',                       # 900 и 10000 — наименьший по числу; Q183 и Q29 — по номеру
-        'Q2002,,,',                                      # нет ни P1566, ни P17, ни метки en
-        'Q2003,,,"Old Mill, ""East"""'),                 # P1566 не число, P17 — «неизвестное значение»
+        'item,geonames,country,label_en,label_mul,label_ru,lat,lon',
+        'Q36,3000036,Q36,Poland,,Польша,52.25,21',       # место действия — страна; «21.0» — без лишних нулей
+        'Q90,3000001,Q142,Rivertown,,,48.85,9.25',       # два normal — первое по (широта, долгота) как числам
+                                                         # (9.25 < 10.5, хотя строкой «10.5» раньше); deprecated — нет
+        'Q2001,900,Q29,Northport,,Нортпорт,11,21',       # preferred, хотя у normal широта меньше; 900 < 10000;
+                                                         # Q183 и Q29 — по номеру
+        'Q2002,,,,,,,',                                  # нет ни P1566, ни P17, ни меток en/mul/ru, ни координат
+        'Q2003,,,"Old Mill, ""East""",,,,',              # P1566 не число, P17 — «неизвестное значение»,
+                                                         # координаты — только на другом глобусе
+        # «4.8856944E1» — точно, без показателя
+        'Q2005,,Q32,Lake Town,,Озёрный,48.856944,2.3522219',
+        'Q2006,,,Far Mesa,,,30.5,31.5',                  # preferred — на другом глобусе: берётся normal Земли
+        'Q2007,,Q34,,Havn,Гавань,,'),                    # штаб-квартира: без метки en — mul и ru
     'wikidata/item_labels.csv.gz': lines(
         'item,lang,label', 'Q5001,en,Northwind Pictures', 'Q5001,ru,Нордвинд', 'Q5002,mul,Lumen',
         'Q6001,en,Alpha saga', 'Q6001,ru,Сага об Альфе', 'Q7001,en,Golden Reel', 'Q7001,mul,Golden Reel',
         'Q7002,ru,Приз зрителей'),                       # de и fr — не на этих языках
     'wikidata/companies.csv': lines(
-        'item,country', 'Q5001,Q145', 'Q5002,Q31', 'Q5003,'),  # Q183 и Q31 — первая по номеру
+        'item,country,hq',
+        'Q5001,Q145,Q90',                                # штаб-квартиры Q2008 и Q90 — первая по номеру
+        'Q5002,Q31,Q2007',                               # страны Q183 и Q31 — первая по номеру
+        'Q5003,,'),                                      # P159 — «неизвестное значение»: пусто
 }
 DATA_FILES = sorted(EXPECTED)
 NEW_FILES = ('film_dates_extra', 'film_releases', 'film_labels_all', 'film_crew', 'film_links2', 'film_series',
@@ -1103,7 +1142,8 @@ class FullRunTest(unittest.TestCase):
             ('Q1001', 'Q1002', 'Q1003', 'Q1004'): 2, ('Q1005', 'Q1006', 'Q1007', 'Q1008'): 1,
             ('Q1010', 'Q1011', 'Q1012', 'Q1013'): 1}), '429 — та же часть ещё раз, без деления')
         self.assertEqual(self.fake.requested('countries'), collections.Counter({
-            ('Q17', 'Q29', 'Q30', 'Q31'): 2, ('Q38', 'Q90', 'Q142', 'Q145'): 2, ('Q183', 'Q1300'): 2}))
+            ('Q17', 'Q29', 'Q30', 'Q31'): 2, ('Q32', 'Q34', 'Q36', 'Q38'): 2, ('Q90', 'Q142', 'Q145', 'Q183'): 2,
+            ('Q1300',): 2}))
         self.assertIn('сервис просит подождать', self.stdout)
         self.assertIn('HTTP 429', self.stdout)
         self.assertIn('HTTP 503', self.stdout)
@@ -1143,9 +1183,9 @@ class FullRunTest(unittest.TestCase):
                      '| `wikidata/film_awards.csv.gz` | `film,prop,award,date,precision` — ',
                      f'| 5 | {len(self.read("wikidata/film_awards.csv.gz"))} |',
                      '| `wikidata/genre_items.csv` | ',
-                     'не записаны: film_awards — 1, film_cast — 1, film_cast: P453 — 1, film_crew — 1, film_links — 1, '
-                     'film_links2 — 1, film_releases — 1, genre_items — 1, people: P21 — 1, people_links — 1, '
-                     'places: P1566 — 1, places: P17 — 1.',
+                     'не записаны: companies: P159 — 1, film_awards — 1, film_cast — 1, film_cast: P453 — 1, '
+                     'film_crew — 1, film_links — 1, film_links2 — 1, film_releases — 1, genre_items — 1, '
+                     'people: P21 — 1, people_links — 1, places: P1566 — 1, places: P17 — 1, places: P625 — 2.',
                      'только в `parent`: 1.'):
             self.assertIn(want, text)
         self.assertTrue(text.endswith('\n') and '\r' not in text)
@@ -1176,9 +1216,10 @@ class FullRunTest(unittest.TestCase):
         for before, then in (('genres', 'dates_extra'), ('cast', 'dates_extra'), ('film_labels', 'labels_all'),
                              ('titles', 'labels_all'), ('cast', 'people'), ('crew', 'people'),
                              ('awards', 'people'), ('names', 'people_dates'), ('people_links', 'places'),
-                             ('links2', 'places'), ('series', 'item_labels'), ('awards', 'item_labels'),
-                             ('links2', 'companies'), ('releases', 'countries'), ('people_links', 'countries'),
-                             ('places', 'countries'), ('companies', 'countries'), ('countries', 'languages')):
+                             ('links2', 'places'), ('companies', 'places'), ('series', 'item_labels'),
+                             ('awards', 'item_labels'), ('links2', 'companies'), ('releases', 'countries'),
+                             ('people_links', 'countries'), ('places', 'countries'), ('companies', 'countries'),
+                             ('countries', 'languages')):
             with self.subTest(before=before, then=then):
                 self.assertLess(last[before], first[then])
         # прежние шаги — в прежнем порядке, новые по фильмам — следом за составом
@@ -1186,7 +1227,7 @@ class FullRunTest(unittest.TestCase):
         self.assertEqual(order, ['links', 'dates', 'film_labels', 'titles', 'durations', 'signals', 'cast',
                                  'dates_extra', 'releases', 'labels_all', 'crew', 'links2', 'series', 'money',
                                  'awards', 'people', 'people_labels', 'names', 'people_dates', 'people_links',
-                                 'name_items', 'characters', 'places', 'item_labels', 'companies', 'countries',
+                                 'name_items', 'characters', 'item_labels', 'companies', 'places', 'countries',
                                  'languages'])
 
     def test_untitled_films(self):
@@ -1214,16 +1255,18 @@ class FullRunTest(unittest.TestCase):
 
     def test_value_sets(self):
         """Справочники — ровно по собранным множествам значений, частями VALUES."""
-        self.assertEqual(self.asked('places'), ['Q90', 'Q2001', 'Q2002', 'Q2003'], 'P19 ∪ P915')
+        self.assertEqual(self.asked('places'), ['Q36', 'Q90', 'Q2001', 'Q2002', 'Q2003', 'Q2005', 'Q2006', 'Q2007'],
+                         'P19 ∪ P915 ∪ P840 ∪ записанные штаб-квартиры')
         self.assertEqual(self.asked('item_labels'), ['Q5001', 'Q5002', 'Q5003', 'Q6001', 'Q6002', 'Q7001', 'Q7002'],
                          'P272 ∪ P750 ∪ P179 ∪ P166 ∪ P1411')
         self.assertEqual(self.fake.requested('item_labels'), collections.Counter({
             ('Q5001', 'Q5002', 'Q5003', 'Q6001'): 1, ('Q6002', 'Q7001', 'Q7002'): 1}))
         self.assertEqual(self.asked('companies'), ['Q5001', 'Q5002', 'Q5003'], 'P272 ∪ P750')
         # у каждого источника — своя страна: P495 — Q17, Q142, Q183, Q1300; P291 — Q30 и город Q90; P27 — Q38;
-        # P17 места — Q29; P17 студии и прокатчика — Q145, Q31 (записанные, первые по номеру)
-        self.assertEqual(self.asked('countries'),
-                         ['Q17', 'Q29', 'Q30', 'Q31', 'Q38', 'Q90', 'Q142', 'Q145', 'Q183', 'Q1300'])
+        # P17 места — Q29; P17 студии и прокатчика — Q145, Q31 (записанные, первые по номеру); снимок v3 — P17 мест
+        # действия (Q32; страна Q36 — сама себе P17) и штаб-квартиры (Q34)
+        self.assertEqual(self.asked('countries'), ['Q17', 'Q29', 'Q30', 'Q31', 'Q32', 'Q34', 'Q36', 'Q38', 'Q90',
+                                                   'Q142', 'Q145', 'Q183', 'Q1300'])
         self.assertNotIn('Q2003', self.asked('countries'), 'P17 места — «неизвестное значение»')
 
     def test_qualifiers(self):
@@ -1257,6 +1300,46 @@ class FullRunTest(unittest.TestCase):
         self.assertIn('film_crew: часть из 4 (Q100 … Q104) не прошла — HTTP 500', self.stdout)
         self.assertIn('people_dates: часть из 4 (Q1010 … Q1013) не прошла — не JSON', self.stdout)
         self.assertIn('Wikidata: film_crew — фильмов 13: готово', self.stdout)
+
+    # ---- снимок v3 ----
+
+    def test_place_coordinates(self):
+        """P625 мест: только глобус Земли; из набора preferred, иначе normal; первое по (широта, долгота) как числам;
+        нет — пусто. В запросе — через psv:, ранг и фильтр deprecated — в своей ветке."""
+        branch = [g for g in where_groups(code_of(fetch.QUERIES['places'])) if 'P625' in g]
+        self.assertEqual(len(branch), 1)
+        for part in ('?item p:P625 ?st . ?st wikibase:rank ?rank .', 'FILTER(?rank != wikibase:DeprecatedRank)',
+                     '?st psv:P625 ?v .', 'wikibase:geoLatitude ?lat', 'wikibase:geoLongitude ?lon',
+                     'wikibase:geoGlobe ?globe', 'BIND("P625" AS ?kind)'):
+            self.assertIn(part, branch[0])
+        self.assertNotIn('wdt:P625', fetch.QUERIES['places'])
+        rows = self.text('wikidata/places.csv.gz').splitlines()
+        self.assertEqual(rows[0], 'item,geonames,country,label_en,label_mul,label_ru,lat,lon')
+        coords = {r.split(',', 1)[0]: tuple(r.rsplit(',', 2)[1:]) for r in rows[1:]}
+        for q, want, why in (('Q2002', ('', ''), 'координат нет'),
+                             ('Q2003', ('', ''), 'координаты только на другом глобусе'),
+                             ('Q2001', ('11', '21'), 'preferred — раньше normal, даже если у normal широта меньше'),
+                             ('Q90', ('48.85', '9.25'), 'два normal — первое по (широта, долгота) как числам; '
+                                                        'deprecated — нет'),
+                             ('Q2006', ('30.5', '31.5'), 'сначала глобус, потом набор: preferred — не Земля'),
+                             ('Q2005', ('48.856944', '2.3522219'), 'точно, без показателя')):
+            self.assertEqual(coords[q], want, f'{q}: {why}')
+
+    def test_settings_and_hq(self):
+        """Место действия (P840) и штаб-квартира (P159, первая по номеру) — места снимка; место действия, которое само
+        страна, — в places со страной-собой и в countries; P17 новых мест — в countries."""
+        self.assertIn('Q100,P840,Q36\n', self.text('wikidata/film_links2.csv.gz'))
+        places = self.text('wikidata/places.csv.gz')
+        self.assertIn('\nQ36,3000036,Q36,Poland,,Польша,52.25,21\n', places)
+        countries = self.text('wikidata/countries.csv')
+        for row in ('Q32,LU,LUX', 'Q34,SE,SWE', 'Q36,PL,POL'):
+            self.assertIn(f'\n{row}\n', countries)
+        self.assertEqual(self.text('wikidata/companies.csv').splitlines()[:2], ['item,country,hq', 'Q5001,Q145,Q90'])
+        self.assertIn('Q2007', self.asked('places'), 'штаб-квартира — место')
+        self.assertNotIn('Q2008', self.asked('places'), 'не первая по номеру штаб-квартира в снимок не пишется')
+        self.assertNotIn('Q30', [r.split(',')[2] for r in places.splitlines()[1:]], 'P17 Q2008 — тоже нет')
+        sent = [q for kind, _, q in self.fake.log if kind == 'companies']
+        self.assertTrue(sent and all('wdt:P17 ' in q and 'wdt:P159 ' in q for q in sent))
 
     def test_source_md_every_file(self):
         """SOURCE.md описывает каждый файл данных: колонки (как в заголовке CSV), строк, байт."""
@@ -1513,7 +1596,7 @@ class PartsTest(unittest.TestCase):
                 self.assertIn('%VALUES%', code)
                 self.assertRegex(top_level(code), r'^VALUES \?[a-z]+( UNION)+$')
                 checked += 1
-        self.assertGreaterEqual(checked, 17)  # 9 запросов снимка v1 и 8 новых
+        self.assertGreaterEqual(checked, 18)  # 9 запросов снимка v1, 8 — v2, companies — v3
 
     def test_union_branches(self):
         # Каждая ветка UNION начинается с элемента из VALUES и сама несёт ранг и его фильтр (так прошли на настоящем
@@ -1534,13 +1617,13 @@ class PartsTest(unittest.TestCase):
                     self.assertEqual(branch.count('wikibase:rank ?rank'),
                                      branch.count('FILTER(?rank != wikibase:DeprecatedRank)'), branch)
                 checked += 1
-        self.assertEqual(checked, 17)
+        self.assertEqual(checked, 18)
 
     def test_ranks(self):
         """«Кроме deprecated» — через p:/ps:/psv:/pq: с фильтром ранга; «лучший ранг» — через wdt: без p:."""
         all_but_deprecated = ('film_dates', 'film_durations', 'film_cast', 'people_names', 'film_dates_extra',
                               'film_releases', 'film_series', 'film_money', 'film_awards', 'people_dates')
-        best_rank = ('film_links', 'film_titles', 'film_crew', 'film_links2', 'people_links', 'places', 'companies',
+        best_rank = ('film_links', 'film_titles', 'film_crew', 'film_links2', 'people_links', 'companies',
                      'countries', 'languages')
         for stage in all_but_deprecated:
             code = code_of(fetch.QUERIES[stage])
@@ -1567,6 +1650,32 @@ class PartsTest(unittest.TestCase):
                           '123456789012345678901234567890.1'])
         with self.assertRaisesRegex(fetch.FetchError, 'Wikidata film_money: «x» — не число'):
             fetch.decimal_text('x', 'film_money')
+
+    def test_parse_places(self):
+        """Строки ответа places: у P625 — свои переменные (?lat ?lon ?globe ?rank) без ?value; deprecated (если
+        сервис его всё же отдал) — нет; не Земля — в not_items; неизвестный вид — ошибка."""
+        class Counter:
+            def __init__(self):
+                self.not_items = collections.Counter()
+
+            def not_item(self, stage, n=1):
+                self.not_items[stage] += n
+
+        def p625(lat, lon, globe, rank):
+            return {'item': uri('Q9'), 'kind': lit('P625'), 'lat': lit(lat, dtype='double'),
+                    'lon': lit(lon, dtype='double'), 'globe': uri(globe), 'rank': rank_uri(rank)}
+
+        wd = Counter()
+        rows = fetch.parse_places(wd, [p625('1.50', '-0.0', 'Q2', 'normal'), p625('1', '1', 'Q2', 'deprecated'),
+                                       p625('1', '1', 'Q405', 'preferred'),
+                                       {'item': uri('Q9'), 'kind': lit('ru'), 'value': lit('Место', 'ru')}],
+                                  frozenset({'Q9'}))
+        self.assertEqual(rows, [('Q9', 'P625', ('normal', '1.5', '0')), ('Q9', 'ru', 'Место')])
+        self.assertEqual(wd.not_items, {'places: P625': 1})
+        with self.assertRaisesRegex(fetch.FetchError, r'Wikidata places: \?kind = «P18»'):
+            fetch.parse_places(wd, [{'item': uri('Q9'), 'kind': lit('P18'), 'value': lit('x')}], frozenset({'Q9'}))
+        with self.assertRaisesRegex(fetch.FetchError, r'\?rank = «x»'):
+            fetch.parse_places(wd, [dict(p625('1', '1', 'Q2', 'normal'), rank=lit('x'))], frozenset({'Q9'}))
 
     def test_values(self):
         self.assertEqual(fetch.qid('http://www.wikidata.org/entity/Q42'), 'Q42')
