@@ -118,16 +118,17 @@ COMMENT ON COLUMN movies_languages.language_code IS 'Язык — ISO 639-1, и�
 -- Люди: все люди фильмов профиля, их гражданство и съёмочные группы фильмов
 
 CREATE TABLE people (
-    id            integer NOT NULL,
-    first_name    text,
-    last_name     text NOT NULL,
-    name_ru       text,
-    gender        text,
-    birth_date    date,
-    birth_year    smallint,
-    death_date    date,
-    death_year    smallint,
-    birth_city_id integer
+    id             integer NOT NULL,
+    first_name     text,
+    last_name      text NOT NULL,
+    name_ru        text,
+    gender         text,
+    birth_date     date,
+    birth_year     smallint,
+    death_date     date,
+    death_year     smallint,
+    birth_city_id  integer,
+    birth_place_id integer
 );
 COMMENT ON TABLE people IS 'Люди: актёры, режиссёры и съёмочная группа фильмов профиля — каждый один раз';
 COMMENT ON COLUMN people.id IS 'Человек — номер элемента Wikidata';
@@ -139,7 +140,8 @@ COMMENT ON COLUMN people.birth_date IS 'Дата рождения: самая р
 COMMENT ON COLUMN people.birth_year IS 'Год рождения: самая ранняя P569 с точностью не ниже года';
 COMMENT ON COLUMN people.death_date IS 'Дата смерти (P570) — при дате рождения не позже';
 COMMENT ON COLUMN people.death_year IS 'Год смерти (P570) — при годе рождения не больше';
-COMMENT ON COLUMN people.birth_city_id IS 'Город рождения — GeoNames ID места P19, он же id города набора «Мир» (wld-data-v1, cities.id); связь мягкая, без внешнего ключа';
+COMMENT ON COLUMN people.birth_city_id IS 'Город рождения — город места рождения (places.city_id): id города набора «Мир» (wld-data-v1, cities.id); связь мягкая, без внешнего ключа';
+COMMENT ON COLUMN people.birth_place_id IS 'Место рождения — первое по номеру место P19 (с названием)';
 
 CREATE TABLE people_countries (
     person_id    integer NOT NULL,
@@ -166,13 +168,17 @@ CREATE TABLE companies (
     id           integer NOT NULL,
     name         text NOT NULL,
     name_ru      text,
-    country_code text
+    country_code text,
+    hq_place_id  integer,
+    hq_city_id   integer
 );
 COMMENT ON TABLE companies IS 'Студии (P272) и прокатчики (P750) фильмов профиля с названием';
 COMMENT ON COLUMN companies.id IS 'Компания — номер элемента Wikidata';
 COMMENT ON COLUMN companies.name IS 'Название: метка en, иначе mul';
 COMMENT ON COLUMN companies.name_ru IS 'Название по-русски (метка ru)';
 COMMENT ON COLUMN companies.country_code IS 'Страна (P17) — ISO 3166-1 alpha-3';
+COMMENT ON COLUMN companies.hq_place_id IS 'Штаб-квартира — место P159 (первое по номеру, с названием)';
+COMMENT ON COLUMN companies.hq_city_id IS 'Город штаб-квартиры — город места (places.city_id): id города набора «Мир» (wld-data-v1, cities.id); связь мягкая, без внешнего ключа';
 
 CREATE TABLE movies_companies (
     movie_id   integer NOT NULL,
@@ -235,7 +241,7 @@ COMMENT ON COLUMN movies_awards.won IS 'Награда получена (P166) �
 COMMENT ON COLUMN movies_awards.year IS 'Год: самый ранний год P585 с точностью не ниже года';
 
 -- ======================================================================
--- Выход и названия: даты выхода по странам, названия на языках, места съёмок
+-- Выход и названия: даты выхода по странам, названия на языках
 
 CREATE TABLE movies_releases (
     movie_id     integer NOT NULL,
@@ -257,13 +263,50 @@ COMMENT ON COLUMN movies_titles.movie_id IS 'Фильм';
 COMMENT ON COLUMN movies_titles.lang IS 'Язык — код языка метки Wikidata';
 COMMENT ON COLUMN movies_titles.title IS 'Название (метка)';
 
+-- ======================================================================
+-- Места: съёмок и действия фильмов, рождения людей, штаб-квартиры студий — с координатами и городом набора «Мир»
+
 CREATE TABLE movies_locations (
     movie_id integer NOT NULL,
-    city_id  integer NOT NULL
+    place_id integer NOT NULL,
+    city_id  integer
 );
-COMMENT ON TABLE movies_locations IS 'Места съёмок (P915) — города с GeoNames ID';
+COMMENT ON TABLE movies_locations IS 'Места съёмок фильмов (P915) с названием';
 COMMENT ON COLUMN movies_locations.movie_id IS 'Фильм';
-COMMENT ON COLUMN movies_locations.city_id IS 'Город — GeoNames ID места P915, он же id города набора «Мир» (wld-data-v1, cities.id); связь мягкая, без внешнего ключа';
+COMMENT ON COLUMN movies_locations.place_id IS 'Место';
+COMMENT ON COLUMN movies_locations.city_id IS 'Город места (places.city_id): id города набора «Мир» (wld-data-v1, cities.id); связь мягкая, без внешнего ключа';
+
+CREATE TABLE places (
+    id           integer NOT NULL,
+    name         text NOT NULL,
+    name_ru      text,
+    kind         text NOT NULL,
+    latitude     numeric(10,7),
+    longitude    numeric(10,7),
+    country_code text,
+    city_id      integer,
+    city_km      numeric(4,1)
+);
+COMMENT ON TABLE places IS 'Места, на которые ссылается профиль: съёмок и действия фильмов, рождения людей, штаб-квартиры студий — с названием';
+COMMENT ON COLUMN places.id IS 'Место — номер элемента Wikidata';
+COMMENT ON COLUMN places.name IS 'Название: метка en, иначе mul';
+COMMENT ON COLUMN places.name_ru IS 'Название по-русски (метка ru)';
+COMMENT ON COLUMN places.kind IS 'Вид: country — сама страна (у элемента есть ISO3), place — место в стране: country, place';
+COMMENT ON COLUMN places.latitude IS 'Широта, градусы (P625, глобус Земли), 7 знаков';
+COMMENT ON COLUMN places.longitude IS 'Долгота, градусы (P625, глобус Земли), 7 знаков';
+COMMENT ON COLUMN places.country_code IS 'Страна — ISO 3166-1 alpha-3: у страны — свой код, у места — код страны P17';
+COMMENT ON COLUMN places.city_id IS 'Город набора «Мир» (только у места): GeoNames ID места, если он среди городов «Мира», иначе ближайший город той же страны не дальше 30 км; связь мягкая, без внешнего ключа';
+COMMENT ON COLUMN places.city_km IS 'Расстояние до города, км, до 0,1 (по GeoNames ID — 0)';
+
+CREATE TABLE movies_settings (
+    movie_id integer NOT NULL,
+    place_id integer NOT NULL,
+    city_id  integer
+);
+COMMENT ON TABLE movies_settings IS 'Места действия фильмов (P840) с названием';
+COMMENT ON COLUMN movies_settings.movie_id IS 'Фильм';
+COMMENT ON COLUMN movies_settings.place_id IS 'Место';
+COMMENT ON COLUMN movies_settings.city_id IS 'Город места (places.city_id): id города набора «Мир» (wld-data-v1, cities.id); связь мягкая, без внешнего ключа';
 
 -- ======================================================================
 -- Сервис: тарифы и цены, промокоды, каталог «Свартальвхейма»

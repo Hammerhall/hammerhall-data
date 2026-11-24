@@ -52,10 +52,11 @@ import java.util.TreeSet;
  * @param awards        {@code film_awards.csv}: награды P166 и номинации P1411 фильма с датой P585
  * @param peopleDates   {@code people_dates.csv}: рождение P569 и смерть P570 человека
  * @param peopleLinks   {@code people_links.csv}: место рождения P19 и гражданство P27 человека
- * @param places        {@code places.csv}: место (значение P19, P915) → GeoNames ID (только у мест, где он есть)
+ * @param places        {@code places.csv}: место (значение P19, P915, P840, P159) → GeoNames ID, страна P17, метки
+ *                      {@code en}, {@code mul} и {@code ru}, координаты P625
  * @param itemLabels    {@code item_labels.csv}: студия, прокатчик, серия, награда → метки {@code en}, {@code mul},
  *                      {@code ru} (нет — {@code null})
- * @param companies     {@code companies.csv}: студия или прокатчик → страна P17 (только у тех, где она есть)
+ * @param companies     {@code companies.csv}: студия или прокатчик → страна P17 и штаб-квартира P159
  * @param stats         счётчики чтения (для журнала и манифеста)
  */
 public record SourceData(String snapshot, String fetchedAt, Map<Integer, Boolean> classes, Map<Integer, int[]> filmClasses,
@@ -68,8 +69,8 @@ public record SourceData(String snapshot, String fetchedAt, Map<Integer, Boolean
                          Map<Integer, List<PlaceDate>> releases, Map<Integer, Crew> crew, Map<Integer, Links2> links2,
                          Map<Integer, List<SeriesRef>> series, Map<Integer, List<MoneyStmt>> money,
                          Map<Integer, List<AwardStmt>> awards, Map<Integer, LifeDates> peopleDates,
-                         Map<Integer, PersonLinks> peopleLinks, Map<Integer, Integer> places, Map<Integer, String[]> itemLabels,
-                         Map<Integer, Integer> companies, Map<String, Long> stats) {
+                         Map<Integer, PersonLinks> peopleLinks, Map<Integer, Place> places, Map<Integer, String[]> itemLabels,
+                         Map<Integer, CompanyInfo> companies, Map<String, Long> stats) {
 
     public static final String FETCH = "fetch.json";
     public static final String WD = "wikidata/";
@@ -104,8 +105,8 @@ public record SourceData(String snapshot, String fetchedAt, Map<Integer, Boolean
     public static final List<String> YEAR_FALLBACK = List.of(P1191, P571, P2754);
     /** Свойства {@code film_crew}: сценарист, композитор, оператор, продюсер, монтажёр — по этому порядку. */
     public static final List<String> CREW_PROPS = List.of("P58", "P86", "P344", "P162", "P1040");
-    /** Свойства {@code film_links2}: студия, прокатчик, место съёмок, предыдущий фильм, следующий фильм. */
-    public static final String P272 = "P272", P750 = "P750", P915 = "P915", P155 = "P155", P156 = "P156";
+    /** Свойства {@code film_links2}: студия, прокатчик, место съёмок, предыдущий фильм, следующий фильм, место действия. */
+    public static final String P272 = "P272", P750 = "P750", P915 = "P915", P155 = "P155", P156 = "P156", P840 = "P840";
     /** Свойства {@code film_money}: бюджет, сборы. */
     public static final String P2130 = "P2130", P2142 = "P2142";
     /** Свойства {@code film_awards}: награда, номинация. */
@@ -229,9 +230,29 @@ public record SourceData(String snapshot, String fetchedAt, Map<Integer, Boolean
         }
     }
 
-    /** Связи фильма из {@code film_links2} — номера элементов по возрастанию, без повторов. */
-    public record Links2(int[] studios, int[] distributors, int[] locations, int[] previous, int[] next) {
-        public static final Links2 NONE = new Links2(new int[0], new int[0], new int[0], new int[0], new int[0]);
+    /**
+     * Связи фильма из {@code film_links2} — номера элементов по возрастанию, без повторов: студии P272, прокатчики P750,
+     * места съёмок P915, предыдущий P155 и следующий P156 фильм, места действия P840.
+     */
+    public record Links2(int[] studios, int[] distributors, int[] locations, int[] previous, int[] next, int[] settings) {
+        public static final Links2 NONE = new Links2(new int[0], new int[0], new int[0], new int[0], new int[0], new int[0]);
+    }
+
+    /**
+     * Место ({@code places.csv}): GeoNames ID ({@code 0} — нет или не читается), страна P17 ({@code 0} — нет), метки
+     * {@code en}, {@code mul} и {@code ru} (негодные для TSV и нет — {@code null}), координаты P625 как в снимке
+     * (точная десятичная запись; нет, не читаются или вне [−90, 90] и [−180, 180] — {@code null} обе).
+     */
+    public record Place(int geonames, int country, String labelEn, String labelMul, String labelRu, BigDecimal lat,
+                        BigDecimal lon) {
+        public boolean hasCoords() {
+            return lat != null && lon != null;
+        }
+    }
+
+    /** Студия или прокатчик ({@code companies.csv}): страна P17 и штаб-квартира P159 — номера элементов, {@code 0} — нет. */
+    public record CompanyInfo(int country, int hq) {
+        public static final CompanyInfo NONE = new CompanyInfo(0, 0);
     }
 
     /** Серия фильма P179 и номер в ней P1545 (строкой как есть; нет — {@code null}). */
@@ -282,6 +303,11 @@ public record SourceData(String snapshot, String fetchedAt, Map<Integer, Boolean
             }
             Object fj = Json.parse(s.text(FETCH));
             if (!(fj instanceof Map<?, ?> fetch)) throw new IOException(FETCH + ": не объект JSON");
+            // пробный снимок (fetch.py --sample) — только проверка запросов к Wikidata, не вход сборки
+            if (fetch.get("sample") instanceof Map<?, ?> sample) {
+                throw new IOException("пробный снимок: " + sample.get("films") + " фильмов из " + sample.get("from")
+                        + " — не вход сборки");
+            }
             String snapshot = String.valueOf(fetch.get("snapshot"));
             String fetchedAt = fetch.get("fetched_at") == null ? null : String.valueOf(fetch.get("fetched_at"));
 
@@ -557,15 +583,16 @@ public record SourceData(String snapshot, String fetchedAt, Map<Integer, Boolean
                     case P915 -> 2;
                     case P155 -> 3;
                     case P156 -> 4;
-                    default -> throw t.bad("film_links2: свойство «" + t.get(r, "prop") + "» — не P272, P750, P915, P155, P156");
+                    case P840 -> 5;
+                    default -> throw t.bad("film_links2: свойство «" + t.get(r, "prop") + "» — не P272, P750, P915, P155, P156, P840");
                 };
-                add(l2, f, slot, 5, Wikidata.qOrZero(t.get(r, "value")), stats, "film_links2_not_items");
+                add(l2, f, slot, 6, Wikidata.qOrZero(t.get(r, "value")), stats, "film_links2_not_items");
             });
             Map<Integer, Links2> links2 = new HashMap<>();
             for (Map.Entry<Integer, IntList[]> e : l2.entrySet()) {
                 IntList[] a = e.getValue();
                 links2.put(e.getKey(), new Links2(IntList.sorted(a[0]), IntList.sorted(a[1]), IntList.sorted(a[2]),
-                        IntList.sorted(a[3]), IntList.sorted(a[4])));
+                        IntList.sorted(a[3]), IntList.sorted(a[4]), IntList.sorted(a[5])));
             }
             l2.clear();
 
@@ -664,17 +691,20 @@ public record SourceData(String snapshot, String fetchedAt, Map<Integer, Boolean
             }
             pl.clear();
 
-            Map<Integer, Integer> places = new HashMap<>();
-            each(s, PLACES, List.of("item", "geonames", "country", "label_en"), stats, (t, r) -> {
+            Map<Integer, Place> places = new HashMap<>();
+            each(s, PLACES, List.of("item", "geonames", "country", "label_en", "label_mul", "label_ru", "lat", "lon"), stats, (t, r) -> {
                 int item = Wikidata.q(t.get(r, "item"));
                 String g = t.get(r, "geonames").strip();
-                if (g.isEmpty()) return;
-                int id = geonames(g);
-                if (id == 0) {
-                    stats.merge("places_geonames_unreadable", 1L, Long::sum);
-                    return;
-                }
-                places.merge(item, id, Math::min);
+                int id = g.isEmpty() ? 0 : geonames(g);
+                if (!g.isEmpty() && id == 0) stats.merge("places_geonames_unreadable", 1L, Long::sum);
+                String en = t.get(r, "label_en"), mul = t.get(r, "label_mul"), ru = t.get(r, "label_ru");
+                String la = t.get(r, "lat").strip(), lo = t.get(r, "lon").strip();
+                BigDecimal[] ll = coords(la, lo);
+                if (ll == null && !(la.isEmpty() && lo.isEmpty())) stats.merge("places_coords_unreadable", 1L, Long::sum);
+                Place x = new Place(id, Wikidata.qOrZero(t.get(r, "country")), Wikidata.usable(en) ? en : null,
+                        Wikidata.usable(mul) ? mul : null, Wikidata.usable(ru) ? ru : null, ll == null ? null : ll[0],
+                        ll == null ? null : ll[1]);
+                places.merge(item, x, SourceData::mergePlaces);
             });
 
             Map<Integer, String[]> itemLabels = new HashMap<>();
@@ -686,10 +716,11 @@ public record SourceData(String snapshot, String fetchedAt, Map<Integer, Boolean
                 if (a[i] == null || Snapshot.compareBytes(label, a[i]) < 0) a[i] = label;
             });
 
-            Map<Integer, Integer> companies = new HashMap<>();
-            each(s, COMPANIES, List.of("item", "country"), stats, (t, r) -> {
-                int c = Wikidata.qOrZero(t.get(r, "country"));
-                if (c != 0) companies.merge(Wikidata.q(t.get(r, "item")), c, Math::min);
+            Map<Integer, CompanyInfo> companies = new HashMap<>();
+            each(s, COMPANIES, List.of("item", "country", "hq"), stats, (t, r) -> {
+                CompanyInfo x = new CompanyInfo(Wikidata.qOrZero(t.get(r, "country")), Wikidata.qOrZero(t.get(r, "hq")));
+                companies.merge(Wikidata.q(t.get(r, "item")), x, (a, b) -> new CompanyInfo(minQ(a.country(), b.country()),
+                        minQ(a.hq(), b.hq())));
             });
 
             return new SourceData(snapshot, fetchedAt, Collections.unmodifiableMap(classes), filmClasses, dates, filmLabels,
@@ -709,6 +740,44 @@ public record SourceData(String snapshot, String fetchedAt, Map<Integer, Boolean
         IntList[] a = m.computeIfAbsent(key, k -> new IntList[slots]);
         if (a[slot] == null) a[slot] = new IntList();
         a[slot].add(value);
+    }
+
+    /** Меньший номер элемента из двух, {@code 0} — нет. */
+    static int minQ(int a, int b) {
+        return a == 0 ? b : b == 0 ? a : Math.min(a, b);
+    }
+
+    /**
+     * Координаты P625 из записи снимка: широта в [−90, 90], долгота в [−180, 180], обе — десятичные числа; иначе
+     * {@code null}.
+     */
+    static BigDecimal[] coords(String lat, String lon) {
+        if (lat.isEmpty() || lon.isEmpty()) return null;
+        try {
+            BigDecimal a = new BigDecimal(lat), b = new BigDecimal(lon);
+            if (a.abs().compareTo(BigDecimal.valueOf(90)) > 0 || b.abs().compareTo(BigDecimal.valueOf(180)) > 0) return null;
+            return new BigDecimal[]{a, b};
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Две строки одного места (в снимке их нет, но порядок не должен зависеть от файла): GeoNames ID и страна —
+     * меньшие, метки — меньшие по байтам, координаты — первые по (широта, долгота).
+     */
+    private static Place mergePlaces(Place a, Place b) {
+        boolean aFirst = !b.hasCoords() || (a.hasCoords() && (a.lat().compareTo(b.lat()) < 0
+                || (a.lat().compareTo(b.lat()) == 0 && a.lon().compareTo(b.lon()) <= 0)));
+        Place c = aFirst ? a : b;
+        return new Place(minQ(a.geonames(), b.geonames()), minQ(a.country(), b.country()), minBytes(a.labelEn(), b.labelEn()),
+                minBytes(a.labelMul(), b.labelMul()), minBytes(a.labelRu(), b.labelRu()), c.lat(), c.lon());
+    }
+
+    private static String minBytes(String a, String b) {
+        if (a == null) return b;
+        if (b == null) return a;
+        return Snapshot.compareBytes(a, b) <= 0 ? a : b;
     }
 
     /** GeoNames ID (P1566): целое без знака, 1…{@code Integer.MAX_VALUE}; иначе {@code 0}. */

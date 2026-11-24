@@ -3,9 +3,11 @@ package io.hammerhall.data.mov;
 import io.hammerhall.data.core.gen.Profile;
 import io.hammerhall.data.core.random.RandomStreams;
 import io.hammerhall.data.mov.build.Cinema;
+import io.hammerhall.data.mov.build.Places;
 import io.hammerhall.data.mov.build.Rules;
 import io.hammerhall.data.mov.build.Names.GenderPath;
 import io.hammerhall.data.mov.source.SourceData;
+import io.hammerhall.data.mov.source.WorldCities;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -32,8 +34,13 @@ class CinemaTest {
         return SourceData.read(TinySnapshot.path());
     }
 
+    /** Крошечные города «Мира» ({@link TinySnapshot#CITIES}). */
+    static WorldCities cities() throws IOException {
+        return WorldCities.read(TinySnapshot.citiesPath());
+    }
+
     static Cinema cinema(Profile p) throws IOException {
-        return Cinema.build(tiny(), p, new RandomStreams(MovDataset.DEFAULT_SEED), Exclusions.DEFAULT);
+        return Cinema.build(tiny(), cities(), p, new RandomStreams(MovDataset.DEFAULT_SEED), TinySnapshot.EXCLUSIONS);
     }
 
     static Map<Integer, Cinema.Movie> movies(Cinema c) {
@@ -218,9 +225,9 @@ class CinemaTest {
     @DisplayName("Повторяемость: тот же снимок и seed — тот же набор; другой seed меняет только рейтинг и пол «от seed»")
     void seeds() throws IOException {
         SourceData src = tiny();
-        Cinema a = Cinema.build(src, Profile.FULL, new RandomStreams(1), Exclusions.DEFAULT);
-        Cinema b = Cinema.build(src, Profile.FULL, new RandomStreams(1), Exclusions.DEFAULT);
-        Cinema c = Cinema.build(src, Profile.FULL, new RandomStreams(2), Exclusions.DEFAULT);
+        Cinema a = Cinema.build(src, cities(), Profile.FULL, new RandomStreams(1), TinySnapshot.EXCLUSIONS);
+        Cinema b = Cinema.build(src, cities(), Profile.FULL, new RandomStreams(1), TinySnapshot.EXCLUSIONS);
+        Cinema c = Cinema.build(src, cities(), Profile.FULL, new RandomStreams(2), TinySnapshot.EXCLUSIONS);
         assertEquals(a.movies(), b.movies());
         assertEquals(a.actors(), b.actors());
         assertEquals(a.roles(), c.roles());
@@ -233,7 +240,7 @@ class CinemaTest {
     void snapshotYear(@TempDir Path tmp) throws IOException {
         Path f = TinySnapshot.with(tmp, Map.of("fetch.json",
                 TinySnapshot.utf8("{\"snapshot\":\"mov-source-20270101\",\"fetched_at\":\"2027-01-01T00:00:00Z\"}")));
-        Cinema c = Cinema.build(SourceData.read(f), Profile.FULL, new RandomStreams(1), Exclusions.DEFAULT);
+        Cinema c = Cinema.build(SourceData.read(f), cities(), Profile.FULL, new RandomStreams(1), TinySnapshot.EXCLUSIONS);
         assertTrue(movies(c).containsKey(106), "2027 — год снимка");
         Map<String, byte[]> drop = new HashMap<>();
         drop.put("wikidata/characters.csv.gz", null);
@@ -242,13 +249,23 @@ class CinemaTest {
     }
 
     @Test
+    @DisplayName("Пробный снимок (fetch.py --sample: поле sample в fetch.json) — не вход сборки")
+    void sampleSnapshotRefused(@TempDir Path tmp) throws IOException {
+        Path f = TinySnapshot.with(tmp, Map.of("fetch.json", TinySnapshot.utf8("{\"snapshot\":\"mov-source-20261125-sample200\","
+                + "\"fetched_at\":\"2026-11-25T03:00:00Z\",\"sample\":{\"films\":200,\"from\":\"mov-source-20261124\","
+                + "\"from_sha256\":\"00\"},\"files\":{},\"skipped\":[]}")));
+        IOException e = assertThrows(IOException.class, () -> SourceData.read(f));
+        assertTrue(e.getMessage().contains("пробный снимок: 200 фильмов из mov-source-20261124"), e.getMessage());
+    }
+
+    @Test
     @DisplayName("Таблица снимка без сжатия (.csv вместо .csv.gz) читается так же")
     void plainCsv(@TempDir Path tmp) throws IOException {
         Map<String, byte[]> ch = new HashMap<>();
         ch.put("wikidata/film_cast.csv.gz", null);
         ch.put("wikidata/film_cast.csv", TinySnapshot.utf8(TinySnapshot.FILM_CAST));
-        Cinema c = Cinema.build(SourceData.read(TinySnapshot.with(tmp, ch)), Profile.FULL, new RandomStreams(MovDataset.DEFAULT_SEED),
-                Exclusions.DEFAULT);
+        Cinema c = Cinema.build(SourceData.read(TinySnapshot.with(tmp, ch)), cities(), Profile.FULL, new RandomStreams(MovDataset.DEFAULT_SEED),
+                TinySnapshot.EXCLUSIONS);
         assertEquals(cinema(Profile.FULL).roles(), c.roles());
     }
 
@@ -312,15 +329,19 @@ class CinemaTest {
         assertEquals(List.of(501, 502, 503, 504, 505, 506, 507, 510, 511, 512, 513, 514, 515, 516, 517, 518),
                 c.people().stream().map(Cinema.Person::id).toList(), "Q509 — не человек, Q519 — без имени, Q520 — только в дубле");
         assertEquals(new Cinema.Person(501, "Steven", "Halden", "Стивен Халден", "M", LocalDate.of(1946, 12, 18), 1946, null,
-                null, 1_000_001), p.get(501), "город — первое по номеру место P19 (Q6000)");
+                null, 1_000_001, 6000), p.get(501), "место — первое по номеру P19 (Q6000), город — его");
         assertEquals(new Cinema.Person(506, "John", "Smith", null, null, LocalDate.of(1900, 3, 4), 1900, LocalDate.of(1999, 12, 31),
-                1999, null), p.get(506), "иное P21 — в режиссёрах, пол пустой");
+                1999, null, null), p.get(506), "иное P21 — в режиссёрах, пол пустой");
         assertNull(p.get(502).birthDate(), "preferred — с точностью года");
         assertEquals(1970, p.get(502).birthYear());
-        assertNull(p.get(502).birthCityId(), "у места нет GeoNames ID");
+        assertEquals(6002, p.get(502).birthPlaceId());
+        assertEquals(1_000_001, p.get(502).birthCityId(), "у места нет GeoNames ID — ближайший город (равные — меньший id)");
         assertNull(p.get(503).birthYear(), "1650 — раньше 1700");
         assertNull(p.get(503).deathYear(), "без рождения нет смерти");
-        assertNull(p.get(503).birthCityId(), "места нет в places");
+        assertEquals(6015, p.get(503).birthPlaceId(), "первое по номеру P19 из тех, что берутся: Q6003 нет, Q6014 — в списке");
+        assertEquals(1_000_004, p.get(503).birthCityId());
+        assertNull(p.get(510).birthPlaceId(), "Q6007 без названия, Q6013 — в исключённой стране");
+        assertNull(p.get(510).birthCityId());
         assertEquals(1950, p.get(504).birthYear());
         assertNull(p.get(504).deathDate(), "смерть раньше рождения");
         assertNull(p.get(504).deathYear());
@@ -362,8 +383,9 @@ class CinemaTest {
     @DisplayName("Студии и прокатчики: обе роли; без метки en/mul — нет; негодная en — mul; страна — ISO3 или пусто")
     void companies() throws IOException {
         Cinema c = cinema(Profile.FULL);
-        assertEquals(List.of(new Cinema.Company(7001, "Northwind Pictures", "Нордвинд", "USA"),
-                new Cinema.Company(7002, "Bluebird Films", null, null), new Cinema.Company(7004, "Harbor Media", null, null)),
+        assertEquals(List.of(new Cinema.Company(7001, "Northwind Pictures", "Нордвинд", "USA", 6001, 1_000_003),
+                new Cinema.Company(7002, "Bluebird Films", null, null, null, null),
+                new Cinema.Company(7004, "Harbor Media", null, null, null, null)),
                 c.companies(), "Q7002: страна исключена; Q7004: en с обратной косой, страны нет; Q7003 — только ru");
         assertEquals(new java.util.TreeSet<>(List.of("101 7001 distribution", "101 7001 production", "101 7002 distribution",
                 "112 7004 distribution")), new java.util.TreeSet<>(c.moviesCompanies().stream()
@@ -419,11 +441,92 @@ class CinemaTest {
         assertNull(t.get(126), "фильм не в наборе");
     }
 
+    static List<String> links(List<Cinema.PlaceLink> l) {
+        return l.stream().map(x -> x.movieId() + "-" + x.placeId() + "-" + x.cityId()).toList();
+    }
+
+    static BigDecimal bd(String s) {
+        return new BigDecimal(s);
+    }
+
     @Test
-    @DisplayName("Места съёмок: GeoNames ID мест P915, два места одного города — одна строка, без ID — нет")
-    void locations() throws IOException {
-        assertEquals(List.of("101-1000001", "101-1000002", "112-1000001"), pairs(cinema(Profile.FULL).locations()));
-        assertEquals(1L, tiny().stats().get("places_geonames_unreadable"));
+    @DisplayName("Места съёмок и действия: строка на (фильм, место), город — как у места; место без названия — строки нет")
+    void locationsAndSettings() throws IOException {
+        Cinema c = cinema(Profile.FULL);
+        assertEquals(List.of("101-6000-1000001", "101-6001-1000003", "101-6002-1000001", "101-6005-null", "112-6000-1000001",
+                "113-6010-null", "113-6012-1000001"), links(c.locations()), "Q6001 и Q6005 — один GeoNames ID, но разные места");
+        assertEquals(List.of("101-30-null", "112-6006-null", "117-6009-null"), links(c.settings()), "Q6007 без названия — нет");
+        assertEquals(List.of("101-30-null"), links(cinema(Profile.SMALL).settings()));
+        SourceData d = tiny();
+        assertEquals(1L, d.stats().get("places_geonames_unreadable"));
+        assertEquals(1L, d.stats().get("places_coords_unreadable"), "Q6010: широта 95");
+    }
+
+    @Test
+    @DisplayName("Места: только те, на кого ссылается профиль; вид, страна, координаты; город — по GeoNames ID, ближайший той же страны до 30 км")
+    void places() throws IOException {
+        Cinema c = cinema(Profile.FULL);
+        Map<Integer, Cinema.Place> p = c.places().stream().collect(Collectors.toMap(Cinema.Place::id, Function.identity()));
+        assertEquals(List.of(30, 6000, 6001, 6002, 6005, 6006, 6009, 6010, 6012, 6015),
+                c.places().stream().map(Cinema.Place::id).toList(),
+                "съёмки, действие, рождение (Q6000, Q6002, Q6015), штаб-квартира (Q6001); Q6007 без названия; Q9001, Q6013, Q6014 — исключены");
+        assertEquals(new Cinema.Place(30, "United States", "Соединённые Штаты", "country", bd("39.8000000"), bd("-98.5000000"),
+                "USA", null, null), p.get(30), "страна: свой код, города нет");
+        assertEquals(new Cinema.Place(6000, "Rivermouth", "Ривермут", "place", bd("40.0000000"), bd("-74.0000002"), "USA",
+                1_000_001, bd("0.0")), p.get(6000), "город по GeoNames ID — 0 км; координаты — половина к чётному");
+        assertEquals(1_000_003, p.get(6001).cityId(), "GeoNames ID не из «Мира»: ближайший той же страны (Otherland ближе, но QXA)");
+        assertEquals(bd("2.2"), p.get(6001).cityKm());
+        assertEquals(1_000_001, p.get(6002).cityId(), "Rivermouth и Lakeside — на равном расстоянии: меньший id");
+        assertEquals(bd("21.3"), p.get(6002).cityKm());
+        assertNull(p.get(6005).cityId(), "без координат");
+        assertNull(p.get(6005).latitude());
+        assertNull(p.get(6006).cityId(), "ближайший — дальше 30 км");
+        assertNull(p.get(6006).cityKm());
+        assertNull(p.get(6009).countryCode());
+        assertNull(p.get(6009).cityId(), "без страны — ближайшего не ищем");
+        assertNull(p.get(6010).latitude(), "широта вне диапазона — координат нет");
+        assertEquals("Mill Pond", p.get(6012).name(), "en нет — mul");
+        assertEquals(new Cinema.Place(6015, "Lakeside Village", null, "place", null, null, "USA", 1_000_004, bd("0.0")), p.get(6015));
+        assertEquals(1_000_001, p.get(6012).cityId());
+        assertEquals(bd("0.0"), p.get(6012).cityKm(), "совпали координаты — 0 км (ближайший)");
+        assertEquals(Map.of(Places.CityPath.GEONAMES, 2L, Places.CityPath.NEAREST, 3L, Places.CityPath.NONE, 4L,
+                Places.CityPath.COUNTRY, 1L), c.placePaths());
+        assertEquals(Map.of(Places.Excluded.EXCLUDED_COUNTRY, 1L, Places.Excluded.IN_EXCLUDED_COUNTRY, 1L, Places.Excluded.LISTED, 1L),
+                c.placesExcluded(), "Q9001 (действие Q117), Q6013 (съёмки Q112, рождение Q510, штаб-квартира Q7004), Q6014");
+        Cinema s = cinema(Profile.SMALL);
+        assertEquals(List.of(30, 6000, 6001, 6002, 6005, 6015), s.places().stream().map(Cinema.Place::id).toList(),
+                "small: места фильма 101, рождения его людей и штаб-квартиры его студий");
+        assertEquals(Map.of(Places.Excluded.EXCLUDED_COUNTRY, 0L, Places.Excluded.IN_EXCLUDED_COUNTRY, 1L, Places.Excluded.LISTED, 1L),
+                s.placesExcluded());
+    }
+
+    @Test
+    @DisplayName("Исключённые места — как без названия: строк мест фильмов нет, у людей и студий — пусто; список мест подменяется")
+    void excludedPlaces() throws IOException {
+        Cinema c = cinema(Profile.FULL);
+        assertTrue(c.locations().stream().noneMatch(x -> x.placeId() == 6013), "съёмки Q112 в Q6013 — строки нет");
+        assertTrue(c.settings().stream().noneMatch(x -> x.placeId() == 9001), "действие Q117 в стране Q9001 — строки нет");
+        assertEquals(new Cinema.Company(7004, "Harbor Media", null, null, null, null),
+                c.companies().stream().filter(x -> x.id() == 7004).findFirst().orElseThrow(), "штаб-квартира исключена — пусто");
+        Cinema d = Cinema.build(tiny(), cities(), Profile.FULL, new RandomStreams(MovDataset.DEFAULT_SEED), Exclusions.DEFAULT);
+        assertEquals(6014, people(d).get(503).birthPlaceId(), "без Q6014 в списке — оно первое из берущихся");
+        assertEquals(1_000_001, people(d).get(503).birthCityId());
+        assertEquals(0L, d.placesExcluded().get(Places.Excluded.LISTED));
+    }
+
+    @Test
+    @DisplayName("places.csv читается по заголовку (столбцы в другом порядке): место без en — по mul, ссылки на него появляются")
+    void placesMulColumn(@TempDir Path tmp) throws IOException {
+        Map<String, byte[]> ch = new HashMap<>();
+        ch.put("wikidata/places.csv.gz", TinySnapshot.gz(TinySnapshot.csv("item,label_ru,lat,lon,geonames,country,label_mul,label_en",
+                "Q6007|Безымянное|40|-74||Q30|Nameless Hill|")));
+        Cinema c = Cinema.build(SourceData.read(TinySnapshot.with(tmp, ch)), cities(), Profile.FULL,
+                new RandomStreams(MovDataset.DEFAULT_SEED), TinySnapshot.EXCLUSIONS);
+        assertEquals(List.of("101-6007-1000001"), links(c.settings()));
+        assertEquals(List.of(new Cinema.Place(6007, "Nameless Hill", "Безымянное", "place", bd("40.0000000"), bd("-74.0000000"), "USA",
+                1_000_001, bd("0.0"))), c.places().stream().filter(x -> x.id() == 6007).toList());
+        assertEquals(6007, people(c).get(510).birthPlaceId());
+        assertEquals(List.of(), links(c.locations()), "других мест в этом снимке нет");
     }
 
     @Test

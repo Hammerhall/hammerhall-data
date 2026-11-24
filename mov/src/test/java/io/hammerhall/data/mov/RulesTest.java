@@ -330,16 +330,6 @@ class RulesTest {
         assertEquals(new Rules.Event(null, null), Rules.event(List.of(d(-50, 1, 1, 11, false)), 2026), "до н. э.");
     }
 
-    @Test
-    @DisplayName("Город по месту: первое место по номеру → GeoNames ID; у места его нет — пусто (следующее не берём)")
-    void city() {
-        Map<Integer, Integer> places = Map.of(6000, 1_000_001, 6001, 1_000_002);
-        assertEquals(1_000_001, Rules.city(new int[]{6000, 6001}, places));
-        assertNull(Rules.city(new int[]{5999, 6000}, places));
-        assertNull(Rules.city(new int[0], places));
-        assertNull(Rules.city(null, places));
-    }
-
     // ---------------------------------------------------------------- снимок v2: справочники и связи
 
     @Test

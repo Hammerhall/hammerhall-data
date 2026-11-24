@@ -2,10 +2,19 @@
 mov-source-YYYYMMDD.zip (выпуск mov-source-YYYYMMDD этого репозитория; вход source сборки набора).
 
 Запуск:  python3 -X utf8 -I mov/source/fetch.py --snapshot mov-source-YYYYMMDD --out ПАПКА [--work ПАПКА]
+                                                [--steps ФАЙЛ] [--sample N --sample-from ПРЕЖНИЙ.zip]
 
 В ПАПКЕ — mov-source-YYYYMMDD.zip, SOURCE.md и SHA256SUMS (копии тех же файлов из архива). Дерево архива собирается
 в --work (в ней — папка с именем снимка, прежняя стирается); без --work — во временной папке, после сборки её нет.
-Год снимка (из тега) — верхняя граница запасного пути по годам P577.
+Год снимка (из тега) — верхняя граница запасного пути по годам P577. --steps — ход по шагам (Markdown: элементов,
+частей, делилось, запросов, повторов, просьб подождать, строк, время) в ФАЙЛ, и когда снимок не собран, — для
+сводки запуска; в архив он не идёт.
+
+Пробный снимок (--sample N или MOV_FETCH_SAMPLE=N, с --sample-from) — проверка запросов на настоящем сервисе за
+минуты: шаг 1 не идёт, фильмы — первые N по номеру Q из films.csv.gz прежнего снимка (с их классами из FILM_CLASSES),
+шаги 2–6 — как обычно, нижние границы не проверяются. Имя — mov-source-YYYYMMDD-sampleN (архив, папка, fetch.json);
+в SOURCE.md — «Пробный: N фильмов из <прежний снимок>», в fetch.json — поле sample (films, from, from_sha256): у
+настоящего снимка его нет, по нему сборщик отличает пробный.
 
 Раскладка архива — без общей верхней папки: SOURCE.md, SHA256SUMS, fetch.json, wikidata/…. Данные — CSV (UTF-8, LF,
 заголовок, кавычки — где нужно; item — строкой Q…; строки — по столбцам слева направо, номера Q — как числа), большие —
@@ -46,6 +55,7 @@ Blazegraph может начать раньше веток — со всех у�
   MOV_FETCHED_AT        время снимка YYYY-MM-DDTHH:MM:SSZ вместо нынешнего (два прогона — один архив побайтно)
   MOV_FETCH_WORKERS     запросов одновременно (3; от 1 до 5)
   MOV_FETCH_CHUNK       элементов в части VALUES (1000)
+  MOV_FETCH_SAMPLE      пробный снимок из стольких фильмов (как --sample; --sample — главнее)
 Прокси — как у urllib: HTTPS_PROXY, HTTP_PROXY, NO_PROXY.
 
 Только стандартная библиотека; Python 3.12 (CI) и новее.
@@ -725,6 +735,12 @@ class Http:
         self.stop = threading.Event()
         self.sent = 0
         self.answered = 0
+        self.stages = {}  # шаг → отправлено, повторов после сбоя, просьб подождать (429, 503 с Retry-After)
+
+    def count(self, stage, key):
+        with self.lock:
+            c = self.stages.setdefault(stage, {'sent': 0, 'retries': 0, 'busy': 0})
+            c[key] += 1
 
     def delay(self, seconds, exact=False):
         """Пауза с учётом MOV_FETCH_BACKOFF: обычная — умножается, из Retry-After (exact) — как есть; 0 — без пауз."""
@@ -752,10 +768,10 @@ class Http:
                 return
             self.sleep(left)
 
-    def post(self, url, data, label, check, heavy=None):
+    def post(self, url, data, label, check, heavy=None, stage=None):
         """POST data с повторами; check(тело) — проверка ответа (Retry — ответ негодный), её итог — итог запроса.
         heavy — после стольких неудач вида «сервис не справился» (тайм-аут, 5xx, негодный ответ) — Heavy, а не новые
-        попытки; None — такие неудачи — обычные попытки."""
+        попытки; None — такие неудачи — обычные попытки. stage — шаг для учёта (Http.stages)."""
         where = f'{url} ({label})'
         failed = heavy_seen = busy = 0
         while True:
@@ -764,6 +780,7 @@ class Http:
             self.wait_hold()
             with self.lock:
                 self.sent += 1
+            self.count(stage, 'sent')
             wait = None
             try:
                 value = check(self._once(url, data))
@@ -801,6 +818,7 @@ class Http:
                 s = max(self.delay(BACKOFF[min(busy, len(BACKOFF)) - 1]),
                         self.delay(wait, exact=True) if wait is not None else 0)
                 log(f'  сервис просит подождать — {where}: {reason}; пауза {s:g} с для всех запросов')
+                self.count(stage, 'busy')
                 self.hold(s)
                 continue
             if kind == 'heavy':
@@ -812,6 +830,7 @@ class Http:
                 raise FetchError(f'не удалось скачать {where}: {reason} (попыток: {ATTEMPTS})')
             s = self.delay(BACKOFF[failed - 1])
             log(f'  попытка {failed}/{ATTEMPTS} не удалась — {where}: {reason}; повтор через {s:g} с')
+            self.count(stage, 'retries')
             self.sleep(s)
 
     def _once(self, url, data):
@@ -988,6 +1007,7 @@ class Config:
         self.minimums = (env.get('MOV_FETCH_MIN') or '1').strip() != '0'
         self.workers = env_int(env, 'MOV_FETCH_WORKERS', WORKERS, 1, WORKERS_MAX)
         self.chunk = env_int(env, 'MOV_FETCH_CHUNK', CHUNK, 1, None)
+        self.sample = env_int(env, 'MOV_FETCH_SAMPLE', None, 1, None)
         at = (env.get('MOV_FETCHED_AT') or '').strip()
         if at:
             try:
@@ -1012,17 +1032,20 @@ def env_int(env, key, default, low, high):
 
 
 class Snapshot:
-    """Дерево архива и учёт его файлов: путь → url, bytes, sha256, rows (для fetch.json и SOURCE.md)."""
+    """Дерево архива и учёт его файлов: путь → url, bytes, sha256, rows (для fetch.json и SOURCE.md). sample — у
+    пробного снимка: films, from, from_sha256 (в fetch.json как есть) и pairs — пары (фильм, класс) вместо шага 1."""
 
-    def __init__(self, name, year, cfg, tree, http_client):
+    def __init__(self, name, year, cfg, tree, http_client, sample=None):
         self.name = name
         self.year = year
         self.cfg = cfg
         self.tree = tree
         self.http = http_client
+        self.sample = sample
         self.fetched_at = cfg.fetched_at
         self.files = {}
         self.info = {}
+        self.wd = None
 
     def path(self, rel):
         p = self.tree.joinpath(*rel.split('/'))
@@ -1044,13 +1067,15 @@ class Snapshot:
         log(f'Wikidata: {rel} — {num(f["bytes"])} байт, строк {num(f["rows"])}')
 
     def at_least(self, what, have, need):
-        if self.cfg.minimums and have < need:
+        """Нижняя граница числа строк; у пробного снимка — не проверяется (его строки — малая доля)."""
+        if self.cfg.minimums and self.sample is None and have < need:
             raise FetchError(f'{what}: {num(have)} — меньше нижней границы {num(need)}; сервис отдал не всё? '
                              f'(MOV_FETCH_MIN=0 — без этой проверки)')
 
 
 class Wikidata:
-    """Запросы к SPARQL-эндпойнту и их учёт: части, деления, значения не-item по шагам."""
+    """Запросы к SPARQL-эндпойнту и их учёт: части, деления, значения не-item по шагам; steps — ход по шагам (в
+    порядке шагов: элементов, частей, делилось, строк, секунд)."""
 
     def __init__(self, snap):
         self.snap = snap
@@ -1060,11 +1085,21 @@ class Wikidata:
         self.parts = 0
         self.splits = 0
         self.not_items = {}
+        self.steps = {}
 
-    def query(self, text, label, heavy=None):
+    def query(self, text, label, heavy=None, stage=None):
         self.http.pause(PAUSE)
         data = urllib.parse.urlencode({'query': text}).encode('ascii')
-        return self.http.post(self.cfg.sparql, data, f'Wikidata {label}', check_sparql, heavy)
+        return self.http.post(self.cfg.sparql, data, f'Wikidata {label}', check_sparql, heavy,
+                              stage=stage or label.split(',')[0].split(' ')[0])
+
+    def step(self, stage, items, parts, splits, rows, seconds):
+        """Учёт шага; шаг из нескольких вызовов (genre_items по уровням) — суммой."""
+        with self.lock:
+            s = self.steps.setdefault(stage, {'items': 0, 'parts': 0, 'splits': 0, 'rows': 0, 'seconds': 0.0})
+            for key, value in (('items', items), ('parts', parts), ('splits', splits), ('rows', rows),
+                               ('seconds', seconds)):
+                s[key] += value
 
     def not_item(self, stage, n=1):
         with self.lock:
@@ -1115,7 +1150,7 @@ def in_parts(wd, stage, items, parse, what, quiet=False):
         label = f'{stage}, {num(len(part))} шт.: {part[0]} … {part[-1]}'
         split = len(part) >= 2 * MIN_CHUNK
         try:
-            bindings = wd.query(text, label, heavy=1 if split else None)
+            bindings = wd.query(text, label, heavy=1 if split else None, stage=stage)
         except Heavy as e:
             with lock:
                 state['splits'] += 1
@@ -1153,6 +1188,7 @@ def in_parts(wd, stage, items, parse, what, quiet=False):
     with wd.lock:
         wd.parts += len(parts)
         wd.splits += state['splits']
+    wd.step(stage, len(items), len(parts), state['splits'], len(rows), time.monotonic() - t0)
     log(f'Wikidata: {stage} — {what} {num(len(items))}: готово за {took(time.monotonic() - t0)}, строк '
         f'{num(len(rows))}, запросов {num(wd.http.sent - sent0)}'
         + (f', частей делилось {num(state["splits"])}' if state['splits'] else ''))
@@ -1429,8 +1465,8 @@ def films_by_years(wd, cls, last_year):
         text = (QUERIES['films_by_class_years'].replace(CLASS, cls)
                 .replace(DATE_FROM, date_literal(start)).replace(DATE_TO, date_literal(end)))
         try:
-            found |= films_from(wd, wd.query(text, f'films_by_class_years {cls} {start}–{end - 1}', heavy=2),
-                                'films_by_class')
+            found |= films_from(wd, wd.query(text, f'films_by_class_years {cls} {start}–{end - 1}', heavy=2,
+                                             stage='films_by_class'), 'films_by_class')
             continue
         except Heavy as e:
             log(f'  Wikidata: класс {cls}, {start}–{end - 1} — дважды не уложился ({e}); по году')
@@ -1438,7 +1474,8 @@ def films_by_years(wd, cls, last_year):
         for year in range(start, end):
             text = (QUERIES['films_by_class_years'].replace(CLASS, cls)
                     .replace(DATE_FROM, date_literal(year)).replace(DATE_TO, date_literal(year + 1)))
-            found |= films_from(wd, wd.query(text, f'films_by_class_years {cls} {year}'), 'films_by_class')
+            found |= films_from(wd, wd.query(text, f'films_by_class_years {cls} {year}', stage='films_by_class'),
+                                'films_by_class')
     return found, single
 
 
@@ -1452,7 +1489,8 @@ def fetch_films(wd):
     for cls in FILM_CLASSES:
         text = QUERIES['films_by_class'].replace(CLASS, cls)
         try:
-            found = films_from(wd, wd.query(text, f'films_by_class {cls}', heavy=2), 'films_by_class')
+            found = films_from(wd, wd.query(text, f'films_by_class {cls}', heavy=2, stage='films_by_class'),
+                               'films_by_class')
             mode = None
         except Heavy as e:
             log(f'  Wikidata: класс {cls} целиком дважды не уложился ({e}); по годам P577 с {YEARS_FROM}, по 10 лет')
@@ -1462,9 +1500,49 @@ def fetch_films(wd):
         info.append({'class': cls, 'found': len(found), 'years': mode})
         log(f'Wikidata: films_by_class {cls} — фильмов {num(len(found))}' + ('' if mode is None else ' (по годам)'))
     films = {f for f, _ in pairs}
+    wd.step('films_by_class', len(FILM_CLASSES), len(FILM_CLASSES), 0, len(pairs), time.monotonic() - t0)
     log(f'Wikidata: films_by_class — готово за {took(time.monotonic() - t0)}: фильмов {num(len(films))}, запросов '
         f'{num(wd.http.sent - sent0)}')
     return pairs, info
+
+
+def read_sample(path, n):
+    """Пробный снимок: первые n фильмов по номеру Q из films.csv.gz прежнего снимка (path — его zip) — среди тех, у
+    кого есть класс из FILM_CLASSES (так их находит шаг 1), — и их пары (фильм, класс из FILM_CLASSES). Итог — sample
+    для Snapshot."""
+    p = pathlib.Path(path)
+    if not p.is_file():
+        raise FetchError(f'--sample-from {path}: нет такого файла')
+    try:
+        with zipfile.ZipFile(p) as zf:
+            names = set(zf.namelist())
+            for need in ('fetch.json', 'wikidata/films.csv.gz'):
+                if need not in names:
+                    raise FetchError(f'--sample-from {p.name}: в архиве нет {need} — это не снимок mov-source')
+            meta = json.loads(zf.read('fetch.json').decode('utf-8'))
+            text = zlib.decompress(zf.read('wikidata/films.csv.gz'), 16 + zlib.MAX_WBITS).decode('utf-8')
+    except (zipfile.BadZipFile, OSError, ValueError, zlib.error) as e:
+        raise FetchError(f'--sample-from {p.name}: не прочесть ({type(e).__name__}: {e})') from None
+    name = meta.get('snapshot') if isinstance(meta, dict) else None
+    if not isinstance(name, str) or not name:
+        raise FetchError(f'--sample-from {p.name}: в fetch.json нет имени снимка')
+    if 'sample' in meta:
+        raise FetchError(f'--sample-from {p.name}: {name} — сам пробный; пробный снимок берут из настоящего')
+    rows = list(csv.reader(io.StringIO(text)))
+    if not rows or rows[0] != ['film', 'class']:
+        raise FetchError(f'--sample-from {p.name}: films.csv.gz — заголовок не «film,class»')
+    for r in rows[1:]:
+        if len(r) != 2 or not QID.fullmatch(r[0]) or not QID.fullmatch(r[1]):
+            raise FetchError(f'--sample-from {p.name}: films.csv.gz — строка «{",".join(r)}» не «Q…,Q…»')
+    films = sorted({f for f, c in rows[1:] if c in FILM_CLASSES}, key=qnum)[:n]
+    if not films:
+        raise FetchError(f'--sample-from {p.name}: в films.csv.gz нет фильмов классов FILM_CLASSES')
+    take = set(films)
+    pairs = {(f, c) for f, c in rows[1:] if f in take and c in FILM_CLASSES}
+    digest = file_digest(p)
+    log(f'пробный снимок: фильмов {num(len(films))} из {name} (просили {num(n)}; первые по номеру Q в films.csv.gz), '
+        f'sha256 архива {digest}')
+    return {'films': len(films), 'from': name, 'from_sha256': digest, 'pairs': pairs}
 
 
 def fetch_genres(wd, start):
@@ -1534,11 +1612,17 @@ def above(parents, start):
 
 def fetch_wikidata(snap):
     wd = Wikidata(snap)
+    snap.wd = wd
     for name, text in QUERIES.items():
         snap.put(f'wikidata/queries/{name}.rq', text.encode('utf-8'), None)
 
-    # 1–2. фильмы и их связи
-    class_pairs, class_info = fetch_films(wd)
+    # 1–2. фильмы и их связи; у пробного снимка шаг 1 не идёт — фильмы и классы из прежнего снимка
+    if snap.sample is None:
+        class_pairs, class_info = fetch_films(wd)
+    else:
+        class_pairs = snap.sample['pairs']
+        class_info = [{'class': c, 'found': sum(1 for _, k in class_pairs if k == c), 'years': None}
+                      for c in FILM_CLASSES]
     films = sorted({f for f, _ in class_pairs}, key=qnum)
     links = in_parts(wd, 'film_links', films, parse_links, 'фильмов')
 
@@ -1729,9 +1813,10 @@ def lookup(wd, stage, items, kinds):
 
 
 def fetch_places(wd, places):
-    """Места: строки (item, GeoNames ID — наименьший по числу, страна P17 — первая по номеру, метки en, mul и ru, широта и
-    долгота); чего нет — пусто. Координаты — P625 на глобусе Земли: из набора preferred, иначе normal, — первые по
-    (широта, долгота) как числам. GeoNames ID не из цифр и страна не item не пишутся (считаются в not_items)."""
+    """Места: строки (item, GeoNames ID — наименьший по числу, страна P17 — первая по номеру, метки en, mul и ru,
+    широта и долгота); чего нет — пусто. Координаты — P625 на глобусе Земли: из набора preferred, иначе normal, —
+    первые по (широта, долгота) как числам. GeoNames ID не из цифр и страна не item не пишутся (считаются в
+    not_items)."""
     found = {q: {'P1566': [], 'P17': [], 'en': [], 'mul': [], 'ru': [], 'P625': []} for q in places}
     for item, kind, value in in_parts(wd, 'places', places, parse_places, 'элементов'):
         f = found[item]
@@ -1815,10 +1900,10 @@ FILE_NOTES = (
      '(значения P272, P750), серий (P179) и наград (P166, P1411)'),
     ('wikidata/companies.csv', '`item,country,hq` — студии и прокатчики (значения P272, P750): страна (P17) и '
      'штаб-квартира (P159), лучший ранг; несколько — первое по номеру; нет — пусто'),
-    ('wikidata/places.csv.gz', '`item,geonames,country,label_en,label_mul,label_ru,lat,lon` — места (значения P19, P915, P840 и '
-     '`companies.hq`): GeoNames ID (P1566; несколько — наименьший по числу), страна (P17; несколько — первая по '
-     'номеру) — лучший ранг; метки en, mul и ru; координаты (P625, кроме deprecated, только глобус Земли; из preferred, '
-     f'иначе normal, — первые по широте, затем долготе, как числам; глобус — {EARTH}); нет — пусто'),
+    ('wikidata/places.csv.gz', '`item,geonames,country,label_en,label_mul,label_ru,lat,lon` — места (значения P19, '
+     'P915, P840 и `companies.hq`): GeoNames ID (P1566; несколько — наименьший по числу), страна (P17; несколько — '
+     'первая по номеру) — лучший ранг; метки en, mul и ru; координаты (P625, кроме deprecated, только глобус Земли; '
+     f'из preferred, иначе normal, — первые по широте, затем долготе, как числам; глобус — {EARTH}); нет — пусто'),
     ('wikidata/countries.csv', '`item,iso2,iso3` — страны: значения P495, места публикации (P291 в `film_releases`), '
      'гражданство (P27), страны мест и компаний (`places.country`, `companies.country`): P297 и P298 (лучший ранг; '
      'несколько — первый по алфавиту; нет — пусто)'),
@@ -1837,9 +1922,18 @@ def source_md(snap):
     wd = snap.info['wikidata']
     cfg = snap.cfg
     http_client = snap.http
-    out = [
-        f'# {snap.name} — снимок источника набора Movie',
-        '',
+    sample = snap.sample
+    out = [f'# {snap.name} — {"пробный снимок" if sample else "снимок"} источника набора Movie', '']
+    if sample:
+        out += [
+            f'**Пробный: {num(sample["films"])} фильмов из {sample["from"]}** — первые по номеру Q в его',
+            f'`wikidata/films.csv.gz` (sha256 архива `{sample["from_sha256"]}`).',
+            'Проверка запросов на настоящем сервисе: шаг «фильмы по классам» не выполнялся, нижние границы числа строк',
+            f'не проверялись. **Не вход сборки набора** — имя `{snap.name}` и поле `sample` в `fetch.json`',
+            'отличают его от настоящего снимка.',
+            '',
+        ]
+    out += [
         'Снимок Wikidata, из которого собирается набор `mov-data-v1`: фильмы, их даты, названия, жанры, режиссёры,',
         'состав и съёмочная группа, студии, серии, бюджеты и сборы, награды, люди, места (съёмок, действия, рождения,',
         f'штаб-квартиры — с координатами) и справочники. Время снимка — **{snap.fetched_at}** (UTC).',
@@ -1847,7 +1941,8 @@ def source_md(snap):
         f'Архив `{snap.name}.zip` — без общей папки. Ответы Wikidata — в CSV (UTF-8, LF, заголовок первой строкой,',
         'кавычки — где нужно; item — номером `Q…`; строки — по столбцам слева направо, номера `Q` — как числа),',
         'большие файлы — в `.csv.gz` (gzip). `SHA256SUMS` — суммы всех прочих файлов архива; `fetch.json` — у каждого',
-        'файла адрес, байты, sha256 и число строк. Собран `mov/source/fetch.py` (workflow `source` по тегу снимка).',
+        'файла адрес, байты, sha256 и число строк. Собран `mov/source/fetch.py` '
+        + ('в пробном режиме (`--sample`).' if sample else '(workflow `source` по тегу снимка).'),
         '',
         '## Wikidata',
         '',
@@ -1857,23 +1952,28 @@ def source_md(snap):
         + (' (остальные — повторы после сбоев и пауз по просьбе сервиса).' if http_client.sent != http_client.answered
            else '.'),
         '',
-        'Фильмы — экземпляры (P31) классов с `included = 1` из `wikidata/classes.csv`, по запросу на класс:',
+        ('Фильмы — экземпляры (P31) классов с `included = 1` из `wikidata/classes.csv`, по запросу на класс:'
+         if not sample else
+         f'Фильмы — из прежнего снимка {sample["from"]} (его `films.csv.gz`), классы с `included = 1` — оттуда же:'),
         '',
         '| класс | метка | запрос | найдено |',
         '|---|---|---|---:|',
     ]
     for c in wd['classes']:
-        if c['years'] is None:
+        if sample:
+            how = f'из {sample["from"]}'
+        elif c['years'] is None:
             how = 'целиком'
         else:
             how = f'по годам P577, {YEARS_FROM}–{snap.year}, по 10 лет'
             if c['years']:
                 how += '; по году — ' + ', '.join(f'{a}–{b}' for a, b in c['years'])
         out.append(f'| `{c["class"]}` | {cell(wd["labels"].get(c["class"]))} | {how} | {num(c["found"])} |')
+    out += ['']
+    if not sample:
+        out += ['Запрос класса по годам — если целиком он дважды не уложился во время; фильм без P577 так не '
+                'находится.', '']
     out += [
-        '',
-        'Запрос класса по годам — если целиком он дважды не уложился во время; фильм без P577 так не находится.',
-        '',
         'Связи, даты, метки, названия, длительность, признаки, состав, люди и справочники — частями VALUES по',
         f'{num(cfg.chunk)} элементов, до {cfg.workers} запросов одновременно; часть, на которую сервис не ответил',
         f'(тайм-аут, 5xx, оборванный ответ), делится пополам, пока половины не меньше {MIN_CHUNK}. Частей — '
@@ -1912,8 +2012,11 @@ def fetch_json(snap):
     """fetch.json: снимок, время, файлы (по пути) и пропущенное; одна строка на файл — читать глазами."""
     lines = ['{',
              f'  "snapshot": {json.dumps(snap.name)},',
-             f'  "fetched_at": {json.dumps(snap.fetched_at)},',
-             '  "files": {']
+             f'  "fetched_at": {json.dumps(snap.fetched_at)},']
+    if snap.sample:  # пробный снимок: у настоящего этого поля нет — по нему сборщик пробный не берёт
+        mark = {k: snap.sample[k] for k in ('films', 'from', 'from_sha256')}
+        lines.append(f'  "sample": {json.dumps(mark, ensure_ascii=False)},')
+    lines.append('  "files": {')
     names = sorted(snap.files, key=lambda s: s.encode('utf-8'))
     for i, rel in enumerate(names):
         e = snap.files[rel]
@@ -1979,6 +2082,33 @@ def finish(snap, out):
     log(f'архив: {dest} — {num(dest.stat().st_size)} байт, файлов {num(len(names))}, sha256 {file_digest(dest)}')
 
 
+def steps_md(snap, seconds, error=None):
+    """Ход снимка по шагам — Markdown для сводки запуска (--steps): итог, пометка пробного, таблица шагов."""
+    wd, http_client = snap.wd, snap.http
+    out = [f'### Ход снимка {snap.name}', '']
+    if error is None:
+        out.append(f'Собран за {took(seconds)}: запросов {num(http_client.sent)}, '
+                   f'с ответом {num(http_client.answered)}.')
+    else:
+        out.append(f'**Не собран** ({took(seconds)}, запросов {num(http_client.sent)}): {cell(str(error))}')
+    if snap.sample:
+        out.append(f'Пробный: {num(snap.sample["films"])} фильмов из {snap.sample["from"]}; шаг 1 (фильмы по классам) '
+                   f'не шёл.')
+    out += ['',
+            '| шаг | элементов | частей | делилось | запросов | повторов | ждали (429/503) | строк | время |',
+            '|---|---:|---:|---:|---:|---:|---:|---:|---:|']
+    for stage, s in (wd.steps.items() if wd is not None else ()):
+        c = http_client.stages.get(stage, {'sent': 0, 'retries': 0, 'busy': 0})
+        out.append(f'| {stage} | {num(s["items"])} | {num(s["parts"])} | {num(s["splits"])} | {num(c["sent"])} | '
+                   f'{num(c["retries"])} | {num(c["busy"])} | {num(s["rows"])} | {took(s["seconds"])} |')
+    done = set(wd.steps) if wd is not None else set()
+    for stage, c in sorted(http_client.stages.items(), key=lambda kv: str(kv[0])):
+        if stage not in done:  # шаг не дошёл до конца (на нём и встал снимок)
+            out.append(f'| {stage} (не закончен) | — | — | — | {num(c["sent"])} | {num(c["retries"])} | '
+                       f'{num(c["busy"])} | — | — |')
+    return '\n'.join(out) + '\n'
+
+
 def run(args, cfg):
     m = SNAPSHOT_RE.fullmatch(args.snapshot)
     if not m:
@@ -1988,6 +2118,17 @@ def run(args, cfg):
     except ValueError:
         raise FetchError(f'снимок «{args.snapshot}»: нет такой даты') from None
     year = int(m.group(1))
+    n = cfg.sample
+    if args.sample is not None:
+        if not (args.sample.isascii() and args.sample.isdigit()) or int(args.sample) < 1:
+            raise FetchError(f'--sample «{args.sample}» — нужно целое число не меньше 1')
+        n = int(args.sample)
+    if n is not None and not args.sample_from:
+        raise FetchError(f'пробный снимок ({n} фильмов) — нужен --sample-from: прежний снимок, из которого их взять')
+    if n is None and args.sample_from:
+        raise FetchError('--sample-from — только с --sample N (или MOV_FETCH_SAMPLE)')
+    sample = read_sample(args.sample_from, n) if n is not None else None
+    name = args.snapshot if sample is None else f'{args.snapshot}-sample{n}'
     out = pathlib.Path(args.out)
     tmp = None
     if args.work:
@@ -1995,20 +2136,34 @@ def run(args, cfg):
     else:
         tmp = tempfile.mkdtemp(prefix='mov-source-')
         work = pathlib.Path(tmp)
-    tree = work / args.snapshot
+    tree = work / name
+    snap = None
+    error = None
+    t0 = time.monotonic()
     try:
         if tree.exists():
             shutil.rmtree(tree)
         tree.mkdir(parents=True)
-        snap = Snapshot(args.snapshot, year, cfg, tree, Http(cfg.backoff))
-        t0 = time.monotonic()
+        snap = Snapshot(name, year, cfg, tree, Http(cfg.backoff), sample)
         log(f'снимок {snap.name}: время {snap.fetched_at}, {cfg.sparql}, частями по {num(cfg.chunk)}, потоков '
-            f'{cfg.workers}, дерево {tree}')
+            f'{cfg.workers}, дерево {tree}' + (f'; пробный — {sample["films"]} фильмов из {sample["from"]}'
+                                              if sample else ''))
         fetch_wikidata(snap)
         finish(snap, out)
         log(f'снимок {snap.name} собран за {took(time.monotonic() - t0)}: запросов {num(snap.http.sent)}, '
             f'с ответом {num(snap.http.answered)}')
+    except BaseException as e:
+        error = e
+        raise
     finally:
+        if args.steps and snap is not None:
+            text = steps_md(snap, time.monotonic() - t0,
+                            None if error is None else (str(error) or type(error).__name__))
+            try:
+                pathlib.Path(args.steps).parent.mkdir(parents=True, exist_ok=True)
+                pathlib.Path(args.steps).write_text(text, encoding='utf-8')
+            except OSError as e:
+                log(f'ход по шагам не записан в {args.steps}: {e}')
         if tmp is not None:
             shutil.rmtree(tmp, ignore_errors=True)
     return 0
@@ -2019,6 +2174,9 @@ def parse_args(argv):
     p.add_argument('--snapshot', required=True, help='имя снимка — тег выпуска: mov-source-YYYYMMDD')
     p.add_argument('--out', required=True, help='куда положить архив, SOURCE.md и SHA256SUMS')
     p.add_argument('--work', help='где собирать дерево архива (по умолчанию — временная папка)')
+    p.add_argument('--steps', help='куда записать ход по шагам (Markdown, для сводки запуска)')
+    p.add_argument('--sample', help='пробный снимок: столько фильмов из прежнего (--sample-from), без шага 1')
+    p.add_argument('--sample-from', help='прежний снимок (zip), из films.csv.gz которого берутся фильмы пробного')
     return p.parse_args(argv)
 
 

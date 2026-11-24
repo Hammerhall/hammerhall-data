@@ -8,6 +8,7 @@ import io.hammerhall.data.core.gen.Module;
 import io.hammerhall.data.core.io.TableSink;
 import io.hammerhall.data.mov.Exclusions;
 import io.hammerhall.data.mov.MovSchema;
+import io.hammerhall.data.mov.source.CitiesSource;
 import io.hammerhall.data.mov.source.SnapshotSource;
 
 import java.io.IOException;
@@ -27,10 +28,12 @@ public final class CinemaModule implements Module {
     public static final Key<Cinema> CINEMA = Key.of("mov.cinema");
 
     private final SnapshotSource source;
+    private final CitiesSource cities;
     private final Exclusions exclusions;
 
-    public CinemaModule(SnapshotSource source, Exclusions exclusions) {
+    public CinemaModule(SnapshotSource source, CitiesSource cities, Exclusions exclusions) {
         this.source = source;
+        this.cities = cities;
         this.exclusions = exclusions;
     }
 
@@ -46,7 +49,8 @@ public final class CinemaModule implements Module {
 
     @Override
     public void generate(GenContext ctx) throws IOException {
-        Cinema c = Cinema.build(source.load(ctx.config().input("source")), ctx.profile(), ctx.streams(), exclusions);
+        Cinema c = Cinema.build(source.load(ctx.config().input("source")), cities.load(ctx.config().input("cities")),
+                ctx.profile(), ctx.streams(), exclusions);
         ctx.put(CINEMA, c);
         ctx.log("снимок " + source.loaded().snapshot() + ": " + c.stats());
 
@@ -61,11 +65,18 @@ public final class CinemaModule implements Module {
         }
         ctx.close("movies");
 
+        // места — до людей, студий и мест фильмов: на них ссылаются
+        s = ctx.sink("places");
+        for (Cinema.Place p : c.places()) {
+            s.add(p.id(), p.name(), p.nameRu(), p.kind(), p.latitude(), p.longitude(), p.countryCode(), p.cityId(), p.cityKm());
+        }
+        ctx.close("places");
+
         // люди — до актёров и режиссёров: на них ссылаются actors.id и directors.id
         s = ctx.sink("people");
         for (Cinema.Person p : c.people()) {
             s.add(p.id(), p.firstName(), p.lastName(), p.nameRu(), p.gender(), p.birthDate(), small(p.birthYear()),
-                    p.deathDate(), small(p.deathYear()), p.birthCityId());
+                    p.deathDate(), small(p.deathYear()), p.birthCityId(), p.birthPlaceId());
         }
         ctx.close("people");
 
@@ -110,7 +121,7 @@ public final class CinemaModule implements Module {
         ctx.close("movies_crew");
 
         s = ctx.sink("companies");
-        for (Cinema.Company x : c.companies()) s.add(x.id(), x.name(), x.nameRu(), x.countryCode());
+        for (Cinema.Company x : c.companies()) s.add(x.id(), x.name(), x.nameRu(), x.countryCode(), x.hqPlaceId(), x.hqCityId());
         ctx.close("companies");
 
         s = ctx.sink("movies_companies");
@@ -146,8 +157,12 @@ public final class CinemaModule implements Module {
         ctx.close("movies_titles");
 
         s = ctx.sink("movies_locations");
-        for (Cinema.Pair p : c.locations()) s.add(p.a(), p.b());
+        for (Cinema.PlaceLink x : c.locations()) s.add(x.movieId(), x.placeId(), x.cityId());
         ctx.close("movies_locations");
+
+        s = ctx.sink("movies_settings");
+        for (Cinema.PlaceLink x : c.settings()) s.add(x.movieId(), x.placeId(), x.cityId());
+        ctx.close("movies_settings");
     }
 
     /** Год — {@code smallint} поля; нет — NULL. */
@@ -159,8 +174,9 @@ public final class CinemaModule implements Module {
      * Свои инварианты: размер профиля, рейтинг у всех фильмов в [1.0, 9.9], у каждого актёра — роль, у каждого
      * режиссёра — фильм, доли жанров режиссёра в (0, 1], пол актёра — {@code M} или {@code F}; люди — ровно актёры,
      * режиссёры и группа профиля, пол человека — как у актёра; в справочниках (студии, серии, награды) — только те, на
-     * кого ссылаются; продолжение — не сам фильм; смерть — не раньше рождения; бюджет и сборы — больше нуля. Ключи и
-     * ссылки всех таблиц проверяет ядро по схеме.
+     * кого ссылаются; продолжение — не сам фильм; смерть — не раньше рождения; бюджет и сборы — больше нуля; места —
+     * только те, на кого ссылается профиль, город с расстоянием — только у места и не дальше 30 км, город в ссылках на
+     * место — тот же, что у места. Ключи и ссылки всех таблиц проверяет ядро по схеме.
      */
     @Override
     public void check(GenContext ctx, CheckReport report) {
@@ -240,6 +256,27 @@ public final class CinemaModule implements Module {
         report.expectNone("продолжение — не сам фильм; бюджет и сборы — больше нуля", badLinks,
                 "продолжений " + c.sequels().size());
         report.ok("год и название фильмов", "год по путям " + c.yearPaths() + ", название по путям " + c.titlePaths());
+
+        // места: только те, на кого ссылается профиль; город и расстояние — вместе и только у места, не дальше 30 км;
+        // город в ссылках (места фильмов, рождение, штаб-квартира) — тот же, что у места
+        Map<Integer, Cinema.Place> placeById = new java.util.HashMap<>();
+        for (Cinema.Place p : c.places()) placeById.put(p.id(), p);
+        Set<Integer> usedPlaces = new HashSet<>();
+        List<String> badPlaces = new ArrayList<>();
+        for (Cinema.PlaceLink x : c.locations()) placeLink("movies_locations " + x.movieId(), x.placeId(), x.cityId(), placeById, usedPlaces, badPlaces);
+        for (Cinema.PlaceLink x : c.settings()) placeLink("movies_settings " + x.movieId(), x.placeId(), x.cityId(), placeById, usedPlaces, badPlaces);
+        for (Cinema.Person x : c.people()) placeLink("people " + x.id(), x.birthPlaceId(), x.birthCityId(), placeById, usedPlaces, badPlaces);
+        for (Cinema.Company x : c.companies()) placeLink("companies " + x.id(), x.hqPlaceId(), x.hqCityId(), placeById, usedPlaces, badPlaces);
+        java.math.BigDecimal max = java.math.BigDecimal.valueOf(Places.MAX_KM);
+        for (Cinema.Place p : c.places()) {
+            if (!usedPlaces.contains(p.id())) badPlaces.add("places " + p.id() + ": на него никто не ссылается");
+            if ((p.cityId() == null) != (p.cityKm() == null)) badPlaces.add("places " + p.id() + ": город и расстояние — не вместе");
+            if (p.cityId() != null && (p.kind().equals(Places.COUNTRY) || p.cityKm().signum() < 0 || p.cityKm().compareTo(max) > 0)) {
+                badPlaces.add("places " + p.id() + ": город у страны или дальше " + Places.MAX_KM + " км");
+            }
+        }
+        report.expectNone("места — только те, на кого ссылается профиль; город — у места, не дальше 30 км, в ссылках — тот же",
+                badPlaces, "мест " + c.places().size() + ", пути города " + c.placePaths());
         report.ok("жанры", "у фильмов full с P136 жанр из словаря — " + c.stats().get("movies_full_with_p136_genre") + " из "
                 + c.stats().get("movies_full_with_p136"));
     }
@@ -271,7 +308,28 @@ public final class CinemaModule implements Module {
                 Aggregate.countEq("movies_awards", "won", "t"),
                 Aggregate.distinct("movies_releases", "country_code"),
                 Aggregate.distinct("movies_titles", "lang"),
-                Aggregate.distinct("movies_locations", "city_id"));
+                Aggregate.distinct("movies_locations", "place_id"),
+                Aggregate.nulls("movies_locations", "city_id"),
+                Aggregate.countEq("places", "kind", Places.COUNTRY),
+                Aggregate.nulls("places", "city_id"),
+                Aggregate.sum("places", "city_km"),
+                Aggregate.distinct("places", "country_code"),
+                Aggregate.distinct("movies_settings", "place_id"),
+                Aggregate.nulls("movies_settings", "city_id"),
+                Aggregate.nulls("people", "birth_place_id"),
+                Aggregate.nulls("companies", "hq_place_id"));
+    }
+
+    /** Ссылка на место и город: город — только при месте и тот же, что у места; место — в {@code used}. */
+    private static void placeLink(String what, Integer place, Integer city, Map<Integer, Cinema.Place> byId, Set<Integer> used,
+                                  List<String> bad) {
+        if (place == null) {
+            if (city != null) bad.add(what + ": город без места");
+            return;
+        }
+        used.add(place);
+        Cinema.Place p = byId.get(place);
+        if (p == null || !java.util.Objects.equals(p.cityId(), city)) bad.add(what + ": город не как у места " + place);
     }
 
     /** Чего нет в одном множестве из другого — в обе стороны, для отчёта. */

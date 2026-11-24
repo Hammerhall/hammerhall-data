@@ -41,7 +41,13 @@ digraph schema {
     style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
     "movies_releases" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_releases</B><BR/>Выход по странам</TD></TR></TABLE>>];
     "movies_titles" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_titles</B><BR/>Названия фильмов</TD></TR></TABLE>>];
+  }
+  subgraph "cluster_places" {
+    label=<<B>Места</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
     "movies_locations" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_locations</B><BR/>Места съёмок</TD></TR></TABLE>>];
+    "places" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>places</B><BR/>Места</TD></TR></TABLE>>];
+    "movies_settings" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_settings</B><BR/>Места действия</TD></TR></TABLE>>];
   }
   subgraph "cluster_service" {
     label=<<B>Сервис</B>>;
@@ -86,9 +92,11 @@ digraph schema {
   "genres" -> "directors_genres";
   "movies" -> "movies_countries";
   "movies" -> "movies_languages";
+  "places" -> "people" [style=dashed];
   "people" -> "people_countries";
   "movies" -> "movies_crew";
   "people" -> "movies_crew";
+  "places" -> "companies" [style=dashed];
   "movies" -> "movies_companies";
   "companies" -> "movies_companies";
   "movies" -> "movies_series";
@@ -99,6 +107,9 @@ digraph schema {
   "movies" -> "movies_releases";
   "movies" -> "movies_titles";
   "movies" -> "movies_locations";
+  "places" -> "movies_locations";
+  "movies" -> "movies_settings";
+  "places" -> "movies_settings";
   "plans" -> "plan_prices";
   "promo_codes" -> "users" [style=dashed];
   "users" -> "devices";

@@ -735,9 +735,9 @@ class FakeWikidata:
         return collections.Counter(k for t, k, _ in self.log if t == kind)
 
 
-def run_fetch(server, out, work=None, env=None, chunk='4', workers='3'):
+def run_fetch(server, out, work=None, env=None, chunk='4', workers='3', extra=()):
     """fetch.main в этом процессе: адрес — локальный сервер, без пауз и нижних границ, части по 4, делятся до 1;
-    итог — (код, stdout, stderr)."""
+    extra — ещё аргументы fetch.py; итог — (код, stdout, stderr)."""
     full = {
         'MOV_WIKIDATA_SPARQL': server.base + '/sparql',
         'MOV_FETCH_BACKOFF': '0',
@@ -749,7 +749,7 @@ def run_fetch(server, out, work=None, env=None, chunk='4', workers='3'):
         'no_proxy': '127.0.0.1,localhost',
     }
     full.update(env or {})
-    argv = ['--snapshot', SNAPSHOT, '--out', str(out)] + (['--work', str(work)] if work else [])
+    argv = ['--snapshot', SNAPSHOT, '--out', str(out)] + (['--work', str(work)] if work else []) + list(extra)
     stdout, stderr = io.StringIO(), io.StringIO()
     with mock.patch.dict(os.environ, {k: v for k, v in full.items() if v is not None}), \
             mock.patch.object(fetch, 'MIN_CHUNK', 1), mock.patch.object(fetch, 'TIMEOUT', CLIENT_TIMEOUT), \
@@ -966,7 +966,9 @@ class FullRunTest(unittest.TestCase):
         cls.server.route('POST', '/sparql', cls.fake)
         cls.out = root / 'out'
         cls.started = time.monotonic()
-        cls.code, cls.stdout, cls.stderr = run_fetch(cls.server, cls.out, work=root / 'work')
+        cls.steps = root / 'steps.md'
+        cls.code, cls.stdout, cls.stderr = run_fetch(cls.server, cls.out, work=root / 'work',
+                                                     extra=['--steps', str(cls.steps)])
         if cls.code != 0:
             raise AssertionError(f'прогон упал: {cls.stderr}\n{cls.stdout}')
         cls.requests_first = list(cls.server.requests)
@@ -1351,6 +1353,202 @@ class FullRunTest(unittest.TestCase):
                 rows, size = doc[name]['rows'], doc[name]['bytes']
                 self.assertRegex(text, rf'(?m)^\| `{re.escape(name)}` \| `{re.escape(header)}` — [^|\n]+ '
                                        rf'\| {fetch.num(rows)} \| {fetch.num(size)} \|$')
+
+    def test_steps(self):
+        """--steps: по шагу — элементов, частей, делилось, запросов, повторов, просьб подождать (429/503), строк,
+        время; запросы шагов в сумме — все запросы снимка. В архив ход не идёт."""
+        text = self.steps.read_text(encoding='utf-8')
+        self.assertTrue(text.startswith(f'### Ход снимка {SNAPSHOT}\n\nСобран за '), text[:200])
+        rows = step_rows(text)
+        self.assertEqual(list(rows), ['films_by_class', 'film_links', 'genre_items', 'film_dates', 'film_labels',
+                                      'film_titles', 'film_durations', 'film_signals', 'film_cast',
+                                      'film_dates_extra', 'film_releases', 'film_labels_all', 'film_crew',
+                                      'film_links2', 'film_series', 'film_money', 'film_awards', 'people',
+                                      'people_labels', 'people_names', 'people_dates', 'people_links', 'name_items',
+                                      'characters', 'item_labels', 'companies', 'places', 'countries', 'languages'])
+        # films_by_class: два 500 у Q24869 и у его 1990-х, оборванный JSON у Q202866 — по повтору
+        self.assertEqual(rows['films_by_class'][3:6], ['40', '3', '0'])
+        self.assertEqual(rows['film_dates'][1:3], ['4', '2'], '4 части, делились 2')
+        self.assertEqual(rows['film_labels'][2:5], ['1', '6', '0'], 'молчание — деление, не повтор')
+        self.assertEqual(rows['people'][5], '1', '429')
+        self.assertEqual(rows['countries'][3:6], ['8', '0', '4'], '503 с Retry-After на каждой из 4 частей')
+        self.assertEqual(rows['people_dates'][2], '2')
+        self.assertEqual(rows['film_cast'][6], '15')
+        self.assertEqual(sum(int(r[3]) for r in rows.values()), len(self.fake.log))
+        self.assertNotIn('Ход снимка', self.read('SOURCE.md').decode('utf-8'))
+
+
+def step_rows(text):
+    """Таблица хода (--steps): шаг → [элементов, частей, делилось, запросов, повторов, ждали, строк, время]."""
+    rows = {}
+    for line in text.splitlines():
+        m = re.fullmatch(r'\| ([a-z_0-9]+(?: \(не закончен\))?) \| (.+) \|', line)
+        if m:
+            rows[m.group(1)] = m.group(2).split(' | ')
+    return rows
+
+
+PREV = 'mov-source-20990101'
+PREV_FILMS = lines('film,class', 'Q100,Q11424', 'Q100,Q24869', 'Q101,Q24869',
+                   'Q102,Q193977',                 # класс только из EXCLUDED_CLASSES — шаг 1 такой не нашёл бы
+                   'Q103,Q24869', 'Q105,Q11424', 'Q105,Q193977',
+                   'Q110,Q11424',                  # в прежнем снимке был, теперь — для взрослых (жанр)
+                   'Q113,Q11424', 'Q113,Q226730')
+
+
+def snapshot_zip(path, films=PREV_FILMS, meta=None, skip=()):
+    """Маленький «прежний снимок»: fetch.json и wikidata/films.csv.gz (остального пробному не нужно)."""
+    entries = {'fetch.json': json.dumps(meta or {'snapshot': PREV, 'fetched_at': '2099-01-01T00:00:00Z',
+                                                 'files': {}, 'skipped': []}).encode(),
+               'wikidata/films.csv.gz': gzip.compress(films.encode(), mtime=0)}
+    with zipfile.ZipFile(path, 'w') as zf:
+        for name, data in entries.items():
+            if name not in skip:
+                zf.writestr(name, data)
+    return path
+
+
+class SampleRunTest(unittest.TestCase):
+    """Пробный снимок (--sample N --sample-from прежний.zip): шаг 1 не идёт, фильмы — первые N по номеру Q из
+    films.csv.gz прежнего снимка, шаги 2–6 — как обычно; имя, SOURCE.md и fetch.json — с пометкой; нижние границы не
+    проверяются; тот же сервис — тот же архив."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.root = pathlib.Path(cls.tmp.name)
+        cls.prev = snapshot_zip(cls.root / f'{PREV}.zip')
+        cls.server = Server()
+        cls.fake = FakeWikidata(faults=False)
+        cls.server.route('POST', '/sparql', cls.fake)
+        cls.out = cls.root / 'out'
+        cls.steps = cls.root / 'steps.md'
+        cls.code, cls.stdout, cls.stderr = run_fetch(
+            cls.server, cls.out, extra=['--sample', '5', '--sample-from', str(cls.prev), '--steps', str(cls.steps)])
+        if cls.code != 0:
+            raise AssertionError(f'пробный прогон упал: {cls.stderr}\n{cls.stdout}')
+        cls.name = f'{SNAPSHOT}-sample5'
+        cls.zip_bytes = (cls.out / f'{cls.name}.zip').read_bytes()
+        cls.zf = zipfile.ZipFile(io.BytesIO(cls.zip_bytes))
+        # второй прогон — с нижними границами (MOV_FETCH_MIN не задан): у пробного они не проверяются
+        cls.server.route('POST', '/sparql', FakeWikidata(faults=False))
+        cls.code2, _, cls.stderr2 = run_fetch(cls.server, cls.root / 'out2', env={'MOV_FETCH_MIN': None},
+                                              extra=['--sample', '5', '--sample-from', str(cls.prev)])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.zf.close()
+        cls.server.close()
+        cls.tmp.cleanup()
+
+    def text(self, name):
+        data = self.zf.read(name)
+        return (gzip.decompress(data) if name.endswith('.gz') else data).decode('utf-8')
+
+    def test_outputs(self):
+        self.assertEqual(sorted(p.name for p in self.out.iterdir()), ['SHA256SUMS', 'SOURCE.md', f'{self.name}.zip'])
+        expected = (['SHA256SUMS', 'SOURCE.md', 'fetch.json'] + DATA_FILES
+                    + [f'wikidata/queries/{n}.rq' for n in fetch.QUERIES])
+        self.assertEqual(sorted(self.zf.namelist()), sorted(expected), 'те же файлы, что у настоящего')
+
+    def test_no_step_one(self):
+        kinds = [k for k, _, _ in self.fake.log]
+        self.assertNotIn('class', kinds)
+        self.assertNotIn('years', kinds)
+        self.assertEqual(kinds[0], 'links', 'первый запрос — шаг 2')
+        self.assertEqual(self.fake.requested('links'), collections.Counter({
+            ('Q100', 'Q101', 'Q103', 'Q105'): 1, ('Q110',): 1}), 'первые 5 по номеру среди фильмов классов')
+        self.assertIn('Q103', self.text('wikidata/film_signals.csv.gz'), 'и без P577 — фильм выборки')
+
+    def test_films(self):
+        self.assertEqual(self.text('wikidata/films.csv.gz'), lines(
+            'film,class', 'Q100,Q11424', 'Q100,Q24869', 'Q101,Q24869', 'Q103,Q24869', 'Q105,Q11424',
+            'Q105,Q193977'))  # Q110 — для взрослых по жанру: отбор тот же, что у настоящего
+        for name in DATA_FILES:
+            text = self.text(name)
+            for q in ('Q102', 'Q110', 'Q113', 'Q2900', 'Q2901'):
+                self.assertIsNone(re.search(rf'\b{q}\b', text), f'{name}: {q}')
+        self.assertIn('Q1001', self.text('wikidata/people.csv.gz'), 'шаги 2–6 — как обычно')
+        self.assertIn('Q36', self.text('wikidata/places.csv.gz'))
+
+    def test_marks(self):
+        md = self.text('SOURCE.md')
+        for want in (f'# {self.name} — пробный снимок источника набора Movie',
+                     f'**Пробный: 5 фильмов из {PREV}**',
+                     f'sha256 архива `{sha256(self.prev.read_bytes())}`', '**Не вход сборки',
+                     f'| `Q11424` | film | из {PREV} | 3 |', f'| `Q24869` | feature film | из {PREV} | 3 |',
+                     'В снимке фильмов — 4,', 'Собран `mov/source/fetch.py` в пробном режиме'):
+            self.assertIn(want, md)
+        self.assertNotIn('Запрос класса по годам', md)
+        self.assertEqual((self.out / 'SOURCE.md').read_text(encoding='utf-8'), md)
+        doc = json.loads(self.zf.read('fetch.json'))
+        self.assertEqual(list(doc), ['snapshot', 'fetched_at', 'sample', 'files', 'skipped'])
+        self.assertEqual(doc['snapshot'], self.name)
+        self.assertEqual(doc['sample'], {'films': 5, 'from': PREV, 'from_sha256': sha256(self.prev.read_bytes())})
+
+    def test_steps(self):
+        text = self.steps.read_text(encoding='utf-8')
+        self.assertIn(f'### Ход снимка {self.name}', text)
+        self.assertIn(f'Пробный: 5 фильмов из {PREV}; шаг 1 (фильмы по классам) не шёл.', text)
+        rows = step_rows(text)
+        self.assertNotIn('films_by_class', rows)
+        self.assertEqual(list(rows)[0], 'film_links')
+        self.assertEqual(rows['film_links'][:2], ['5', '2'])
+        self.assertEqual(sum(int(r[3]) for r in rows.values()), len(self.fake.log))
+
+    def test_determinism_without_minimums(self):
+        self.assertEqual(self.code2, 0, self.stderr2)
+        self.assertEqual(sha256((self.root / 'out2' / f'{self.name}.zip').read_bytes()), sha256(self.zip_bytes))
+
+    def test_env_sample(self):
+        fake = FakeWikidata(faults=False)
+        self.server.route('POST', '/sparql', fake)
+        code, _, err = run_fetch(self.server, self.root / 'out3', env={'MOV_FETCH_SAMPLE': '2'},
+                                 extra=['--sample-from', str(self.prev)])
+        self.assertEqual(code, 0, err)
+        self.assertTrue((self.root / 'out3' / f'{SNAPSHOT}-sample2.zip').is_file())
+        self.assertEqual(self.fake_items(fake, 'links'), ['Q100', 'Q101'])
+        code, _, err = run_fetch(self.server, self.root / 'out4', env={'MOV_FETCH_SAMPLE': '2'},
+                                 extra=['--sample', '1', '--sample-from', str(self.prev)])
+        self.assertEqual(code, 0, err)
+        self.assertTrue((self.root / 'out4' / f'{SNAPSHOT}-sample1.zip').is_file(), '--sample главнее')
+
+    @staticmethod
+    def fake_items(fake, kind):
+        return sorted({q for key in fake.requested(kind) for q in key}, key=fetch.qnum)
+
+    def test_errors(self):
+        bad_zip = self.root / 'bad.zip'
+        bad_zip.write_bytes(b'not a zip')
+        sample_meta = {'snapshot': f'{PREV}-sample9', 'fetched_at': '2099-01-01T00:00:00Z', 'sample': {'films': 9},
+                       'files': {}, 'skipped': []}
+        cases = (
+            ([], {'MOV_FETCH_SAMPLE': '0'}, 'MOV_FETCH_SAMPLE=«0» — нужно целое число не меньше 1'),
+            (['--sample', '5'], {}, 'нужен --sample-from'),
+            (['--sample-from', str(self.prev)], {}, '--sample-from — только с --sample N'),
+            (['--sample', '0', '--sample-from', str(self.prev)], {}, '--sample «0» — нужно целое число не меньше 1'),
+            (['--sample', 'x', '--sample-from', str(self.prev)], {}, '--sample «x»'),
+            (['--sample', '5', '--sample-from', str(self.root / 'nope.zip')], {}, 'нет такого файла'),
+            (['--sample', '5', '--sample-from', str(bad_zip)], {}, 'не прочесть (BadZipFile'),
+            (['--sample', '5', '--sample-from', str(snapshot_zip(self.root / 'nofilms.zip',
+                                                                  skip=('wikidata/films.csv.gz',)))], {},
+             'в архиве нет wikidata/films.csv.gz — это не снимок mov-source'),
+            (['--sample', '5', '--sample-from', str(snapshot_zip(self.root / 'sample9.zip', meta=sample_meta))], {},
+             'сам пробный'),
+            (['--sample', '5', '--sample-from', str(snapshot_zip(self.root / 'header.zip',
+                                                                  films=lines('item,class', 'Q1,Q11424')))], {},
+             'заголовок не «film,class»'),
+        )
+        for extra, env, want in cases:
+            with self.subTest(want=want):
+                fake = FakeWikidata(faults=False)
+                self.server.route('POST', '/sparql', fake)
+                code, _, err = run_fetch(self.server, self.root / 'bad-out', env=env, extra=extra)
+                self.assertEqual(code, 1, err)
+                self.assertIn('снимок не собран', err)
+                self.assertIn(want, err)
+                self.assertEqual(fake.log, [], 'до запросов')
+                self.assertFalse((self.root / 'bad-out').exists())
 
 
 class FailureTest(unittest.TestCase):

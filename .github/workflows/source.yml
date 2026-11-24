@@ -8,11 +8,19 @@
 #                               SHA256SUMS (копии из архива), заметки — SOURCE.md; выпуск — после одобрения в окружении
 #                               набора <код>-data-release (одно окружение на набор: правила тегов <код>-data-v* и
 #                               <код>-source-*)
+#   запуск вручную            → пробный снимок <код>-source-<сегодня UTC>-sample<N>: тесты без сети, прежний снимок —
+#   (поля code и sample)        из паспорта набора (input.source.release или .url, file, sha256; сумма сверяется),
+#                               fetch.py --sample N --sample-from прежний.zip (шаг «фильмы по классам» не идёт — первые
+#                               N фильмов прежнего снимка; остальное — настоящими запросами, за минуты); ход по шагам
+#                               (строк, время, повторы, деления, 429) — в сводку; архив, SOURCE.md, SHA256SUMS,
+#                               fetch.json и ход — артефактом <имя пробного>. Выпуска нет. Пробный режим есть только
+#                               у fetch.py, который знает --sample-from (сейчас — mov)
 #   набор без <код>/source/fetch.py (например, air-source-20250901 — тот снимок собран вручную) → задача «Снимок»
 #                               падает с причиной, выпуск не трогается
 #
 # Снимок — вход сборки набора: sha256 архива (в сводке запуска) идёт в паспорт набора (input.<имя>.sha256). Повторный
-# запуск по тому же тегу скачивает всё заново и переписывает файлы выпуска — у архива будет другая сумма.
+# запуск по тому же тегу скачивает всё заново и переписывает файлы выпуска — у архива будет другая сумма. Пробный
+# снимок входом не бывает: у него своё имя (…-sample<N>) и поле sample в fetch.json.
 # Теги <код>-data-v* этот workflow не берёт — их собирает data.yml, а data.yml не берёт <код>-source-*.
 #
 # Версии actions — те же, что в data.yml (Node 24): checkout v5, setup-python v6, upload-artifact v6, download-artifact v7.
@@ -21,12 +29,24 @@ name: source
 on:
   push:
     tags: ['*-source-*']
+  workflow_dispatch:
+    inputs:
+      code:
+        description: 'Код набора — папка с source/fetch.py и пробным режимом (mov)'
+        type: string
+        required: true
+        default: mov
+      sample:
+        description: 'Пробный снимок: столько первых фильмов прежнего снимка (паспорт набора, input.source)'
+        type: number
+        required: true
+        default: 200
 
 permissions:
   contents: read
 
 concurrency:
-  group: source-${{ github.ref }}
+  group: source-${{ github.ref }}-${{ inputs.code || 'tag' }}
   cancel-in-progress: false
 
 env:
@@ -38,38 +58,67 @@ defaults:
 
 jobs:
   snapshot:
-    name: Снимок
+    name: ${{ github.event_name == 'push' && 'Снимок' || 'Пробный снимок' }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 300
+    # пробный — минуты (ожидание 5–10); запас — на повторы и паузы по просьбе сервиса
+    timeout-minutes: ${{ github.event_name == 'push' && 300 || 45 }}
     outputs:
       code: ${{ steps.tag.outputs.code }}
       environment: ${{ steps.tag.outputs.environment }}
     env:
       TAG: ${{ github.ref_name }}
+      EVENT: ${{ github.event_name }}
     steps:
       - uses: actions/checkout@v5
 
-      - name: Набор и дата снимка — из тега
+      - name: Набор и имя снимка — из тега или полей запуска
         id: tag
+        env:
+          INPUT_CODE: ${{ inputs.code }}
+          INPUT_SAMPLE: ${{ inputs.sample }}
         run: |
           . tools/ci/passport.sh
-          [[ "$TAG" =~ ^([a-z][a-z0-9]*)-source-([0-9]{8})$ ]] \
-            || fail "тег «$TAG» — не <код>-source-YYYYMMDD (например, wld-source-20261123)"
-          CODE="${BASH_REMATCH[1]}"
-          DAY="${BASH_REMATCH[2]}"
-          [ "$(date -u -d "$DAY" +%Y%m%d 2>/dev/null)" = "$DAY" ] || fail "тег $TAG: даты $DAY нет в календаре"
+          if [ "$EVENT" = workflow_dispatch ]; then
+            [[ "$INPUT_CODE" =~ ^[a-z][a-z0-9]*$ ]] \
+              || fail "код набора «$INPUT_CODE» — нужны строчные латинские буквы и цифры (например, mov)"
+            [[ "$INPUT_SAMPLE" =~ ^[1-9][0-9]*$ ]] || fail "sample «$INPUT_SAMPLE» — нужно целое число не меньше 1"
+            CODE="$INPUT_CODE"
+            SNAPSHOT="$CODE-source-$(date -u +%Y%m%d)"
+            NAME="$SNAPSHOT-sample$INPUT_SAMPLE"
+          else
+            [[ "$TAG" =~ ^([a-z][a-z0-9]*)-source-([0-9]{8})$ ]] \
+              || fail "тег «$TAG» — не <код>-source-YYYYMMDD (например, wld-source-20261123)"
+            CODE="${BASH_REMATCH[1]}"
+            DAY="${BASH_REMATCH[2]}"
+            [ "$(date -u -d "$DAY" +%Y%m%d 2>/dev/null)" = "$DAY" ] || fail "тег $TAG: даты $DAY нет в календаре"
+            SNAPSHOT="$TAG"
+            NAME="$TAG"
+          fi
           [ -f "$CODE/source/fetch.py" ] \
-            || fail "у набора $CODE нет $CODE/source/fetch.py — этим workflow снимок $TAG не собрать; снимок без fetch.py собирают вручную (так собран air-source-20250901)"
+            || fail "у набора $CODE нет $CODE/source/fetch.py — этим workflow снимок $NAME не собрать; снимок без fetch.py собирают вручную (так собран air-source-20250901)"
           compgen -G "$CODE/source/test_*.py" >/dev/null \
             || fail "у $CODE/source/fetch.py нет тестов без сети ($CODE/source/test_*.py)"
-          TODAY="$(date -u +%Y%m%d)"
-          [ "$DAY" = "$TODAY" ] || echo "::warning::дата в теге — $DAY, сегодня (UTC) — $TODAY; источники всё равно скачиваются сейчас"
+          if [ "$EVENT" = workflow_dispatch ]; then
+            grep -q -- '--sample-from' "$CODE/source/fetch.py" \
+              || fail "у $CODE/source/fetch.py нет пробного режима (--sample N --sample-from ПРЕЖНИЙ.zip)"
+          else
+            TODAY="$(date -u +%Y%m%d)"
+            [ "$DAY" = "$TODAY" ] || echo "::warning::дата в теге — $DAY, сегодня (UTC) — $TODAY; источники всё равно скачиваются сейчас"
+          fi
           {
             echo "code=$CODE"
             echo "environment=$CODE-data-release"
+            echo "snapshot=$SNAPSHOT"
+            echo "name=$NAME"
+            echo "sample=$INPUT_SAMPLE"
           } >> "$GITHUB_OUTPUT"
-          echo "Снимок **$TAG** — набор \`$CODE\`, \`$CODE/source/fetch.py\`" >> "$GITHUB_STEP_SUMMARY"
-          echo "снимок $TAG: набор $CODE, окружение выпуска $CODE-data-release"
+          if [ "$EVENT" = workflow_dispatch ]; then
+            echo "Пробный снимок **$NAME** — набор \`$CODE\`, $INPUT_SAMPLE фильмов из прежнего снимка (паспорт набора); выпуска нет" >> "$GITHUB_STEP_SUMMARY"
+            echo "пробный снимок $NAME: набор $CODE, фильмов $INPUT_SAMPLE"
+          else
+            echo "Снимок **$TAG** — набор \`$CODE\`, \`$CODE/source/fetch.py\`" >> "$GITHUB_STEP_SUMMARY"
+            echo "снимок $TAG: набор $CODE, окружение выпуска $CODE-data-release"
+          fi
 
       - uses: actions/setup-python@v6
         with:
@@ -84,38 +133,99 @@ jobs:
           python --version
           python -X utf8 -I -m unittest discover -s "$CODE/source" -p 'test_*.py' -v
 
+      - name: Прежний снимок — из паспорта набора (input.source), сверка sha256
+        id: prev
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          CODE: ${{ steps.tag.outputs.code }}
+          GH_TOKEN: ${{ github.token }}
+        # паспорт — только на чтение (tools/ci/passport.sh); tools/ci/inputs.sh не берём: он качает все входы набора,
+        # а пробному нужен один — снимок
+        run: |
+          . tools/ci/passport.sh
+          [[ " $(passport "$CODE" inputs) " == *" source "* ]] \
+            || fail "$CODE/dataset.properties: среди inputs= нет source — пробному снимку не из чего взять фильмы"
+          FILE="$(passport "$CODE" input.source.file)"
+          RELEASE="$(passport "$CODE" input.source.release)"
+          URL="$(passport "$CODE" input.source.url)"
+          WANT="$(passport "$CODE" input.source.sha256)"
+          [[ "$FILE" =~ ^[A-Za-z0-9._-]+$ ]] || fail "$CODE/dataset.properties: input.source.file=«$FILE» — нужно имя файла"
+          [[ "$WANT" =~ ^[0-9a-f]{64}$ && ! "$WANT" =~ ^0+$ ]] \
+            || fail "$CODE/dataset.properties: input.source.sha256=«$WANT» — нужна sha256 файла снимка (не заглушка): сверить прежний снимок не с чем"
+          mkdir -p work/prev
+          if [ -n "$RELEASE" ]; then
+            gh release download "$RELEASE" --repo "$GITHUB_REPOSITORY" --pattern "$FILE" --dir work/prev
+          elif [ -n "$URL" ]; then
+            curl -fsSL --retry 5 --retry-delay 3 -o "work/prev/$FILE" "$URL"
+          else
+            fail "$CODE/dataset.properties: у входа source нет ни input.source.release, ни input.source.url"
+          fi
+          HAVE="$(sha256sum "work/prev/$FILE" | cut -d' ' -f1)"
+          [ "$HAVE" = "$WANT" ] || fail "прежний снимок $FILE: sha256 $HAVE, в паспорте $WANT — не тот файл"
+          echo "path=work/prev/$FILE" >> "$GITHUB_OUTPUT"
+          echo "Прежний снимок — \`$FILE\` (${RELEASE:-$URL}), sha256 \`$HAVE\` — совпал с паспортом" >> "$GITHUB_STEP_SUMMARY"
+          echo "прежний снимок: $FILE — sha256 совпал с паспортом"
+
       - name: Скачивание снимка
         env:
           CODE: ${{ steps.tag.outputs.code }}
-        run: python -X utf8 -I "$CODE/source/fetch.py" --snapshot "$TAG" --out work/out --work work/fetch
+          SNAPSHOT: ${{ steps.tag.outputs.snapshot }}
+          SAMPLE: ${{ steps.tag.outputs.sample }}
+          PREV: ${{ steps.prev.outputs.path }}
+        run: |
+          if [ "$EVENT" = workflow_dispatch ]; then
+            python -X utf8 -I "$CODE/source/fetch.py" --snapshot "$SNAPSHOT" --out work/out --work work/fetch \
+              --steps work/steps.md --sample "$SAMPLE" --sample-from "$PREV"
+          else
+            python -X utf8 -I "$CODE/source/fetch.py" --snapshot "$TAG" --out work/out --work work/fetch
+          fi
+
+      - name: Ход по шагам — в сводку
+        if: always() && github.event_name == 'workflow_dispatch'
+        run: |
+          if [ -s work/steps.md ]; then
+            { echo; cat work/steps.md; } >> "$GITHUB_STEP_SUMMARY"
+            cat work/steps.md
+          else
+            echo "хода по шагам нет — до запросов дело не дошло (см. шаги выше)" | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Архив сходится со своими суммами; суммы — в сводку
+        env:
+          NAME: ${{ steps.tag.outputs.name }}
         run: |
-          for f in "$TAG.zip" SOURCE.md SHA256SUMS; do
+          for f in "$NAME.zip" SOURCE.md SHA256SUMS; do
             [ -s "work/out/$f" ] || { echo "::error::нет work/out/$f"; exit 1; }
           done
-          python -X utf8 -I -m zipfile -e "work/out/$TAG.zip" work/check
+          python -X utf8 -I -m zipfile -e "work/out/$NAME.zip" work/check
           (cd work/check && sha256sum --quiet --strict -c SHA256SUMS)
           [ "$(find work/check -type f | wc -l)" -eq "$(($(wc -l < work/check/SHA256SUMS) + 1))" ] \
             || { echo "::error::в архиве есть файлы, которых нет в SHA256SUMS"; exit 1; }
           cmp work/check/SHA256SUMS work/out/SHA256SUMS
           cmp work/check/SOURCE.md work/out/SOURCE.md
+          if [ "$EVENT" = workflow_dispatch ]; then
+            # пробный: пометка sample в fetch.json — обязательна (по ней сборщик пробный снимок не берёт)
+            python -X utf8 -I -c 'import json, sys; d = json.load(open(sys.argv[1], encoding="utf-8")); sys.exit(0 if d.get("sample") and d["snapshot"] == sys.argv[2] else "fetch.json: нет пометки sample или имя не то")' work/check/fetch.json "$NAME"
+            cp work/check/fetch.json work/out/fetch.json
+            cp work/steps.md work/out/steps.md
+          fi
           {
             echo
-            echo "### Файлы выпуска"
+            echo "### Файлы $([ "$EVENT" = workflow_dispatch ] && echo 'пробного снимка (артефакт)' || echo 'выпуска')"
             echo
             echo '```'
-            (cd work/out && sha256sum "$TAG.zip" SOURCE.md SHA256SUMS)
-            echo "$(stat -c %s "work/out/$TAG.zip") байт, файлов в архиве: $(find work/check -type f | wc -l)"
+            (cd work/out && sha256sum "$NAME.zip" SOURCE.md SHA256SUMS)
+            echo "$(stat -c %s "work/out/$NAME.zip") байт, файлов в архиве: $(find work/check -type f | wc -l)"
             echo '```'
             echo
             cat work/out/SOURCE.md
           } >> "$GITHUB_STEP_SUMMARY"
-          (cd work/out && sha256sum "$TAG.zip" SOURCE.md SHA256SUMS)
+          (cd work/out && sha256sum "$NAME.zip" SOURCE.md SHA256SUMS)
 
       - uses: actions/upload-artifact@v6
         with:
-          name: snapshot
+          # тег — «snapshot» (его берёт задача «Выпуск снимка»); пробный — своим именем, чтобы не спутать
+          name: ${{ github.event_name == 'push' && 'snapshot' || steps.tag.outputs.name }}
           path: work/out/
           if-no-files-found: error
           retention-days: 7
@@ -123,6 +233,7 @@ jobs:
 
   publish:
     name: Выпуск снимка
+    # только тег: ручной (пробный) запуск выпуска не делает
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
     needs: snapshot
     runs-on: ubuntu-24.04

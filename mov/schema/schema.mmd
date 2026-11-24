@@ -64,7 +64,8 @@ erDiagram
         smallint birth_year "Год рождения: самая ранняя P569 с точностью не ниже года"
         date death_date "Дата смерти (P570) — при дате рождения не позже"
         smallint death_year "Год смерти (P570) — при годе рождения не больше"
-        int birth_city_id "Город рождения — GeoNames ID места P19, он же id города набора «Мир» (wld-data-v1, cities.id); связь мягкая, без внешнего ключа"
+        int birth_city_id "Город рождения — город места рождения (places.city_id): id города набора «Мир» (wld-data-v1, cities.id); связь мягкая, без внешнего ключа"
+        int birth_place_id FK "Место рождения — первое по номеру место P19 (с названием)"
     }
     people_countries {
         int person_id PK, FK "Человек"
@@ -80,6 +81,8 @@ erDiagram
         text name "Название: метка en, иначе mul"
         text name_ru "Название по-русски (метка ru)"
         text country_code "Страна (P17) — ISO 3166-1 alpha-3"
+        int hq_place_id FK "Штаб-квартира — место P159 (первое по номеру, с названием)"
+        int hq_city_id "Город штаб-квартиры — город места (places.city_id): id города набора «Мир» (wld-data-v1, cities.id); связь мягкая, без внешнего ключа"
     }
     movies_companies {
         int movie_id PK, FK "Фильм"
@@ -123,7 +126,24 @@ erDiagram
     }
     movies_locations {
         int movie_id PK, FK "Фильм"
-        int city_id PK "Город — GeoNames ID места P915, он же id города набора «Мир» (wld-data-v1, cities.id); связь мягкая, без внешнего ключа"
+        int place_id PK, FK "Место"
+        int city_id "Город места (places.city_id): id города набора «Мир» (wld-data-v1, cities.id); связь мягкая, без внешнего ключа"
+    }
+    places {
+        int id PK "Место — номер элемента Wikidata"
+        text name "Название: метка en, иначе mul"
+        text name_ru "Название по-русски (метка ru)"
+        text kind "Вид: country — сама страна (у элемента есть ISO3), place — место в стране"
+        decimal latitude "Широта, градусы (P625, глобус Земли), 7 знаков"
+        decimal longitude "Долгота, градусы (P625, глобус Земли), 7 знаков"
+        text country_code "Страна — ISO 3166-1 alpha-3: у страны — свой код, у места — код страны P17"
+        int city_id "Город набора «Мир» (только у места): GeoNames ID места, если он среди городов «Мира», иначе ближайший город той же страны не дальше 30 км; связь мягкая, без внешнего ключа"
+        decimal city_km "Расстояние до города, км, до 0,1 (по GeoNames ID — 0)"
+    }
+    movies_settings {
+        int movie_id PK, FK "Фильм"
+        int place_id PK, FK "Место"
+        int city_id "Город места (places.city_id): id города набора «Мир» (wld-data-v1, cities.id); связь мягкая, без внешнего ключа"
     }
     plans {
         int id PK "Тариф"
@@ -297,9 +317,11 @@ erDiagram
     genres ||--o{ directors_genres : "genre_id"
     movies ||--o{ movies_countries : "movie_id"
     movies ||--o{ movies_languages : "movie_id"
+    places |o--o{ people : "birth_place_id"
     people ||--o{ people_countries : "person_id"
     movies ||--o{ movies_crew : "movie_id"
     people ||--o{ movies_crew : "person_id"
+    places |o--o{ companies : "hq_place_id"
     movies ||--o{ movies_companies : "movie_id"
     companies ||--o{ movies_companies : "company_id"
     movies ||--o{ movies_series : "movie_id"
@@ -311,6 +333,9 @@ erDiagram
     movies ||--o{ movies_releases : "movie_id"
     movies ||--o{ movies_titles : "movie_id"
     movies ||--o{ movies_locations : "movie_id"
+    places ||--o{ movies_locations : "place_id"
+    movies ||--o{ movies_settings : "movie_id"
+    places ||--o{ movies_settings : "place_id"
     plans ||--o{ plan_prices : "plan_id"
     users |o--o{ users : "referrer_id"
     promo_codes |o--o{ users : "promo_code_id"

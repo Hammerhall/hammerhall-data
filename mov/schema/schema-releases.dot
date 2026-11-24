@@ -9,10 +9,8 @@ digraph schema {
     style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
     "movies_releases" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_releases</B><BR/>Выход по странам</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="movie_id"><FONT FACE="DejaVu Sans Mono"># </FONT>movie_id</TD></TR><TR><TD ALIGN="LEFT" PORT="country_code"><FONT FACE="DejaVu Sans Mono"># </FONT>country_code</TD></TR><TR><TD ALIGN="LEFT" PORT="release_date"><FONT FACE="DejaVu Sans Mono">∗ </FONT>release_date</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
     "movies_titles" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_titles</B><BR/>Названия фильмов</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="movie_id"><FONT FACE="DejaVu Sans Mono"># </FONT>movie_id</TD></TR><TR><TD ALIGN="LEFT" PORT="lang"><FONT FACE="DejaVu Sans Mono"># </FONT>lang</TD></TR><TR><TD ALIGN="LEFT" PORT="title"><FONT FACE="DejaVu Sans Mono">∗ </FONT>title</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
-    "movies_locations" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_locations</B><BR/>Места съёмок</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="movie_id"><FONT FACE="DejaVu Sans Mono"># </FONT>movie_id</TD></TR><TR><TD ALIGN="LEFT" PORT="city_id"><FONT FACE="DejaVu Sans Mono"># </FONT>city_id</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
   }
   "movies" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#999999" BGCOLOR="white"><TR><TD><FONT COLOR="#666666">movies<BR/>Фильмы</FONT></TD></TR></TABLE>>];
   "movies" -> "movies_releases":"movie_id";
   "movies" -> "movies_titles":"movie_id";
-  "movies" -> "movies_locations":"movie_id";
 }

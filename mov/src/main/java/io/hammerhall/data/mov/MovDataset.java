@@ -10,11 +10,14 @@ import io.hammerhall.data.core.time.Period;
 import io.hammerhall.data.mov.build.Cinema;
 import io.hammerhall.data.mov.build.CinemaModule;
 import io.hammerhall.data.mov.build.Names;
+import io.hammerhall.data.mov.build.Places;
 import io.hammerhall.data.mov.build.Rank;
 import io.hammerhall.data.mov.build.Rules;
 import io.hammerhall.data.mov.site.SiteModule;
+import io.hammerhall.data.mov.source.CitiesSource;
 import io.hammerhall.data.mov.source.SnapshotSource;
 import io.hammerhall.data.mov.source.SourceData;
+import io.hammerhall.data.mov.source.WorldCities;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -39,9 +42,9 @@ public final class MovDataset implements Dataset {
     /** seed набора: рейтинг и пол там, где источник молчит, — от него и id. */
     public static final long DEFAULT_SEED = 20261123L;
     /** Снимок источников: выпуск этого репозитория; файл и sha256 — те же, что в паспорте. */
-    public static final String SNAPSHOT = "mov-source-20261124";
+    public static final String SNAPSHOT = "mov-source-20261125";
     public static final Input SOURCE = new Input("source", SNAPSHOT + ".zip", null,
-            "c71fb7ba1c13231ce14af8533e62106361544f0a1ce153a3ee6439a4e06b0c0e");
+            "ec6626eeb3725a98375195306ee36f935e7df915e77aaf46d92cba74252ab762");
     /** Дата снимка (из его имени); фильмы — с {@link Rules#FIRST_YEAR} года до года снимка. */
     public static final LocalDate SNAPSHOT_DATE = LocalDate.parse(SNAPSHOT.substring("mov-source-".length()),
             DateTimeFormatter.BASIC_ISO_DATE);
@@ -51,10 +54,22 @@ public final class MovDataset implements Dataset {
      */
     public static final Period PERIOD = new Period(LocalDate.of(2025, 10, 1), LocalDate.of(2027, 10, 30),
             Instant.parse("2027-09-01T00:00:00Z"), Period.MOSCOW);
+    /**
+     * Второй вход — города набора «Мир» ({@code cities.tsv.gz} выпуска {@code wld-data-v1}): город места (P19, P915,
+     * P840, P159) — по GeoNames ID или ближайший той же страны. Сумма содержимого — та же, что в паспорте
+     * ({@code input.cities.sha256_tsv}); нули — заглушка, сверить не с чем.
+     */
+    public static final Input CITIES = new Input("cities", WorldCities.FILE,
+            "1536ea827a88fca5692e974d3314bbe296b55a03d6ae692528e22e012e9e792f", null);
+    /** Выпуск, из которого города. */
+    public static final String CITIES_RELEASE = "wld-data-v1";
     /** Источник и лицензия — для манифеста. */
     public static final String SOURCES = "Wikidata (CC0 1.0)";
+    /** Лицензия городов «Мира» (названия и координаты — GeoNames). */
+    public static final String CITIES_LICENSE = "GeoNames (CC BY 4.0), via wld-data-v1";
 
     private final SnapshotSource source = new SnapshotSource();
+    private final CitiesSource cities = new CitiesSource();
     private final Exclusions exclusions;
 
     public MovDataset() {
@@ -73,6 +88,11 @@ public final class MovDataset implements Dataset {
     /** Снимок этого набора (после {@link #readInputs} — прочитан). */
     public SnapshotSource source() {
         return source;
+    }
+
+    /** Города «Мира» этого набора (после {@link #readInputs} — прочитаны). */
+    public CitiesSource cities() {
+        return cities;
     }
 
     @Override
@@ -112,7 +132,7 @@ public final class MovDataset implements Dataset {
 
     @Override
     public List<Module> modules() {
-        return List.of(new CinemaModule(source, exclusions), SiteModule.ofCinema(source));
+        return List.of(new CinemaModule(source, cities, exclusions), SiteModule.ofCinema(source));
     }
 
     @Override
@@ -122,13 +142,14 @@ public final class MovDataset implements Dataset {
 
     @Override
     public List<Input> inputs() {
-        return List.of(SOURCE);
+        return List.of(SOURCE, CITIES);
     }
 
     /**
      * Снимок: sha256 файла — против паспорта (в паспорте заглушка или другая сумма: {@code strict} — ошибка, иначе —
      * предупреждение), затем разбор ({@link SourceData#read}). Имя снимка в манифесте — из его {@code fetch.json}, не
-     * из имени файла: тождество выпуска зависит только от содержимого.
+     * из имени файла: тождество выпуска зависит только от содержимого. Города «Мира» — sha256 содержимого против
+     * паспорта ({@link #CITIES}; так же: заглушка или другая сумма — со {@code strict} ошибка, иначе предупреждение).
      */
     @Override
     public List<Map<String, Object>> readInputs(Config cfg, boolean strict) throws IOException {
@@ -156,7 +177,23 @@ public final class MovDataset implements Dataset {
         in.put("fetched_at", d.fetchedAt());
         in.put("license", SOURCES);
         in.put("sha256", have);
-        return List.of(in);
+
+        WorldCities w = cities.load(cfg.input(CITIES.name()));
+        String cmsg = CITIES.sha256Tsv().matches("0+")
+                ? "в паспорте нет sha256_tsv городов (input.cities.sha256_tsv — заглушка): сверить не с чем; у этих — " + w.sha256Tsv()
+                : !CITIES.sha256Tsv().equals(w.sha256Tsv())
+                ? CITIES.file() + ": sha256_tsv " + w.sha256Tsv() + ", в паспорте " + CITIES.sha256Tsv() + " — не " + CITIES_RELEASE : null;
+        if (cmsg != null) {
+            if (strict) throw new IllegalStateException(cmsg);
+            System.out.println("ВНИМАНИЕ: " + cmsg);
+        }
+        Map<String, Object> ci = new LinkedHashMap<>();
+        ci.put("name", CITIES.file());
+        ci.put("release", CITIES_RELEASE);
+        ci.put("license", CITIES_LICENSE);
+        ci.put("rows", (long) w.size());
+        ci.put("sha256_tsv", w.sha256Tsv());
+        return List.of(in, ci);
     }
 
     /**
@@ -208,6 +245,12 @@ public final class MovDataset implements Dataset {
         Map<String, Object> t = new LinkedHashMap<>();
         if (c != null) for (Rules.TitlePath p : Rules.TitlePath.values()) t.put(p.name().toLowerCase(Locale.ROOT), c.titlePaths().get(p));
         m.put("movies_title", t);
+        Map<String, Object> pc = new LinkedHashMap<>();
+        if (c != null) for (Places.CityPath p : Places.CityPath.values()) pc.put(p.name().toLowerCase(Locale.ROOT), c.placePaths().get(p));
+        m.put("places_city", pc);
+        Map<String, Object> pe = new LinkedHashMap<>();
+        if (c != null) for (Places.Excluded e : Places.Excluded.values()) pe.put(e.name().toLowerCase(Locale.ROOT), c.placesExcluded().get(e));
+        m.put("places_excluded", pe);
         Map<String, Object> site = SiteModule.manifest(ctx);
         if (site != null) m.put("synthetic", site);
         return m;

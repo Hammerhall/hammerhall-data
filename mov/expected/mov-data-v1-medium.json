@@ -20,19 +20,26 @@
   ],
   "inputs": [
    {
-    "name": "mov-source-20261124.zip",
-    "release": "mov-source-20261124",
-    "fetched_at": "2026-11-24T00:45:07Z",
+    "name": "mov-source-20261125.zip",
+    "release": "mov-source-20261125",
+    "fetched_at": "2026-11-24T12:45:16Z",
     "license": "Wikidata (CC0 1.0)",
-    "sha256": "c71fb7ba1c13231ce14af8533e62106361544f0a1ce153a3ee6439a4e06b0c0e"
+    "sha256": "ec6626eeb3725a98375195306ee36f935e7df915e77aaf46d92cba74252ab762"
+   },
+   {
+    "name": "cities.tsv.gz",
+    "release": "wld-data-v1",
+    "license": "GeoNames (CC BY 4.0), via wld-data-v1",
+    "rows": 138355,
+    "sha256_tsv": "1536ea827a88fca5692e974d3314bbe296b55a03d6ae692528e22e012e9e792f"
    }
   ],
   "source": "Wikidata (CC0 1.0)",
   "selection": {
    "order": "popularity desc, then id",
    "share": "10 %, rounded up",
-   "movies_full": 384274,
-   "movies": 38428
+   "movies_full": 384291,
+   "movies": 38430
   },
   "rank": {
    "kind": "synthetic: popularity signals of Wikidata and seeded noise, not a rating of the film",
@@ -42,31 +49,42 @@
    "same_in_all_profiles": true
   },
   "actors_gender": {
-   "p21": 103451,
-   "given_name": 18,
+   "p21": 103455,
+   "given_name": 17,
    "seeded": 169,
    "seeded_female_share": "0.3783",
    "not_taken_other_p21": 124
   },
   "people_gender": {
-   "p21": 140779,
-   "given_name": 91,
+   "p21": 140784,
+   "given_name": 90,
    "seeded": 759,
    "null_other_p21": 23
   },
   "movies_year": {
-   "p577": 38426,
+   "p577": 38428,
    "p1191": 1,
    "p571": 0,
    "p2754": 1
   },
   "movies_title": {
-   "label_en": 36980,
-   "label_mul": 1442,
+   "label_en": 36983,
+   "label_mul": 1441,
    "p1476": 1,
    "label_latin": 4,
    "label_ru": 0,
    "label_any": 1
+  },
+  "places_city": {
+   "geonames": 10730,
+   "nearest": 12627,
+   "none": 1536,
+   "country": 202
+  },
+  "places_excluded": {
+   "excluded_country": 6,
+   "in_excluded_country": 86,
+   "listed": 81
   },
   "synthetic": {
    "name": "Svartalfheim",
@@ -101,100 +119,100 @@
   {
    "name": "movies.tsv.gz",
    "table": "movies",
-   "rows": 38428,
-   "sha256_tsv": "8dc1ac7ba18c2dd912bce16e70ffd4291e50cf4d0a17e8261de353f41d9783f8",
-   "sha256_gz_reference": "f9cea657621fa73795cd2a8c6d414919e150c22a5ee9d8343d2827980c6511bc"
+   "rows": 38430,
+   "sha256_tsv": "0aae01d4e17a45bfa85d1cdcf8694f3cca9b248ce6e0426ffac41e53986baac9",
+   "sha256_gz_reference": "8e83e3386e506d10fd6839ae86c9a3e0f9bf6c41ff969e9f7249322de2d15af8"
   },
   {
    "name": "actors.tsv.gz",
    "table": "actors",
-   "rows": 103638,
-   "sha256_tsv": "2e9f86de92b89e26770bb06721fd5ca17f19bf67a114c4feb4b30883dd8e7a59",
-   "sha256_gz_reference": "ce5bfdca8af7ece92f99b8a1677408a302c76646152538e4654522455067c53d"
+   "rows": 103641,
+   "sha256_tsv": "65a3fc4839f1de9106e9c592c872fa944aacd18ff1dfb44e70806278f040cc0f",
+   "sha256_gz_reference": "e0be414fe4f96c15d6240e044884da3bdce20369ee50cbef5efa47e48676bb32"
   },
   {
    "name": "directors.tsv.gz",
    "table": "directors",
    "rows": 13713,
-   "sha256_tsv": "82edc3e1ca223340173542ee0631b2d4977fdea968a2c72c933ba85849f1ece7",
-   "sha256_gz_reference": "422994a300548cc49df3dd23b2f762c19450065c4ce4fc96ef9d7927beac4f2c"
+   "sha256_tsv": "70d239614acd05978a77ee3ba90cf9f90144776848109f7d5a74812a1f8114bf",
+   "sha256_gz_reference": "00e43606488aa5c31feaded34c8cd7b46dfb1672f9b4b9b89738814b223842bb"
   },
   {
    "name": "roles.tsv.gz",
    "table": "roles",
-   "rows": 442377,
-   "sha256_tsv": "51aa3d77d765bdc9dd193d0565ef391eadf0b36eb4be4d3cd280c6f21e59a025",
-   "sha256_gz_reference": "5e488a8dae1ad4e4bf259b41bcae6d7ea65842466749e8db09026ad27cd1a240"
+   "rows": 442386,
+   "sha256_tsv": "df434cf414327f652cb6842ea693d21ef5ac3dbad25c1b167861b7d0a1a6a216",
+   "sha256_gz_reference": "39c4161733bdad1977274791ef7a3de5eb4f54917e2c5af0b5810eb577c502c7"
   },
   {
    "name": "movies_directors.tsv.gz",
    "table": "movies_directors",
-   "rows": 41958,
-   "sha256_tsv": "9f30596278bf0dfe8233e8a6749042639ec443a366d0d6a84741f363bdfb1f09",
-   "sha256_gz_reference": "fbf2c4b86ca2f9d4c420ce866d27f2f49248564acbe4caf4d4f01f01d2530520"
+   "rows": 41960,
+   "sha256_tsv": "bc249164d5945bfa8873ab1ebfb01af5e981d4439fa2268988e4accd46e1f4ea",
+   "sha256_gz_reference": "9de5b916ef8124ca4ba951be97f32025b743bd8142f5c7c7c25babd3ff78f456"
   },
   {
    "name": "movies_genres.tsv.gz",
    "table": "movies_genres",
-   "rows": 77751,
-   "sha256_tsv": "fd8b3836db6d1f2697e42bcec9e0f37a5c21db74a5c293551abda446436d9c22",
-   "sha256_gz_reference": "2342592336b197f496a79bada14c3f8a1e7d62c9e3472df18849e5fda5b5d120"
+   "rows": 77753,
+   "sha256_tsv": "fbf01985fc370803d87bf399374a06d4bc86f4dc46f744fbf332377b6567fb9c",
+   "sha256_gz_reference": "b602229ab33568e447611318e1dade04ed738dbbe9eb3966cfbd36940bc9fd1e"
   },
   {
    "name": "directors_genres.tsv.gz",
    "table": "directors_genres",
-   "rows": 43921,
-   "sha256_tsv": "c2103116a66fe87adfd4d408f16f57201b5468413119d57befceb0883045431f",
-   "sha256_gz_reference": "b212c6d531a781bb2f167eecfb1518602ae331acf3c6c1fd4515372d689872f7"
+   "rows": 43922,
+   "sha256_tsv": "ce1168ab2e884643a8b2943c10fe59fec86a5e77650c7110e7f72b58f2270a59",
+   "sha256_gz_reference": "11205ac1ae4d75c177e009338868fb476df262281a3b857e777e056caac43c4a"
   },
   {
    "name": "movies_countries.tsv.gz",
    "table": "movies_countries",
-   "rows": 49666,
-   "sha256_tsv": "fad60af4bc56a9ce7bc8385a78502f148ca776cfec6428b5693d325055a6f003",
-   "sha256_gz_reference": "ebdba9ff9ee2be329a1c917c8e49c45011c0c4f82e0685f61649aeab37b7534b"
+   "rows": 49668,
+   "sha256_tsv": "35b3c6357cb38779bf28d91abf204a6e45d11ad7ba9454f71bd74ba954a45e7a",
+   "sha256_gz_reference": "29c8314d3b7bf05f2c61e6e06aab874d4fd5154dd10a293cb879873b907eaad7"
   },
   {
    "name": "movies_languages.tsv.gz",
    "table": "movies_languages",
-   "rows": 39948,
-   "sha256_tsv": "98f244479502950042ef01e1c579ddc9fec33a78231a6038e4a39089b7bb8e48",
-   "sha256_gz_reference": "834ed200d2e08fe14f4586fec708c934145564294434d217d868d6383d788cd5"
+   "rows": 39950,
+   "sha256_tsv": "cc4eb3a12b552436abb0aaf0e6bc00c13f6144229e8bdbbea54d7bea123d4ba0",
+   "sha256_gz_reference": "d2c1b3db1be0e7f1985afc149574934001b73b58b03b269b62c7367b41ebe838"
   },
   {
    "name": "people.tsv.gz",
    "table": "people",
-   "rows": 141652,
-   "sha256_tsv": "98163085ee8602189583f748866fbed042840abfea09a64fef8c3b0694b783ec",
-   "sha256_gz_reference": "b8a707404c1ca7587c26715e7877f5253be27135892424ac1aaf465a8bf8dfbe"
+   "rows": 141656,
+   "sha256_tsv": "5d4a5b90a50a9d34d5ad63b97b181f871091a610c96a9c922c7faec6fa3a7c70",
+   "sha256_gz_reference": "64746aea39b5debfc56eec5f4d4f90aec2bc71ea1e51336c2485391b9ceb812b"
   },
   {
    "name": "people_countries.tsv.gz",
    "table": "people_countries",
-   "rows": 127456,
-   "sha256_tsv": "2630f66cd1c12e558980cf987a93b8d24ad8f1cbffcb630feb6ee8f397ef9528",
-   "sha256_gz_reference": "cec4682db25cf129b91746670684c55dede663b903d1c960448e1a4184e5db9a"
+   "rows": 127460,
+   "sha256_tsv": "ea79e24f9ae1887e1cc0907e8904041179d10ff2ebf87e9ba72c277cd82d5ae5",
+   "sha256_gz_reference": "f6c3f38b9c5921b4579e1dad1e6d446156c134f426174fc2030fccccce30e63e"
   },
   {
    "name": "movies_crew.tsv.gz",
    "table": "movies_crew",
-   "rows": 168542,
-   "sha256_tsv": "889272b11c23a0c95cca694b439b1f472900802eaac05377d94eb1ed1bda3e21",
-   "sha256_gz_reference": "d089e1fc28a09149e6e12c3a8a30a16dbdedcccc0e065bef91eea201741b4f71"
+   "rows": 168549,
+   "sha256_tsv": "bb40d00d4e694b84c0c512a891756036ccaed38ecfa0b609ca10946f7bb660b2",
+   "sha256_gz_reference": "fbaaee9229c4da1b73599b5f266715ab707974b8311f884ffb32ffc392a42ee0"
   },
   {
    "name": "companies.tsv.gz",
    "table": "companies",
    "rows": 5090,
-   "sha256_tsv": "81cd2aad34a30f1699612ddae8d2b4c25c0ad0a1772f421a0a9a00d3d3136fd5",
-   "sha256_gz_reference": "613cd28870c1ba9b9f93953f13284c768707c89639869b93a6f214fa67f96501"
+   "sha256_tsv": "7566b9ef2e1aba52311108e86043a9f0fa1c08c8c0dbeba50f246cb4c0c82ef4",
+   "sha256_gz_reference": "3d6dc27e94c71173d70e5230917f87b0dd1e711f5d43d32825dda3afba5d5750"
   },
   {
    "name": "movies_companies.tsv.gz",
    "table": "movies_companies",
-   "rows": 76513,
-   "sha256_tsv": "517811e84d22be9c953eb8157260eaa7a4aab436a7164e3d009058e35700395a",
-   "sha256_gz_reference": "ef18763df2299148d3129081fb23b47bcc4c8c46d3409ad80de4f284c1b6048c"
+   "rows": 76515,
+   "sha256_tsv": "c4d76e601a9ccea30a35aaa4644536d2799aca27f54a17580f82d316c4bc6e6b",
+   "sha256_gz_reference": "813815ede790019b51527def912350ac55c601f713ca72610bf8b160b32a280f"
   },
   {
    "name": "series.tsv.gz",
@@ -241,16 +259,30 @@
   {
    "name": "movies_titles.tsv.gz",
    "table": "movies_titles",
-   "rows": 285355,
-   "sha256_tsv": "0a8994c42074bf7d828a1459c26049739d0e8719c85f22feeb378c6bc80fc03e",
-   "sha256_gz_reference": "c9e927403e9a8950238d1faece071f5c56998427e2300f2b64ea4d38f065768e"
+   "rows": 285370,
+   "sha256_tsv": "276d0020928cbe90af65a3bcca32eddb7725c95cdb7c650efb8f893a1f7aa29e",
+   "sha256_gz_reference": "d3a0481cde2d36e572864b6d9da531065f3cfdf2466daa25e8170db3f703ade6"
   },
   {
    "name": "movies_locations.tsv.gz",
    "table": "movies_locations",
-   "rows": 16488,
-   "sha256_tsv": "f433aeca1a2e49b5244d76138b61a45ca7872419a9f771e819ceb2d4e9768556",
-   "sha256_gz_reference": "becfde259b5867d71f7cc83b70e63c3978e5c74b4a44e31c861df17555282245"
+   "rows": 18652,
+   "sha256_tsv": "38c870e71c268853d5bad0a48563623caf0c580475467faf062f56e91c909ae7",
+   "sha256_gz_reference": "59361a7a29ff057ca0c8dce67a80347174356f1b29ff550ad040c67a3683b2ae"
+  },
+  {
+   "name": "places.tsv.gz",
+   "table": "places",
+   "rows": 25095,
+   "sha256_tsv": "ecfb9c0a7a86a40342268d8ee27bf8ef88ddd8c77cbde8c514c4417c3b830666",
+   "sha256_gz_reference": "9363b5bd8a2ab7fc1abbe72e0ab0412c2c696a00bd3cc4b60a4ddf37987088fa"
+  },
+  {
+   "name": "movies_settings.tsv.gz",
+   "table": "movies_settings",
+   "rows": 25168,
+   "sha256_tsv": "f1d8ad498c38fae6298c51f8490cbb40608992d3463c2239936c5465aaadf3e4",
+   "sha256_gz_reference": "e7888fc492328a7d4265785e81c92567d27edaaf4bceecc0e539552b3d51ed1f"
   },
   {
    "name": "plans.tsv.gz",
@@ -284,8 +316,8 @@
    "name": "devices.tsv.gz",
    "table": "devices",
    "rows": 23935,
-   "sha256_tsv": "76050ce60ba17bada4870e293fea53560bc49ec4069636c76a1e58e098358302",
-   "sha256_gz_reference": "e765b598d54abec0ed7dfddaadecbf3318e027c0cbbe423af0f4f23fa5e7ca17"
+   "sha256_tsv": "da44c9f37fde4a58cc7a95b99566d5601cd6b6006794a06487cd221b7a6271b0",
+   "sha256_gz_reference": "3bff8646257bd2926a6b666dd69853ce8d82cfbb365f612beb2188d4b1a38cc1"
   },
   {
    "name": "subscriptions.tsv.gz",
@@ -297,9 +329,9 @@
   {
    "name": "payments.tsv.gz",
    "table": "payments",
-   "rows": 71465,
-   "sha256_tsv": "987df385e73ea2a20511641ff90969b35bc0c938d632a09e4741867eefe2644a",
-   "sha256_gz_reference": "5e284c2882d667c5a09e796f0daf8c42247e0f1aa23079be00b5ec400a945aab"
+   "rows": 71467,
+   "sha256_tsv": "464f02f7f3380490f0033a7dda3ff1c20be62797e52a9825639082b6352daaf0",
+   "sha256_gz_reference": "62dac9dd6c4c88fb53139bcb4cc282b84eb7d8d2f1ef154233d275c191d955f0"
   },
   {
    "name": "catalog.tsv.gz",
@@ -311,65 +343,65 @@
   {
    "name": "purchases.tsv.gz",
    "table": "purchases",
-   "rows": 7548,
-   "sha256_tsv": "71d2e7350808230ff058b76f83f417bd36d881c186a2da237dff7c9724aeb492",
-   "sha256_gz_reference": "737311f18e4d30ed1b4fcb0471183adea80c75fe18e6c9b14f0fa2ba59cf9f22"
+   "rows": 7550,
+   "sha256_tsv": "982f90d8400b92db78472e6b3f9c0cec80600de4549dd8bc67b8502ee9597c7e",
+   "sha256_gz_reference": "0d58dba367c6e52608b8760788d2f8ba32362de52005b988195c42204ecbebb6"
   },
   {
    "name": "views.tsv.gz",
    "table": "views",
-   "rows": 115151,
-   "sha256_tsv": "d58d79c7bb432ce5cb996033bdf20e5c1aba5829ee340bc5fa3f8091f0f9e1ec",
-   "sha256_gz_reference": "f5aa59fa283e968eb614890dc44df98a59633f76532f9eec99de31925a9b10bd"
+   "rows": 115231,
+   "sha256_tsv": "ec9cd1fe5aca780a11988cac27149ee6d8babcf708f33158bcf0b04e85904099",
+   "sha256_gz_reference": "4faa8180d21d6801bd0983f7327d1cedbdfd54c3f569aa6c4315c5e355e963ef"
   },
   {
    "name": "ratings.tsv.gz",
    "table": "ratings",
-   "rows": 47066,
-   "sha256_tsv": "63767b97318359dc840fd244807816e39c549d187c1b60f414195b348ea72ecf",
-   "sha256_gz_reference": "787565a569dd9f1d8679f929e45a5bfddbb874a239e62a95dc7df6fc7c5d8f18"
+   "rows": 47074,
+   "sha256_tsv": "af68abc4f931e67269228395ec2f21420bb88000242463044cebb7040f5ced4b",
+   "sha256_gz_reference": "e30fdd510ebfc4869833f164fe7b48db788e11fb0072d669c58f4b79760aa36f"
   },
   {
    "name": "reviews.tsv.gz",
    "table": "reviews",
-   "rows": 2683,
-   "sha256_tsv": "2a306b32ea62be7ae73216d9b158d15b978859858bfb9b1b4121a6348e93429a",
-   "sha256_gz_reference": "f84d8a0105361618308540f33d24c4b439f78ac16f34313315e3dcf1fce81b95"
+   "rows": 2679,
+   "sha256_tsv": "c43da44b3963e022b0636cac847ce7a5dc282e2b4b9921577bbeb09246f7af32",
+   "sha256_gz_reference": "df965e3138f54baba8231efea3dcfe13d94964382422c34978dc0dcb9b1c725c"
   },
   {
    "name": "review_votes.tsv.gz",
    "table": "review_votes",
-   "rows": 34306,
-   "sha256_tsv": "2bedac39fa8c638fa69f1e4aa41d5f6924f2a2a9377d5f531975c8586a3d0259",
-   "sha256_gz_reference": "5e8672e8e3022b3736bef49c5199d4b7f6552b00ec4fd1efb5a67e170bab3bd0"
+   "rows": 34633,
+   "sha256_tsv": "3ff4c7d5019914911c2a7f6c13d1bf3b5a347ab28555f1bb5bcef2067d62d09b",
+   "sha256_gz_reference": "9f0ae18c24a462a2cb01c4a470f1d5f82367448c62eee22600697d8126331c0c"
   },
   {
    "name": "watchlist.tsv.gz",
    "table": "watchlist",
-   "rows": 41621,
-   "sha256_tsv": "525a6f63ee94e6255c937131dc5c889c34add030076cb712371ad1868f61df0c",
-   "sha256_gz_reference": "67dcddef3081c7c70b8eed8fa1c7f80f9b77a4f41239e659342d42ac168a0a43"
+   "rows": 41656,
+   "sha256_tsv": "f23876bca3dffbe1e2ab194cba1ae247c79c3d81ba2d55a3e7e7391f3c209b08",
+   "sha256_gz_reference": "165fde117f5f3dd39658342825b6d81b2e3a54f956508196400efc7b59b867fc"
   },
   {
    "name": "follows.tsv.gz",
    "table": "follows",
    "rows": 20173,
-   "sha256_tsv": "89cad56f6460e06c137c30d3c667382965a8201b19c45bbd8ea069acebf4d769",
-   "sha256_gz_reference": "e70d25dedbf2a06757910c465f800e6bdaca7b0fec0377bcc1906576036bda78"
+   "sha256_tsv": "158b110535b0818577d073f1a6851813f6d763aad2f21870a6ea2101a94e93f5",
+   "sha256_gz_reference": "981bebaddf1ca6c0a14404e484cddd65cddb2fec370ff0e7ab47b53f0f29a29f"
   },
   {
    "name": "collections.tsv.gz",
    "table": "collections",
    "rows": 1483,
-   "sha256_tsv": "aed11756f2abed3b403b72075c37a836196bcfffad470bfeb7db923c34f19f48",
-   "sha256_gz_reference": "303f6a8d15df698aa86f09ec3f552fb418358b18f82dcb54b9ff906bc360ee2c"
+   "sha256_tsv": "1d2b65b6fe2bf7f83294d4ca3efea21504ad9ae862a497e368276d4126a44b5f",
+   "sha256_gz_reference": "a87d90bc24bd253f838c8618c1ea05fb62971ee509f9f1722777690a17431065"
   },
   {
    "name": "collection_items.tsv.gz",
    "table": "collection_items",
-   "rows": 19284,
-   "sha256_tsv": "2232ccf1e0ddf01d2c9ed33f66f8dcb82c6cc1e7ffdfb02175edeb94e0d450e2",
-   "sha256_gz_reference": "f709a58f29a7e4379a37de2b1bd323cb28c807dfefdd8458f6a9c7f9c8b4e8f2"
+   "rows": 19301,
+   "sha256_tsv": "3271d53cc3e81b45da7fbd40e0ce7c39c6c17339eb5703db40718cd6cc556767",
+   "sha256_gz_reference": "27f4400a92f897bc8f60485f0a68392f79aa5aaa179ae7320f67b71f1bb3aa21"
   },
   {
    "name": "tags.tsv.gz",
@@ -381,35 +413,35 @@
   {
    "name": "movie_tags.tsv.gz",
    "table": "movie_tags",
-   "rows": 18957,
-   "sha256_tsv": "c2add0c0dc9b1a6c9fd9ce6a30e6cb4722eeb8eb7bf29eaa50ae4b820252598c",
-   "sha256_gz_reference": "022d4546e23146048ba5e4263a3cc5fea6d2acfb679afce438e4383d7154a5de"
+   "rows": 19060,
+   "sha256_tsv": "5adfaaa1671ec42636b4fa93a3c3edf083da5e6965d3dadf66d5b48365582f9e",
+   "sha256_gz_reference": "93d5e052a9d31684753fe5d8cd7002f4d37fecb804b4444b07a425e53d6fa888"
   }
  ],
  "texts": [
   {
    "name": "LICENSE",
-   "sha256": "93d866148b3de14637d8739fae55b52d6dcabfeb0ef273d0dbf8ab52a874261b"
+   "sha256": "0568284e391b4f3b553e86e49c9cb06499ef4ec9bfa674f38fdc121e8c95cad0"
   },
   {
    "name": "schema-tables.sql",
-   "sha256": "a4c9b672224d042e0727a93d5b3277e733d14c976163714df2e92e049875f8a8"
+   "sha256": "c9f44d342ad81b5ea7adfa818ebc317a50bb7b63a8f88ea7e29d86e8ff094672"
   },
   {
    "name": "schema-constraints.sql",
-   "sha256": "3ada06eba8d862a2b6bf7245cd30caa0160e72160cf953ff26e47f18607db748"
+   "sha256": "194b4af8887bd2358725d50c35808ea7dcfab5d9125aa02d9713f89ea1f9f534"
   },
   {
    "name": "schema.mmd",
-   "sha256": "28a3057890c66012b256448f9d6603b6ee4ea0a7c8153f10cf9b6623f2c49267"
+   "sha256": "31f792db7582783431f86a93f745e1decc4a3ad24dd625bfb2ae67bf5f1e0c6b"
   },
   {
    "name": "load-postgres.psql",
-   "sha256": "e3771e92347125dd75128d4a8860e4cf62cc63ff70dee2b8c615db7f06c9e65e"
+   "sha256": "acd5497a612104e11bc1ba79b0676878f5ff3c30442ce8f2a3ea080fb863dc27"
   },
   {
    "name": "schema.svg",
-   "sha256": "cf68b071d05a08b3ad1a2c74b25052d191c23c96a5fd58c7feaf23b3de9f853c"
+   "sha256": "f82412850aa70768a7b70dc303a4fbde179642a6b262727fdb2f6c352e4ffa73"
   },
   {
    "name": "schema-cinema.svg",
@@ -417,15 +449,19 @@
   },
   {
    "name": "schema-people.svg",
-   "sha256": "502de499f7c68b8bff2b509d22df3df95f58ef6bfaad6bd9f5e45f181675739b"
+   "sha256": "5eb0486600347329501c44a20ef74d10296d66aba5db6e8250d54b2706d3ce28"
   },
   {
    "name": "schema-studios.svg",
-   "sha256": "33358c3eee677af244d2540b36b7905a5851982ff0ad245e5a944d4a62d40e1a"
+   "sha256": "fe50f89f7d3a7236deed485fed73c35beecc86443434081c15b0e2b311b20b5a"
   },
   {
    "name": "schema-releases.svg",
-   "sha256": "5b873925f89fcc6d48dff2d24a0c24a3910a8dbe84adc7da0286c37c2e0794ab"
+   "sha256": "a0b5a6d73384abb728cb534fbc0d542f23adb4a0c068888a2869a2adf8aa0710"
+  },
+  {
+   "name": "schema-places.svg",
+   "sha256": "d987b5ea601dc6e67277c87fe424b08badea99dcbaa15259e457e71e9dc170c6"
   },
   {
    "name": "schema-service.svg",
@@ -449,31 +485,31 @@
    "table": "movies",
    "op": "nulls",
    "column": "title_ru",
-   "value": 11977
+   "value": 11978
   },
   {
    "table": "movies",
    "op": "nulls",
    "column": "release_date",
-   "value": 16429
+   "value": 16431
   },
   {
    "table": "movies",
    "op": "nulls",
    "column": "runtime",
-   "value": 2389
+   "value": 2390
   },
   {
    "table": "movies",
    "op": "nulls",
    "column": "budget_usd",
-   "value": 33777
+   "value": 33779
   },
   {
    "table": "movies",
    "op": "nulls",
    "column": "box_office_usd",
-   "value": 34312
+   "value": 34314
   },
   {
    "table": "movies",
@@ -494,7 +530,7 @@
    "op": "sum",
    "column": "rank",
    "scale": 1,
-   "value": "318111.3"
+   "value": "318128.3"
   },
   {
    "table": "movies",
@@ -515,7 +551,7 @@
    "op": "sum",
    "column": "runtime",
    "scale": 0,
-   "value": "3600602"
+   "value": "3600703"
   },
   {
    "table": "movies",
@@ -541,7 +577,7 @@
    "table": "actors",
    "op": "nulls",
    "column": "name_ru",
-   "value": 27159
+   "value": 27160
   },
   {
    "table": "actors",
@@ -566,7 +602,7 @@
    "table": "roles",
    "op": "nulls",
    "column": "role",
-   "value": 372140
+   "value": 372149
   },
   {
    "table": "movies_genres",
@@ -579,7 +615,7 @@
    "op": "sum",
    "column": "prob",
    "scale": 4,
-   "value": "26876.9697"
+   "value": "26876.8863"
   },
   {
    "table": "movies_countries",
@@ -603,7 +639,7 @@
    "table": "people",
    "op": "nulls",
    "column": "name_ru",
-   "value": 37558
+   "value": 37559
   },
   {
    "table": "people",
@@ -615,31 +651,37 @@
    "table": "people",
    "op": "nulls",
    "column": "birth_date",
-   "value": 33592
+   "value": 33590
   },
   {
    "table": "people",
    "op": "nulls",
    "column": "birth_year",
-   "value": 23611
+   "value": 23608
   },
   {
    "table": "people",
    "op": "nulls",
    "column": "death_date",
-   "value": 98634
+   "value": 98633
   },
   {
    "table": "people",
    "op": "nulls",
    "column": "death_year",
-   "value": 96289
+   "value": 96288
   },
   {
    "table": "people",
    "op": "nulls",
    "column": "birth_city_id",
-   "value": 33494
+   "value": 36108
+  },
+  {
+   "table": "people",
+   "op": "nulls",
+   "column": "birth_place_id",
+   "value": 31028
   },
   {
    "table": "people",
@@ -666,7 +708,7 @@
    "op": "count_eq",
    "column": "job",
    "arg": "writer",
-   "value": 49896
+   "value": 49898
   },
   {
    "table": "companies",
@@ -678,14 +720,26 @@
    "table": "companies",
    "op": "nulls",
    "column": "country_code",
-   "value": 1527
+   "value": 1520
+  },
+  {
+   "table": "companies",
+   "op": "nulls",
+   "column": "hq_place_id",
+   "value": 2102
+  },
+  {
+   "table": "companies",
+   "op": "nulls",
+   "column": "hq_city_id",
+   "value": 2279
   },
   {
    "table": "movies_companies",
    "op": "count_eq",
    "column": "role",
    "arg": "production",
-   "value": 30158
+   "value": 30159
   },
   {
    "table": "series",
@@ -732,9 +786,83 @@
   },
   {
    "table": "movies_locations",
-   "op": "distinct",
+   "op": "nulls",
    "column": "city_id",
-   "value": 3087
+   "value": 3174
+  },
+  {
+   "table": "movies_locations",
+   "op": "distinct",
+   "column": "place_id",
+   "value": 4423
+  },
+  {
+   "table": "places",
+   "op": "nulls",
+   "column": "name_ru",
+   "value": 5573
+  },
+  {
+   "table": "places",
+   "op": "nulls",
+   "column": "latitude",
+   "value": 668
+  },
+  {
+   "table": "places",
+   "op": "nulls",
+   "column": "longitude",
+   "value": 668
+  },
+  {
+   "table": "places",
+   "op": "nulls",
+   "column": "country_code",
+   "value": 842
+  },
+  {
+   "table": "places",
+   "op": "nulls",
+   "column": "city_id",
+   "value": 1738
+  },
+  {
+   "table": "places",
+   "op": "nulls",
+   "column": "city_km",
+   "value": 1738
+  },
+  {
+   "table": "places",
+   "op": "count_eq",
+   "column": "kind",
+   "arg": "country",
+   "value": 202
+  },
+  {
+   "table": "places",
+   "op": "sum",
+   "column": "city_km",
+   "scale": 1,
+   "value": "50099.1"
+  },
+  {
+   "table": "places",
+   "op": "distinct",
+   "column": "country_code",
+   "value": 217
+  },
+  {
+   "table": "movies_settings",
+   "op": "nulls",
+   "column": "city_id",
+   "value": 8278
+  },
+  {
+   "table": "movies_settings",
+   "op": "distinct",
+   "column": "place_id",
+   "value": 2535
   },
   {
    "table": "plans",
@@ -858,7 +986,7 @@
    "table": "payments",
    "op": "nulls",
    "column": "subscription_id",
-   "value": 7561
+   "value": 7563
   },
   {
    "table": "payments",
@@ -871,13 +999,13 @@
    "op": "sum",
    "column": "amount_rub",
    "scale": 2,
-   "value": "35628633.00"
+   "value": "35626451.00"
   },
   {
    "table": "payments",
    "op": "nulls",
    "column": "refunded_at",
-   "value": 71119
+   "value": 71122
   },
   {
    "table": "payments",
@@ -891,7 +1019,7 @@
    "op": "count_eq",
    "column": "status",
    "arg": "refunded",
-   "value": 346
+   "value": 345
   },
   {
    "table": "catalog",
@@ -950,55 +1078,55 @@
    "op": "sum",
    "column": "price_rub",
    "scale": 2,
-   "value": "1481582.00"
+   "value": "1479400.00"
   },
   {
    "table": "purchases",
    "op": "nulls",
    "column": "expires_at",
-   "value": 903
+   "value": 898
   },
   {
    "table": "purchases",
    "op": "count_eq",
    "column": "kind",
    "arg": "buy",
-   "value": 903
+   "value": 898
   },
   {
    "table": "views",
    "op": "sum",
    "column": "watched_min",
    "scale": 0,
-   "value": "11487473"
+   "value": "11491951"
   },
   {
    "table": "views",
    "op": "count_eq",
    "column": "completed",
    "arg": "t",
-   "value": 91825
+   "value": 91870
   },
   {
    "table": "views",
    "op": "count_eq",
    "column": "source",
    "arg": "subscription",
-   "value": 90198
+   "value": 90280
   },
   {
    "table": "views",
    "op": "count_eq",
    "column": "source",
    "arg": "free",
-   "value": 17096
+   "value": 17095
   },
   {
    "table": "views",
    "op": "count_eq",
    "column": "quality",
    "arg": "UHD",
-   "value": 6500
+   "value": 6501
   },
   {
    "table": "views",
@@ -1012,73 +1140,73 @@
    "op": "sum",
    "column": "rating",
    "scale": 0,
-   "value": "425731"
+   "value": "425822"
   },
   {
    "table": "ratings",
    "op": "sum",
    "column": "changes",
    "scale": 0,
-   "value": "60"
+   "value": "64"
   },
   {
    "table": "reviews",
    "op": "nulls",
    "column": "edited_at",
-   "value": 2382
+   "value": 2380
   },
   {
    "table": "reviews",
    "op": "count_eq",
    "column": "status",
    "arg": "hidden",
-   "value": 58
+   "value": 54
   },
   {
    "table": "review_votes",
    "op": "count_eq",
    "column": "useful",
    "arg": "t",
-   "value": 28118
+   "value": 28462
   },
   {
    "table": "watchlist",
    "op": "nulls",
    "column": "removed_at",
-   "value": 10174
+   "value": 10124
   },
   {
    "table": "watchlist",
    "op": "nulls",
    "column": "removed_reason",
-   "value": 10174
+   "value": 10124
   },
   {
    "table": "watchlist",
    "op": "count_eq",
    "column": "removed_reason",
    "arg": "watched",
-   "value": 11103
+   "value": 11135
   },
   {
    "table": "watchlist",
    "op": "count_eq",
    "column": "removed_reason",
    "arg": "dropped",
-   "value": 20344
+   "value": 20397
   },
   {
    "table": "follows",
    "op": "nulls",
    "column": "unfollowed_at",
-   "value": 17817
+   "value": 17829
   },
   {
    "table": "collections",
    "op": "count_eq",
    "column": "is_public",
    "arg": "t",
-   "value": 1035
+   "value": 1032
   },
   {
    "table": "collection_items",

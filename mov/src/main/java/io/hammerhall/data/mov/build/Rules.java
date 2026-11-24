@@ -403,16 +403,6 @@ public final class Rules {
         }
     }
 
-    /**
-     * Город по месту (P19, P915): GeoNames ID места ({@code places}) — id города набора «Мир» ({@code cities.id} =
-     * geonameid); у места его нет — {@code null}. Мест несколько — берётся первое по номеру элемента.
-     *
-     * @param items места по возрастанию номера
-     */
-    public static Integer city(int[] items, Map<Integer, Integer> places) {
-        return items == null || items.length == 0 ? null : places.get(items[0]);
-    }
-
     // ---------------------------------------------------------------- съёмочная группа, студии, серии, награды
 
     /** Должность в группе ({@code movies_crew.job}) по свойству {@link SourceData#CREW_PROPS} (тот же порядок). */

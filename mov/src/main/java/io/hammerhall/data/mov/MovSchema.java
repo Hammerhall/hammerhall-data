@@ -2,6 +2,7 @@ package io.hammerhall.data.mov;
 
 import io.hammerhall.data.core.schema.Schema;
 import io.hammerhall.data.core.schema.Table;
+import io.hammerhall.data.mov.build.Places;
 import io.hammerhall.data.mov.build.Rules;
 import io.hammerhall.data.mov.site.SiteSchema;
 
@@ -19,8 +20,9 @@ import static io.hammerhall.data.core.schema.ColType.TEXT;
  * Схема {@code mov-data-v1} — единственное описание таблиц набора «Кино»: жанры, фильмы, актёры, режиссёры, роли и
  * связи фильмов с режиссёрами, жанрами, странами и языками; люди (даты жизни, город рождения, гражданство) и
  * съёмочные группы; студии и прокатчики, серии и продолжения, награды и номинации; выход по странам, названия на
- * языках, места съёмок. Значения — из снимка Wikidata ({@code mov-source-*}); что откуда и по какому правилу — в
- * README набора и SOURCE.md выпуска.
+ * языках; места (съёмок, действия, рождения, штаб-квартир) с координатами и городом набора «Мир». Значения — из
+ * снимка Wikidata ({@code mov-source-*}) и городов «Мира» ({@code cities.tsv.gz} выпуска {@code wld-data-v1}); что
+ * откуда и по какому правилу — в README набора и SOURCE.md выпуска.
  *
  * <p>{@code verbatimSource()} — у полей, чьё содержание взято из источника без изменений: названия фильмов (и на
  * языках), имена людей, роли, названия студий, серий и наград, коды стран и языков (настоящие названия и имена могут
@@ -28,10 +30,11 @@ import static io.hammerhall.data.core.schema.ColType.TEXT;
  * свои слова: жанры (словарь набора), числа, даты, рейтинг, пол, доли, должности в группе, роли компаний.
  *
  * <p>id фильмов, людей, студий, серий и наград — номер элемента Wikidata ({@code Q42} → 42): один человек может быть и
- * актёром, и режиссёром, и в съёмочной группе под одним id; в {@code people} он один раз. Город
- * ({@code people.birth_city_id}, {@code movies_locations.city_id}) — GeoNames ID, он же id города набора «Мир»
- * ({@code wld-data-v1}, {@code cities.id}): связь между наборами мягкая, внешнего ключа нет (город может быть не в
- * «Мире»). Ключи DDL ставятся после загрузки ({@code schema-constraints.sql}), ссылки проверяет ядро.
+ * актёром, и режиссёром, и в съёмочной группе под одним id; в {@code people} он один раз. Место ({@code places}) —
+ * тоже номер элемента; ссылки на него ({@code movies_locations}, {@code movies_settings}, {@code people.birth_place_id},
+ * {@code companies.hq_place_id}) — внешние ключи. Город ({@code places.city_id} и его копии в ссылках на место) — id
+ * города набора «Мир» ({@code wld-data-v1}, {@code cities.id} = geonameid): связь между наборами мягкая, внешнего
+ * ключа нет. Ключи DDL ставятся после загрузки ({@code schema-constraints.sql}), ссылки проверяет ядро.
  */
 public final class MovSchema {
     private MovSchema() {
@@ -42,18 +45,22 @@ public final class MovSchema {
     public static final List<String> TABLES = List.of("genres", "movies", "actors", "directors", "roles", "movies_directors",
             "movies_genres", "directors_genres", "movies_countries", "movies_languages", "people", "people_countries",
             "movies_crew", "companies", "movies_companies", "series", "movies_series", "movies_sequels", "awards",
-            "movies_awards", "movies_releases", "movies_titles", "movies_locations");
+            "movies_awards", "movies_releases", "movies_titles", "movies_locations", "places", "movies_settings");
 
     static final String WD = "Wikidata";
     static final String WD_RULE = "Wikidata, правило набора";
-    static final String WD_GN = "Wikidata (GeoNames ID, P1566)";
+    static final String WD_WLD = "Wikidata и города «Мира» (wld-data-v1), правило набора";
+    /** Город «Мира» места — описание поля-копии в ссылках на место. */
+    static final String CITY_OF_PLACE = "id города набора «Мир» (wld-data-v1, cities.id); связь мягкая, без внешнего ключа";
 
     public static Schema build() {
         Schema s = new Schema("mov", VERSION)
                 .group("cinema", "Кино: фильмы и жанры, актёры и роли, режиссёры, страны и языки фильмов")
                 .group("people", "Люди: все люди фильмов профиля, их гражданство и съёмочные группы фильмов")
                 .group("studios", "Студии и награды: студии и прокатчики, серии фильмов и продолжения, награды и номинации")
-                .group("releases", "Выход и названия: даты выхода по странам, названия на языках, места съёмок");
+                .group("releases", "Выход и названия: даты выхода по странам, названия на языках")
+                .group("places", "Места: съёмок и действия фильмов, рождения людей, штаб-квартиры студий — с координатами и "
+                        + "городом набора «Мир»");
 
         s.add(Table.of("genres", "cinema", "Жанры: словарь из 24 жанров (id и названия — как в прежнем наборе фильмов)")
                 .title("Жанры")
@@ -155,8 +162,10 @@ public final class MovSchema {
                 .col("birth_year", SMALLINT, "Год рождения: самая ранняя P569 с точностью не ниже года").nullable().source(WD_RULE)
                 .col("death_date", DATE, "Дата смерти (P570) — при дате рождения не позже").nullable().source(WD_RULE)
                 .col("death_year", SMALLINT, "Год смерти (P570) — при годе рождения не больше").nullable().source(WD_RULE)
-                .col("birth_city_id", INT, "Город рождения — GeoNames ID места P19, он же id города набора «Мир» "
-                        + "(wld-data-v1, cities.id); связь мягкая, без внешнего ключа").nullable().source(WD_GN)
+                .col("birth_city_id", INT, "Город рождения — город места рождения (places.city_id): " + CITY_OF_PLACE)
+                .nullable().source(WD_WLD)
+                .col("birth_place_id", INT, "Место рождения — первое по номеру место P19 (с названием)").ref("places").nullable()
+                .source(WD_RULE)
                 .pk("id")
                 .check("birth_year", "birth_year >= " + Rules.FIRST_LIFE_YEAR)
                 .check("death_year", "death_year >= birth_year")
@@ -182,6 +191,10 @@ public final class MovSchema {
                 .col("name", TEXT, "Название: метка en, иначе mul").source(WD).verbatimSource()
                 .col("name_ru", TEXT, "Название по-русски (метка ru)").nullable().source(WD).verbatimSource()
                 .col("country_code", TEXT, "Страна (P17) — ISO 3166-1 alpha-3").nullable().source(WD).verbatimSource()
+                .col("hq_place_id", INT, "Штаб-квартира — место P159 (первое по номеру, с названием)").ref("places").nullable()
+                .source(WD_RULE)
+                .col("hq_city_id", INT, "Город штаб-квартиры — город места (places.city_id): " + CITY_OF_PLACE).nullable()
+                .source(WD_WLD)
                 .pk("id"));
 
         s.add(Table.of("movies_companies", "studios", "Студии и прокатчики фильмов")
@@ -246,12 +259,43 @@ public final class MovSchema {
                 .col("title", TEXT, "Название (метка)").source(WD).verbatimSource()
                 .pk("movie_id", "lang"));
 
-        s.add(Table.of("movies_locations", "releases", "Места съёмок (P915) — города с GeoNames ID")
+        s.add(Table.of("movies_locations", "places", "Места съёмок фильмов (P915) с названием")
                 .title("Места съёмок")
                 .col("movie_id", INT, "Фильм").ref("movies").source(WD)
-                .col("city_id", INT, "Город — GeoNames ID места P915, он же id города набора «Мир» (wld-data-v1, "
-                        + "cities.id); связь мягкая, без внешнего ключа").source(WD_GN)
-                .pk("movie_id", "city_id"));
+                .col("place_id", INT, "Место").ref("places").source(WD)
+                .col("city_id", INT, "Город места (places.city_id): " + CITY_OF_PLACE).nullable().source(WD_WLD)
+                .pk("movie_id", "place_id"));
+
+        s.add(Table.of("places", "places", "Места, на которые ссылается профиль: съёмок и действия фильмов, рождения людей, "
+                        + "штаб-квартиры студий — с названием")
+                .title("Места")
+                .col("id", INT, "Место — номер элемента Wikidata").source(WD)
+                .col("name", TEXT, "Название: метка en, иначе mul").source(WD).verbatimSource()
+                .col("name_ru", TEXT, "Название по-русски (метка ru)").nullable().source(WD).verbatimSource()
+                .col("kind", TEXT, "Вид: country — сама страна (у элемента есть ISO3), place — место в стране")
+                .values(Places.COUNTRY, Places.PLACE).source(WD_RULE)
+                .col("latitude", DECIMAL, "Широта, градусы (P625, глобус Земли), " + Places.COORD_SCALE + " знаков")
+                .scale(10, Places.COORD_SCALE).nullable().source(WD)
+                .col("longitude", DECIMAL, "Долгота, градусы (P625, глобус Земли), " + Places.COORD_SCALE + " знаков")
+                .scale(10, Places.COORD_SCALE).nullable().source(WD)
+                .col("country_code", TEXT, "Страна — ISO 3166-1 alpha-3: у страны — свой код, у места — код страны P17")
+                .nullable().source(WD).verbatimSource()
+                .col("city_id", INT, "Город набора «Мир» (только у места): GeoNames ID места, если он среди городов «Мира», "
+                        + "иначе ближайший город той же страны не дальше " + (int) Places.MAX_KM + " км; связь мягкая, без "
+                        + "внешнего ключа").nullable().source(WD_WLD)
+                .col("city_km", DECIMAL, "Расстояние до города, км, до 0,1 (по GeoNames ID — 0)").scale(4, 1).nullable()
+                .source(WD_WLD)
+                .pk("id")
+                .check("latitude", "latitude BETWEEN -90 AND 90")
+                .check("longitude", "longitude BETWEEN -180 AND 180")
+                .check("city_km", "city_km BETWEEN 0 AND " + (int) Places.MAX_KM));
+
+        s.add(Table.of("movies_settings", "places", "Места действия фильмов (P840) с названием")
+                .title("Места действия")
+                .col("movie_id", INT, "Фильм").ref("movies").source(WD)
+                .col("place_id", INT, "Место").ref("places").source(WD)
+                .col("city_id", INT, "Город места (places.city_id): " + CITY_OF_PLACE).nullable().source(WD_WLD)
+                .pk("movie_id", "place_id"));
         SiteSchema.addTo(s);
         return s;
     }

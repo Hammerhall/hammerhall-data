@@ -47,6 +47,14 @@ import java.util.zip.ZipOutputStream;
  * {@code films.csv}. Название только из метки {@code ru} — Q109 (P1476 со знаком табуляции негоден); без названия
  * совсем — Q126 (меток нет ни в одном файле).
  *
+ * <p>Снимок v3 и города «Мира» ({@link #CITIES}, вход {@code cities}): места съёмок (P915), действия (P840), рождения
+ * (P19) и штаб-квартиры (P159). Место — страна (Q30, есть ISO3); город — по GeoNames ID из «Мира» (0 км), ближайший той
+ * же страны (ближе — город другой страны, равные расстояния — меньший id, совпадение координат — 0 км), дальше 30 км,
+ * без координат, без страны, координаты вне диапазона; место без названия (ни en, ни mul) — его нет и ссылок на него
+ * нет; название из {@code mul}; координаты с половиной в восьмом знаке. Исключения ({@link #EXCLUSIONS}): страна с
+ * исключённым кодом (Q9001), место в такой стране (Q6013), место из списка (Q6014); место рождения — первое по номеру
+ * из тех, что берутся (у Q503: Q6003 нет в places, Q6014 в списке — Q6015).
+ *
  * <p>{@link #entries()} — записи снимка (путь → байты): тесты правят копию и пишут свой снимок ({@link #with}).
  */
 public final class TinySnapshot {
@@ -56,11 +64,33 @@ public final class TinySnapshot {
     private static Path file;
     private static final java.util.concurrent.atomic.AtomicInteger COUNTER = new java.util.concurrent.atomic.AtomicInteger();
 
-    /** Вход набора для тестов: настоящий снимок, если он есть по пути входа; иначе — этот ({@code -Dmov.source}). */
+    private static Path citiesFile;
+
+    /** Списки исключений крошечного снимка: страны — как у выпуска, места — Q6014. */
+    static final Exclusions EXCLUSIONS = new Exclusions(Exclusions.COUNTRIES3, Exclusions.COUNTRIES2, java.util.Set.of(6014));
+
+    /**
+     * Входы набора для тестов: настоящий снимок и настоящие города «Мира», если они есть по путям входов; иначе — эти
+     * ({@code -Dmov.source}, {@code -Dmov.cities}), каждый вход — сам по себе.
+     */
     static synchronized void useIfNoSnapshot() throws IOException {
         Path real = Cli.inputPath(new MovDataset(), MovDataset.SOURCE, Map.of());
-        if (Files.isRegularFile(real) && !real.equals(file)) return;
-        System.setProperty("mov.source", path().toString());
+        if (!Files.isRegularFile(real) || real.equals(file)) System.setProperty("mov.source", path().toString());
+        Path cities = Cli.inputPath(new MovDataset(), MovDataset.CITIES, Map.of());
+        if (!Files.isRegularFile(cities) || cities.equals(citiesFile)) System.setProperty("mov.cities", citiesPath().toString());
+    }
+
+    /** Путь к крошечным городам «Мира» ({@link #CITIES}, {@code cities.tsv.gz}; пишется один раз на JVM). */
+    static synchronized Path citiesPath() throws IOException {
+        if (citiesFile == null) {
+            Path dir = Files.createTempDirectory("mov-tiny-cities-");
+            Path f = dir.resolve("cities.tsv.gz");
+            Files.write(f, gz(CITIES));
+            f.toFile().deleteOnExit();
+            dir.toFile().deleteOnExit();
+            citiesFile = f;
+        }
+        return citiesFile;
     }
 
     /** Путь к крошечному снимку (пишется один раз на JVM, во временную папку). */
@@ -339,7 +369,8 @@ public final class TinySnapshot {
             "Q101|P915|Q6000", "Q101|P915|Q6001", "Q101|P915|Q6005", "Q101|P915|Q6002",
             "Q101|P156|Q112",
             "Q112|P272|Q7003", "Q112|P750|Q7004", "Q112|P915|Q6000", "Q112|P155|Q101", "Q112|P156|Q117",
-            "Q113|P156|Q113",
+            "Q113|P156|Q113", "Q113|P915|Q6010", "Q113|P915|Q6012", "Q112|P915|Q6013",
+            "Q101|P840|Q30", "Q101|P840|Q6007", "Q112|P840|Q6006", "Q117|P840|Q6009", "Q117|P840|Q9001",
             "Q119|P155|Q102",
             "Q120|P155|Q119");
 
@@ -380,13 +411,33 @@ public final class TinySnapshot {
     static final String PEOPLE_LINKS = csv("person,prop,value",
             "Q501|P19|Q6001", "Q501|P19|Q6000", "Q501|P27|Q30", "Q501|P27|Q9001",
             "Q502|P19|Q6002", "Q502|P27|Q9002",
-            "Q503|P19|Q6003",
-            "Q510|P27|Q30", "Q510|P27|Q9003");
+            "Q503|P19|Q6003", "Q503|P19|Q6015", "Q503|P19|Q6014",
+            "Q510|P19|Q6007", "Q510|P19|Q6013", "Q510|P27|Q30", "Q510|P27|Q9003");
 
-    /** Места: Q6002 — без GeoNames ID, Q6004 — с нечитаемым, Q6005 — тот же город, что Q6001. */
-    static final String PLACES = csv("item,geonames,country,label_en",
-            "Q6000|1000001|Q30|Rivermouth", "Q6001|1000002|Q30|Hillford", "Q6002||Q30|Old Mill", "Q6004|abc|Q30|Bad Id",
-            "Q6005|1000002|Q30|Hillford North");
+    /**
+     * Места: Q6000 — город «Мира» по GeoNames ID; Q6001 — GeoNames ID не из «Мира», ближайший город страны — Brookfield
+     * (Otherland ближе, но в другой стране); Q6002 — без GeoNames ID, два города на равном расстоянии; Q6004 — GeoNames ID
+     * не читается; Q6005 — ни города, ни координат; Q6006 — ближайший дальше 30 км; Q6007 — без en и mul; Q6009 — без
+     * страны; Q6010 — широта вне диапазона; Q6012 — только mul, координаты как у города; Q30 — страна; Q9001 — страна
+     * с исключённым кодом; Q6013 — место в ней; Q6014 — из списка мест ({@link #EXCLUSIONS}); Q6015 — город «Мира» по
+     * GeoNames ID, без координат.
+     */
+    static final String PLACES = csv("item,geonames,country,label_en,label_mul,label_ru,lat,lon",
+            "Q30||Q30|United States||Соединённые Штаты|39.8|-98.5",
+            "Q6000|1000001|Q30|Rivermouth||Ривермут|40.00000005|-74.00000015",
+            "Q6001|1000002|Q30|Hillford|||40.08|-74",
+            "Q6002||Q30|Old Mill|||40|-74.25",
+            "Q6004|abc|Q30|Bad Id||||",
+            "Q6005|1000002|Q30|Hillford North||||",
+            "Q6006||Q30|Far Away|||45|-74",
+            "Q6007||Q30|||Безымянное|40|-74",
+            "Q6009|||Open Sea|||40|-74.01",
+            "Q6010||Q30|Broken Coords|||95|10",
+            "Q6012||Q30||Mill Pond||40|-74",
+            "Q6013||Q9001|Sand Camp|||1|1",
+            "Q6014|1000001|Q30|Listed Spot|||40|-74",
+            "Q6015|1000004|Q30|Lakeside Village||||",
+            "Q9001||Q9001|Zone Nine||||");
 
     static final String ITEM_LABELS = csv("item,lang,label",
             "Q7001|en|Northwind Pictures", "Q7001|ru|Нордвинд", "Q7002|mul|Bluebird Films", "Q7003|ru|Только русское",
@@ -394,8 +445,21 @@ public final class TinySnapshot {
             "Q7101|en|Alpha Saga", "Q7101|ru|Сага об Альфе", "Q7102|mul|Night Saga",
             "Q7201|en|Golden Reel", "Q7201|ru|Золотая катушка", "Q7202|mul|Silver Frame", "Q7202|de|Silberrahmen");
 
-    static final String COMPANIES = csv("item,country",
-            "Q7001|Q30", "Q7002|Q9001", "Q7004|");
+    /** Студии: штаб-квартира Q7001 — Q6001 (город — ближайший), Q7002 — Q6007 (без названия), Q7004 — Q6013 (исключено). */
+    static final String COMPANIES = csv("item,country,hq",
+            "Q7001|Q30|Q6001", "Q7002|Q9001|Q6007", "Q7004||Q6013");
+
+    /**
+     * Города «Мира» (TSV выпуска {@code wld-data-v1}, колонки — как в нём): Rivermouth и Lakeside — на равном расстоянии
+     * от Old Mill (Q6002); Otherland — в другой стране; Farvale — дальше 30 км от Far Away (Q6006).
+     */
+    static final String CITIES = String.join("\n",
+            "id\tname\tname_ru\tcountry_code\tdistrict\tpopulation\tlatitude\tlongitude\ttimezone",
+            "1000001\tRivermouth\t\tUSA\tShore\t50000\t40\t-74\tAmerica/New_York",
+            "1000003\tBrookfield\t\tUSA\tShore\t12000\t40.1\t-74\tAmerica/New_York",
+            "1000004\tLakeside\t\tUSA\tShore\t9000\t40\t-74.5\tAmerica/New_York",
+            "1000006\tOtherland\t\tQXA\t\t3000\t40.08\t-74\t",
+            "1000007\tFarvale\t\tUSA\tNorth\t2000\t45.4\t-74\tAmerica/New_York") + "\n";
 
     // ---------------------------------------------------------------- снимок
 

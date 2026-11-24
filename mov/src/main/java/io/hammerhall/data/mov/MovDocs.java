@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * SOURCE.md и LICENSE выпуска: источник и его лицензия, снимок (имя, время, sha256), что сделано с данными (в том
  * числе — что рейтинг синтетический, откуда год и название фильма и пол актёра и человека, с числом по каждому пути),
- * профиль, файлы, схема и поля. LICENSE — CC0 1.0 Wikidata.
+ * профиль, файлы, схема и поля. LICENSE — CC0 1.0 Wikidata и CC BY 4.0 GeoNames (города «Мира» для города места).
  */
 public final class MovDocs implements Release.Docs {
     private final SnapshotSource source;
@@ -30,6 +30,8 @@ public final class MovDocs implements Release.Docs {
 
     static final String WIKIDATA = "https://www.wikidata.org/";
     static final String CC0 = "https://creativecommons.org/publicdomain/zero/1.0/";
+    static final String GEONAMES = "https://www.geonames.org/";
+    static final String CC_BY = "https://creativecommons.org/licenses/by/4.0/";
 
     private static String sp(long x) {
         return String.format(Locale.ROOT, "%,d", x).replace(',', ' ');
@@ -46,12 +48,16 @@ public final class MovDocs implements Release.Docs {
     @Override
     @SuppressWarnings("unchecked")
     public String sourceMd(Schema schema, Map<String, Object> m) {
-        Map<String, Object> in = ((List<Map<String, Object>>) m.get("inputs")).getFirst();
+        List<Map<String, Object>> inputs = (List<Map<String, Object>>) m.get("inputs");
+        Map<String, Object> in = inputs.getFirst();
+        Map<String, Object> ci = inputs.size() > 1 ? inputs.get(1) : Map.of();
         Map<String, Object> sel = (Map<String, Object>) m.get("selection");
         Map<String, Object> g = (Map<String, Object>) m.get("actors_gender");
         Map<String, Object> pg = (Map<String, Object>) m.get("people_gender");
         Map<String, Object> y = (Map<String, Object>) m.get("movies_year");
         Map<String, Object> tp = (Map<String, Object>) m.get("movies_title");
+        Map<String, Object> pc = (Map<String, Object>) m.get("places_city");
+        Map<String, Object> pe = (Map<String, Object>) m.get("places_excluded");
         Map<String, Map<String, Object>> files = new LinkedHashMap<>();
         for (Map<String, Object> f : (List<Map<String, Object>>) m.get("files")) files.put((String) f.get("table"), f);
         String profile = String.valueOf(m.get("profile"));
@@ -62,11 +68,15 @@ public final class MovDocs implements Release.Docs {
                 .append("анимационные, документальные фильмы, телефильмы и немое кино (без фильмов для взрослых), жанры по словарю\n")
                 .append("из 24 жанров, страны и языки фильмов; люди (даты жизни, город рождения, гражданство) и съёмочные группы,\n")
                 .append("студии и прокатчики, серии и продолжения, награды и номинации, бюджет и сборы, выход по странам, названия\n")
-                .append("на языках, места съёмок. Названия, имена, даты, хронометраж, суммы, коды — как в Wikidata на дату снимка;\n")
-                .append("рейтинг фильма — синтетический (ниже).\n\n");
+                .append("на языках; места съёмок и действия фильмов, рождения людей и штаб-квартиры студий — с координатами и\n")
+                .append("ближайшим городом набора «Мир». Названия, имена, даты, хронометраж, суммы, координаты, коды — как в\n")
+                .append("Wikidata на дату снимка; рейтинг фильма — синтетический (ниже).\n\n");
         sb.append("Снимок источников — `").append(in.get("release")).append("` (выпуск этого репозитория, файл `")
                 .append(in.get("name")).append("`),\nснят ").append(in.get("fetched_at")).append(", sha256 `")
-                .append(in.get("sha256")).append("`.\n\n");
+                .append(in.get("sha256")).append("`.\n");
+        sb.append("Города — `").append(ci.get("name")).append("` выпуска `").append(ci.get("release"))
+                .append("` (набор «Мир» этого репозитория), городов — ").append(sp(ci.get("rows")))
+                .append(",\nsha256 содержимого `").append(ci.get("sha256_tsv")).append("`.\n\n");
 
         sb.append("""
                 ## Источник и лицензия
@@ -78,11 +88,16 @@ public final class MovDocs implements Release.Docs {
                 .append("первый показ P1191, создание P571, дата производства P2754, название P1476 и метки, хронометраж P2047, ")
                 .append("жанр P136, режиссёр P57, страна P495, язык P364, состав P161 и P725 с ролями P453 и P4633, сценарист ")
                 .append("P58, композитор P86, оператор P344, продюсер P162, монтажёр P1040, студия P272, прокатчик P750, место ")
-                .append("съёмок P915, предыдущий и следующий фильм P155 и P156, серия P179 с номером P1545, бюджет P2130, сборы ")
+                .append("съёмок P915, место действия P840, предыдущий и следующий фильм P155 и P156, серия P179 с номером P1545, ")
+                .append("бюджет P2130, сборы ")
                 .append("P2142, награды P166 и номинации P1411 с датой P585), признаки известности (число статей в разделах, ")
                 .append("число наград и номинаций), люди (P31, P21, имя P735, фамилия P734, рождение P569 и место рождения P19, ")
-                .append("смерть P570, гражданство P27, метки), места (GeoNames ID P1566), страны студий (P17), метки студий, ")
-                .append("серий и наград, коды стран (P297, P298) и языков (P218, P220) | CC0 1.0 — ").append(CC0).append(" |\n\n");
+                .append("смерть P570, гражданство P27, метки), места (GeoNames ID P1566, страна P17, координаты P625, метки), ")
+                .append("студии (страна P17, штаб-квартира P159, метки), метки серий и наград, коды стран (P297, P298) и языков ")
+                .append("(P218, P220) | CC0 1.0 — ").append(CC0).append(" |\n");
+        sb.append("| GeoNames — ").append(GEONAMES).append(", через набор «Мир» (`wld-data-v1`, `cities.tsv.gz`) | города: ")
+                .append("geonameid, страна, координаты — для города места (`city_id`, `city_km`) | CC BY 4.0 — ").append(CC_BY)
+                .append(" |\n\n");
         sb.append("""
                 Оценки фильмов других сервисов (P444) не берутся; ID IMDb (P345) — только в снимке, для отсева дублей.
                 Данные взяты как есть, что с ними сделано — ниже.
@@ -143,15 +158,17 @@ public final class MovDocs implements Release.Docs {
         sb.append("""
                 7. **Даты жизни** — P569 и P570 лучшего ранга: дата — самая ранняя с точностью до дня, год — самой ранней с
                    точностью не ниже года; год вне 1700 … года снимка — пусто; смерть — только при рождении не позже неё.
-                   Город рождения (`birth_city_id`) — GeoNames ID первого по номеру места P19 (нет — пусто); гражданство
-                   (`people_countries`) — коды ISO 3166-1 alpha-3 значений P27.
+                   Место рождения (`birth_place_id`) — первое по номеру место P19 (нет в `places` — пусто), город рождения
+                   (`birth_city_id`) — город этого места (п. 15); гражданство (`people_countries`) — коды ISO 3166-1
+                   alpha-3 значений P27.
                 8. **Роли** — строка на пару «актёр, фильм»: роль — P4633, иначе метка `en` (`mul`) персонажа P453, иначе
                    пусто; несколько ролей актёра в фильме — через « / » (по алфавиту, без повторов); роль со знаками,
                    которых нет в TSV, — пусто.
                 9. **Страны и языки** — коды значений P495 (ISO 3166-1 alpha-3) и P364 (ISO 639-1, иначе ISO 639-3); без
                    кода — строки нет; без нескольких кодов стран (и в гражданстве, странах студий и выхода по странам).
                 10. **Студии и прокатчики** (`companies`) — значения P272 (`production`) и P750 (`distribution`) фильмов
-                    профиля с меткой `en` или `mul`; страна — ISO3 первой по номеру P17.
+                    профиля с меткой `en` или `mul`; страна — ISO3 первой по номеру P17; штаб-квартира (`hq_place_id`) —
+                    первое по номеру место P159, её город (`hq_city_id`) — город места (п. 15).
                 11. **Серии и продолжения** — серии P179 с меткой `en` или `mul`; номер в серии — наименьшее целое P1545 от 1
                     до 10 000, иначе пусто. Продолжение (`movies_sequels`) — пара «фильм, следующий» из P156 и обратного
                     P155, оба фильма — в профиле, не сам себе.
@@ -161,9 +178,25 @@ public final class MovDocs implements Release.Docs {
                     кодом ISO3 (город или фестиваль — строки нет), на страну — самая ранняя дата.
                 14. **Названия** (`movies_titles`) — метки фильма на языках `en mul ru de fr es it pt nl sv pl`, у фильма
                     без них и без P1476 — на всех языках; годные для TSV, одна на язык.
-                15. **Места съёмок** (`movies_locations`) — GeoNames ID мест P915. Город (`movies_locations.city_id`,
-                    `people.birth_city_id`) — id города набора «Мир» (`wld-data-v1`, `cities.id` = geonameid), если город
-                    там есть: связь между наборами мягкая, внешнего ключа нет.
+                15. **Места** (`places`) — каждое место, на которое ссылается профиль: места съёмок P915
+                    (`movies_locations`), места действия P840 (`movies_settings`), места рождения, штаб-квартиры. Название —
+                    метка `en` (иначе `mul`), без названия места нет (и ссылок на него). Так же нет мест по спискам
+                    исключений: страны с кодом из списка кодов стран, мест в такой стране (P17) и мест из списка мест
+                    набора. Место рождения — первое по номеру P19, которое берётся, штаб-квартира — P159, если берётся.
+                    Вид — `country`, если у элемента есть код ISO3 (место — сама страна), иначе `place`; страна — свой
+                    код у страны, код страны P17 у места.
+                    Координаты — P625 на глобусе Земли (7 знаков, половина — к чётному). Город (`city_id`, только у
+                    `place`) — id города набора «Мир» (`cities.id` = geonameid): GeoNames ID места, если такой город есть
+                    (`city_km` = 0), иначе ближайший город той же страны не дальше 30 км по большому кругу (радиус
+                    6 371,0088 км; при равенстве — меньший id), `city_km` — расстояние до 0,1 км (половина — к чётному);
+                    иначе пусто. Связь с «Миром» мягкая, внешнего ключа нет; тот же город — в ссылках на место.
+                """);
+        sb.append("    Мест профиля по пути города: по GeoNames ID — ").append(sp(pc.get("geonames"))).append(", ближайший — ")
+                .append(sp(pc.get("nearest"))).append(", нет — ").append(sp(pc.get("none"))).append(", страна — ")
+                .append(sp(pc.get("country"))).append(";\n    мест, на которые ссылается профиль, нет по спискам исключений: ")
+                .append("страна — ").append(sp(pe.get("excluded_country"))).append(", место в такой стране — ")
+                .append(sp(pe.get("in_excluded_country"))).append(", из списка мест — ").append(sp(pe.get("listed"))).append(".\n");
+        sb.append("""
                 16. **Жанры режиссёров** — доля фильмов режиссёра в профиле с жанром среди его фильмов, у которых есть жанр
                     (4 знака, половина — к чётному); сумма по режиссёру не обязана быть 1.
                 17. **Рейтинг** (`movies.rank`, 1.0–9.9) — **синтетический, не оценка качества фильма**: популярность
@@ -201,9 +234,9 @@ public final class MovDocs implements Release.Docs {
         sb.append("## Схема\n\n").append(SchemaDot.sourceMd(schema));
         sb.append("""
 
-                id фильмов, людей, студий, серий и наград — номер элемента Wikidata; город — GeoNames ID (мягкая связь с
-                набором «Мир», без внешнего ключа). Таблицы — `schema-tables.sql`, ключи, связи, проверки и индексы —
-                `schema-constraints.sql` (после загрузки), ER-диаграмма — `schema.mmd` (Mermaid).
+                id фильмов, людей, студий, серий, наград и мест — номер элемента Wikidata; город — id города набора «Мир»
+                (geonameid; мягкая связь, без внешнего ключа). Таблицы — `schema-tables.sql`, ключи, связи, проверки и
+                индексы — `schema-constraints.sql` (после загрузки), ER-диаграмма — `schema.mmd` (Mermaid).
 
                 ## Загрузка в Postgres
 
@@ -221,7 +254,8 @@ public final class MovDocs implements Release.Docs {
         SourceData d = source.loaded();
         StringBuilder sb = new StringBuilder();
         sb.append("""
-                Набор данных mov-data-v1 «Кино» (hammerhall-data) собран из данных Wikidata.
+                Набор данных mov-data-v1 «Кино» (hammerhall-data) собран из данных Wikidata; город места — по городам
+                набора «Мир» (wld-data-v1), они — из GeoNames.
 
                 """);
         sb.append("Снимок источников: ").append(d.snapshot()).append(" (").append(d.fetchedAt()).append("), sha256 ")
@@ -232,6 +266,14 @@ public final class MovDocs implements Release.Docs {
                 Структурированные данные Wikidata переданы в общественное достояние по CC0 1.0: их можно копировать,
                 изменять и распространять, в том числе в коммерческих целях, без разрешения и без указания авторства.
                 Указать источник — «Wikidata (wikidata.org)» — хороший тон.
+
+                GeoNames — https://www.geonames.org/
+                  Creative Commons Attribution 4.0 International (CC BY 4.0)
+                  https://creativecommons.org/licenses/by/4.0/legalcode
+
+                Город места (places.city_id, places.city_km и их копии в ссылках на место) выбран по городам GeoNames из
+                набора «Мир» (wld-data-v1): geonameid, страна и координаты города. Указание авторства: GeoNames
+                (geonames.org), изменения — выбор ближайшего города и расстояние до него.
 
                 Рейтинг фильма (movies.rank) и пол актёра и человека там, где источник молчит, — значения сборки, не данные
                 Wikidata: как они получены — в SOURCE.md выпуска.

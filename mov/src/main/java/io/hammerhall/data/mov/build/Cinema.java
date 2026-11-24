@@ -5,6 +5,7 @@ import io.hammerhall.data.core.random.RandomStreams;
 import io.hammerhall.data.mov.Exclusions;
 import io.hammerhall.data.mov.source.SourceData;
 import io.hammerhall.data.mov.source.Wikidata;
+import io.hammerhall.data.mov.source.WorldCities;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -45,7 +46,7 @@ public final class Cinema {
 
     /**
      * Пара id: {@code movies_directors} (режиссёр, фильм), {@code movies_genres} (фильм, жанр),
-     * {@code movies_sequels} (фильм, следующий фильм), {@code movies_locations} (фильм, город).
+     * {@code movies_sequels} (фильм, следующий фильм).
      */
     public record Pair(int a, int b) {
     }
@@ -59,15 +60,15 @@ public final class Cinema {
 
     /** Человек {@code people}: актёр, режиссёр или член съёмочной группы фильма профиля. */
     public record Person(int id, String firstName, String lastName, String nameRu, String gender, LocalDate birthDate,
-                         Integer birthYear, LocalDate deathDate, Integer deathYear, Integer birthCityId) {
+                         Integer birthYear, LocalDate deathDate, Integer deathYear, Integer birthCityId, Integer birthPlaceId) {
     }
 
     /** Строка {@code movies_crew}: фильм, человек, должность ({@link Rules#CREW_JOBS}). */
     public record CrewMember(int movieId, int personId, String job) {
     }
 
-    /** Студия или прокатчик {@code companies}. */
-    public record Company(int id, String name, String nameRu, String countryCode) {
+    /** Студия или прокатчик {@code companies}: штаб-квартира — место ({@code places}) и его город «Мира». */
+    public record Company(int id, String name, String nameRu, String countryCode, Integer hqPlaceId, Integer hqCityId) {
     }
 
     /** Строка {@code movies_companies}: роль — {@link Rules#PRODUCTION} или {@link Rules#DISTRIBUTION}. */
@@ -92,6 +93,18 @@ public final class Cinema {
     public record Title(int movieId, String lang, String title) {
     }
 
+    /**
+     * Место {@code places}: вид — {@link Places#COUNTRY} или {@link Places#PLACE}; город «Мира» и расстояние до него —
+     * только у места ({@link Places#resolve}).
+     */
+    public record Place(int id, String name, String nameRu, String kind, BigDecimal latitude, BigDecimal longitude,
+                        String countryCode, Integer cityId, BigDecimal cityKm) {
+    }
+
+    /** Строка {@code movies_locations} (P915) и {@code movies_settings} (P840): фильм, место, город места. */
+    public record PlaceLink(int movieId, int placeId, Integer cityId) {
+    }
+
     /** Строки всех таблиц профиля — копятся при сборке. */
     private static final class Rows {
         final List<Movie> movies = new ArrayList<>();
@@ -113,7 +126,8 @@ public final class Cinema {
         final List<MovieAward> moviesAwards = new ArrayList<>();
         final List<Release> releases = new ArrayList<>();
         final List<Title> titles = new ArrayList<>();
-        final List<Pair> locations = new ArrayList<>();
+        final List<PlaceLink> locations = new ArrayList<>(), settings = new ArrayList<>();
+        final List<Place> places = new ArrayList<>();
     }
 
     private final Profile profile;
@@ -121,19 +135,24 @@ public final class Cinema {
     private final Map<Names.GenderPath, Long> genderPaths, peopleGenderPaths;
     private final Map<Rules.YearPath, Long> yearPaths;
     private final Map<Rules.TitlePath, Long> titlePaths;
+    private final Map<Places.CityPath, Long> placePaths;
+    private final Map<Places.Excluded, Long> placesExcluded;
     private final BigDecimal femaleShare;
     private final int moviesFull;
     private final Map<String, Long> stats;
 
     private Cinema(Profile profile, Rows rows, Map<Names.GenderPath, Long> genderPaths,
                    Map<Names.GenderPath, Long> peopleGenderPaths, Map<Rules.YearPath, Long> yearPaths,
-                   Map<Rules.TitlePath, Long> titlePaths, BigDecimal femaleShare, int moviesFull, Map<String, Long> stats) {
+                   Map<Rules.TitlePath, Long> titlePaths, Map<Places.CityPath, Long> placePaths,
+                   Map<Places.Excluded, Long> placesExcluded, BigDecimal femaleShare, int moviesFull, Map<String, Long> stats) {
         this.profile = profile;
         this.rows = rows;
         this.genderPaths = Collections.unmodifiableMap(new EnumMap<>(genderPaths));
         this.peopleGenderPaths = Collections.unmodifiableMap(new EnumMap<>(peopleGenderPaths));
         this.yearPaths = Collections.unmodifiableMap(new EnumMap<>(yearPaths));
         this.titlePaths = Collections.unmodifiableMap(new EnumMap<>(titlePaths));
+        this.placePaths = Collections.unmodifiableMap(new EnumMap<>(placePaths));
+        this.placesExcluded = Collections.unmodifiableMap(new EnumMap<>(placesExcluded));
         this.femaleShare = femaleShare;
         this.moviesFull = moviesFull;
         this.stats = Collections.unmodifiableMap(stats);
@@ -230,9 +249,19 @@ public final class Cinema {
         return Collections.unmodifiableList(rows.titles);
     }
 
-    /** {@code movies_locations}: (фильм, город). */
-    public List<Pair> locations() {
+    /** {@code movies_locations}: места съёмок (P915). */
+    public List<PlaceLink> locations() {
         return Collections.unmodifiableList(rows.locations);
+    }
+
+    /** {@code movies_settings}: места действия (P840). */
+    public List<PlaceLink> settings() {
+        return Collections.unmodifiableList(rows.settings);
+    }
+
+    /** {@code places}: места, на которые ссылается профиль, — по возрастанию id. */
+    public List<Place> places() {
+        return Collections.unmodifiableList(rows.places);
     }
 
     /** Актёров профиля по пути пола; {@link Names.GenderPath#NOT_TAKEN} — люди состава профиля, которых нет в актёрах. */
@@ -253,6 +282,19 @@ public final class Cinema {
     /** Фильмов профиля по пути названия. */
     public Map<Rules.TitlePath, Long> titlePaths() {
         return titlePaths;
+    }
+
+    /** Мест профиля ({@code places}) по пути города. */
+    public Map<Places.CityPath, Long> placePaths() {
+        return placePaths;
+    }
+
+    /**
+     * Мест, на которые ссылается профиль (P915, P840 фильмов, все P19 людей, штаб-квартиры студий), но которых нет в
+     * наборе по спискам исключений, — по пунктам (каждое место — один раз, по первому подходящему пункту).
+     */
+    public Map<Places.Excluded, Long> placesExcluded() {
+        return placesExcluded;
     }
 
     /** Доля {@code F} среди актёров {@code full} с полом из источника — вероятность {@code F} там, где источник молчит. */
@@ -299,8 +341,11 @@ public final class Cinema {
         return m;
     }
 
-    /** Собрать набор: правила — {@link Rules}, {@link Genres}, {@link Names}, {@link Rank}; случайность — {@code streams}. */
-    public static Cinema build(SourceData src, Profile profile, RandomStreams streams, Exclusions ex) {
+    /**
+     * Собрать набор: правила — {@link Rules}, {@link Genres}, {@link Names}, {@link Rank}, {@link Places}; случайность —
+     * {@code streams}; города «Мира» ({@code cities}) — для города места.
+     */
+    public static Cinema build(SourceData src, WorldCities cities, Profile profile, RandomStreams streams, Exclusions ex) {
         Map<String, Long> stats = new LinkedHashMap<>();
         int lastYear = snapshotYear(src);
 
@@ -435,6 +480,8 @@ public final class Cinema {
         TreeSet<Integer> crewPeople = new TreeSet<>(), companyIds = new TreeSet<>(), seriesIds = new TreeSet<>(),
                 awardIds = new TreeSet<>();
         TreeSet<Long> sequels = new TreeSet<>();
+        Places.Resolver placeOf = new Places.Resolver(src, cities, ex);
+        TreeSet<Integer> placeIds = new TreeSet<>(), placesSeen = new TreeSet<>();
         for (int i = 0; i < n; i++) {
             if (!in[i]) continue;
             Film f = films.get(i);
@@ -473,7 +520,7 @@ public final class Cinema {
                 }
             }
 
-            // студии и прокатчики, места съёмок, продолжения
+            // студии и прокатчики, места съёмок и действия, продолжения
             SourceData.Links2 l2 = src.links2().getOrDefault(id, SourceData.Links2.NONE);
             for (int c : l2.studios()) {
                 if (Rules.itemName(src.itemLabels().get(c)) == null) continue;
@@ -485,12 +532,20 @@ public final class Cinema {
                 out.moviesCompanies.add(new MovieCompany(id, c, Rules.DISTRIBUTION));
                 companyIds.add(c);
             }
-            TreeSet<Integer> cities = new TreeSet<>();
             for (int p : l2.locations()) {
-                Integer city = src.places().get(p);
-                if (city != null) cities.add(city);
+                placesSeen.add(p);
+                Place x = placeOf.taken(p);
+                if (x == null) continue;
+                out.locations.add(new PlaceLink(id, p, x.cityId()));
+                placeIds.add(p);
             }
-            for (int c : cities) out.locations.add(new Pair(id, c));
+            for (int p : l2.settings()) {
+                placesSeen.add(p);
+                Place x = placeOf.taken(p);
+                if (x == null) continue;
+                out.settings.add(new PlaceLink(id, p, x.cityId()));
+                placeIds.add(p);
+            }
             for (int x : l2.next()) if (x != id && profileFilms.contains(x)) sequels.add(((long) id << 32) | x);
             for (int x : l2.previous()) if (x != id && profileFilms.contains(x)) sequels.add(((long) x << 32) | id);
 
@@ -596,8 +651,16 @@ public final class Cinema {
             peoplePaths.merge(h.gender().path(), 1L, Long::sum);
             Rules.Life life = Rules.life(src.peopleDates().get(p), lastYear);
             SourceData.PersonLinks pl = src.peopleLinks().getOrDefault(p, SourceData.PersonLinks.NONE);
+            // место рождения — первое по номеру P19 из тех, что берутся в places (есть название, не исключено)
+            Place birth = null;
+            for (int q : pl.birthPlaces()) {
+                placesSeen.add(q);
+                if (birth == null) birth = placeOf.taken(q);
+            }
+            if (birth != null) placeIds.add(birth.id());
             out.people.add(new Person(p, h.first(), h.last(), h.nameRu(), gender(p, h, genderStream, share), life.birthDate(),
-                    life.birthYear(), life.deathDate(), life.deathYear(), Rules.city(pl.birthPlaces(), src.places())));
+                    life.birthYear(), life.deathDate(), life.deathYear(), birth == null ? null : birth.cityId(),
+                    birth == null ? null : birth.id()));
             TreeSet<String> cc = new TreeSet<>();
             for (int c : pl.citizenships()) {
                 String code = Rules.countryCode(src.countries().get(c), ex);
@@ -609,9 +672,27 @@ public final class Cinema {
         // справочники — только те, на кого есть ссылка в профиле
         for (int c : companyIds) {
             String[] l = src.itemLabels().get(c);
-            Integer country = src.companies().get(c);
+            SourceData.CompanyInfo info = src.companies().getOrDefault(c, SourceData.CompanyInfo.NONE);
+            if (info.hq() != 0) placesSeen.add(info.hq());
+            Place hq = info.hq() == 0 ? null : placeOf.taken(info.hq());
+            if (hq != null) placeIds.add(hq.id());
             out.companies.add(new Company(c, Rules.itemName(l), Rules.itemNameRu(l),
-                    country == null ? null : Rules.countryCode(src.countries().get(country), ex)));
+                    info.country() == 0 ? null : Rules.countryCode(src.countries().get(info.country()), ex),
+                    hq == null ? null : hq.id(), hq == null ? null : hq.cityId()));
+        }
+        // места — те, на которые ссылается профиль: съёмки, действие, рождение, штаб-квартиры
+        Map<Places.CityPath, Long> placePaths = new EnumMap<>(Places.CityPath.class);
+        for (Places.CityPath cp : Places.CityPath.values()) placePaths.put(cp, 0L);
+        for (int p : placeIds) {
+            Places.Resolved r = placeOf.get(p);
+            out.places.add(r.place());
+            placePaths.merge(r.path(), 1L, Long::sum);
+        }
+        Map<Places.Excluded, Long> placesExcluded = new EnumMap<>(Places.Excluded.class);
+        for (Places.Excluded e : Places.Excluded.values()) placesExcluded.put(e, 0L);
+        for (int p : placesSeen) {
+            Places.Resolved r = placeOf.get(p);
+            if (r != null && r.excluded() != null) placesExcluded.merge(r.excluded(), 1L, Long::sum);
         }
         for (int s : seriesIds) {
             String[] l = src.itemLabels().get(s);
@@ -634,9 +715,14 @@ public final class Cinema {
         stats.put("companies", (long) out.companies.size());
         stats.put("series", (long) out.series.size());
         stats.put("awards", (long) out.awards.size());
+        stats.put("places", (long) out.places.size());
+        for (Places.CityPath cp : Places.CityPath.values()) stats.put("places_city_" + cp.name().toLowerCase(java.util.Locale.ROOT), placePaths.get(cp));
+        for (Places.Excluded e : Places.Excluded.values()) stats.put("places_excluded_" + e.name().toLowerCase(java.util.Locale.ROOT), placesExcluded.get(e));
+        stats.put("movies_locations", (long) out.locations.size());
+        stats.put("movies_settings", (long) out.settings.size());
         stats.put("people_not_taken", (long) notHumans.size());
         BigDecimal shareOut = known == 0 ? null : Rules.prob((int) female, (int) known);
-        return new Cinema(profile, out, paths, peoplePaths, yearPaths, titlePaths, shareOut, n, stats);
+        return new Cinema(profile, out, paths, peoplePaths, yearPaths, titlePaths, placePaths, placesExcluded, shareOut, n, stats);
     }
 
     /**
