@@ -3,6 +3,7 @@ package io.hammerhall.data.mov;
 import io.hammerhall.data.core.gen.Profile;
 import io.hammerhall.data.core.random.RandomStreams;
 import io.hammerhall.data.mov.build.Cinema;
+import io.hammerhall.data.mov.build.Rules;
 import io.hammerhall.data.mov.build.Names.GenderPath;
 import io.hammerhall.data.mov.source.SourceData;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -50,15 +52,15 @@ class CinemaTest {
     @DisplayName("Фильмы: исключённые классы, без года, вне окна, без названия, дубль IMDb — не берутся")
     void selection() throws IOException {
         Cinema c = cinema(Profile.FULL);
-        assertEquals(List.of(101, 107, 108, 110, 111, 112, 113, 114, 115, 117, 119, 120),
+        assertEquals(List.of(101, 107, 108, 109, 110, 111, 112, 113, 114, 115, 117, 119, 120, 121, 122, 123, 124, 125),
                 c.movies().stream().map(Cinema.Movie::id).toList());
         Map<String, Long> st = c.stats();
-        assertEquals(20L, st.get("films_in_snapshot"));
+        assertEquals(26L, st.get("films_in_snapshot"));
         assertEquals(2L, st.get("films_excluded_class"), "серия Q103, клип Q116");
-        assertEquals(4L, st.get("films_without_year"), "Q104 без даты, Q105 — 1870, Q106 — 2027, Q118 — до н. э.");
-        assertEquals(1L, st.get("films_without_title"), "Q109: только ru, P1476 со знаком табуляции");
+        assertEquals(4L, st.get("films_without_year"), "Q104 без даты (P571 — 1850), Q105 — 1870, Q106 — 2027, Q118 — до н. э.");
+        assertEquals(1L, st.get("films_without_title"), "Q126: меток нет ни в одном файле");
         assertEquals(1L, st.get("films_imdb_duplicates"), "Q102 — дубль Q101");
-        assertEquals(12, c.moviesFull());
+        assertEquals(18, c.moviesFull());
     }
 
     @Test
@@ -248,5 +250,200 @@ class CinemaTest {
         Cinema c = Cinema.build(SourceData.read(TinySnapshot.with(tmp, ch)), Profile.FULL, new RandomStreams(MovDataset.DEFAULT_SEED),
                 Exclusions.DEFAULT);
         assertEquals(cinema(Profile.FULL).roles(), c.roles());
+    }
+
+    // ---------------------------------------------------------------- снимок v2
+
+    static Map<Integer, Cinema.Person> people(Cinema c) {
+        return c.people().stream().collect(Collectors.toMap(Cinema.Person::id, Function.identity()));
+    }
+
+    @Test
+    @DisplayName("Год по запасным путям (P1191, P571, P2754 — тем же правилом), дата — только из P577; название — из меток на любом языке")
+    void yearAndTitleFallback() throws IOException {
+        Cinema c = cinema(Profile.FULL);
+        Map<Integer, Cinema.Movie> m = movies(c);
+        assertEquals(1999, m.get(101).year(), "P577 есть — P1191 не смотрим");
+        assertEquals(LocalDate.of(1999, 3, 31), m.get(101).releaseDate());
+        assertEquals(1960, m.get(121).year(), "P1191: preferred 1960 раньше normal 1955");
+        assertNull(m.get(121).releaseDate(), "дата выхода — только из P577");
+        assertEquals(1948, m.get(122).year(), "P1191 с точностью десятилетия — не в счёт: P571");
+        assertEquals(1933, m.get(123).year(), "P571 — 2030, после года снимка: P2754");
+        assertEquals(1990, m.get(125).year(), "P577 — 1870, вне окна: P1191");
+        assertNull(m.get(125).releaseDate());
+        assertEquals("Alternativní název", m.get(124).title(), "ar — негодная, cs — первый язык; из двух меток cs — меньшая");
+        assertNull(m.get(124).titleRu());
+        assertEquals("Только по-русски", m.get(109).title(), "только метка ru (P1476 негоден) — название из ru");
+        assertEquals(m.get(109).title(), m.get(109).titleRu());
+        assertEquals(1970, m.get(109).year());
+        assertEquals(Map.of(Rules.YearPath.P577, 14L, Rules.YearPath.P1191, 2L, Rules.YearPath.P571, 1L, Rules.YearPath.P2754, 1L),
+                c.yearPaths());
+        assertEquals(Map.of(Rules.TitlePath.LABEL_EN, 13L, Rules.TitlePath.LABEL_MUL, 1L, Rules.TitlePath.P1476, 1L,
+                Rules.TitlePath.LABEL_LATIN, 1L, Rules.TitlePath.LABEL_RU, 1L, Rules.TitlePath.LABEL_ANY, 1L), c.titlePaths());
+        assertEquals(1L, c.stats().get("movies_title_label_ru"));
+        assertEquals(1L, c.stats().get("movies_year_p571"));
+        Cinema s = cinema(Profile.SMALL);
+        assertEquals(1L, s.yearPaths().get(Rules.YearPath.P577), "пути — по фильмам профиля");
+        assertEquals(0L, s.yearPaths().get(Rules.YearPath.P1191));
+    }
+
+    @Test
+    @DisplayName("Бюджет и сборы: в долларах США, лучший ранг, наибольшая, half-even; ≤ 0 и другие валюты — пусто")
+    void money() throws IOException {
+        Map<Integer, Cinema.Movie> m = movies(cinema(Profile.FULL));
+        assertEquals(1_000_000L, m.get(101).budgetUsd(), "preferred 1 000 000 USD; 5 000 000 normal и 9 000 000 в другой валюте — мимо");
+        assertEquals(2_500_000L, m.get(101).boxOfficeUsd(), "2 500 000,5 → 2 500 000; нечитаемая сумма — мимо");
+        assertNull(m.get(107).budgetUsd(), "preferred — 0: пусто, normal не смотрим");
+        assertNull(m.get(110).budgetUsd(), "0,4 → 0 — пусто");
+        assertEquals(4L, m.get(110).boxOfficeUsd(), "3,5 → 4");
+        assertEquals(2L, m.get(111).boxOfficeUsd(), "2,5 → 2");
+        assertEquals(2_000_000L, m.get(112).budgetUsd(), "preferred — в другой валюте: из сумм в долларах — normal");
+        assertNull(m.get(112).boxOfficeUsd(), "только другая валюта");
+        assertEquals(1_500L, m.get(113).budgetUsd(), "1.5E+3");
+        assertNull(m.get(117).budgetUsd(), "−5");
+        assertNull(m.get(120).budgetUsd());
+    }
+
+    @Test
+    @DisplayName("Люди: актёры, режиссёры и группа — один раз; пол (иное P21 — пусто), даты жизни, город рождения, гражданство")
+    void peopleV2() throws IOException {
+        Cinema c = cinema(Profile.FULL);
+        Map<Integer, Cinema.Person> p = people(c);
+        assertEquals(List.of(501, 502, 503, 504, 505, 506, 507, 510, 511, 512, 513, 514, 515, 516, 517, 518),
+                c.people().stream().map(Cinema.Person::id).toList(), "Q509 — не человек, Q519 — без имени, Q520 — только в дубле");
+        assertEquals(new Cinema.Person(501, "Steven", "Halden", "Стивен Халден", "M", LocalDate.of(1946, 12, 18), 1946, null,
+                null, 1_000_001), p.get(501), "город — первое по номеру место P19 (Q6000)");
+        assertEquals(new Cinema.Person(506, "John", "Smith", null, null, LocalDate.of(1900, 3, 4), 1900, LocalDate.of(1999, 12, 31),
+                1999, null), p.get(506), "иное P21 — в режиссёрах, пол пустой");
+        assertNull(p.get(502).birthDate(), "preferred — с точностью года");
+        assertEquals(1970, p.get(502).birthYear());
+        assertNull(p.get(502).birthCityId(), "у места нет GeoNames ID");
+        assertNull(p.get(503).birthYear(), "1650 — раньше 1700");
+        assertNull(p.get(503).deathYear(), "без рождения нет смерти");
+        assertNull(p.get(503).birthCityId(), "места нет в places");
+        assertEquals(1950, p.get(504).birthYear());
+        assertNull(p.get(504).deathDate(), "смерть раньше рождения");
+        assertNull(p.get(504).deathYear());
+        assertNull(p.get(505).birthDate(), "точность месяца");
+        assertEquals(1980, p.get(505).birthYear(), "1979 — точность десятилетия");
+        assertNull(p.get(505).deathDate(), "30 февраля — не дата");
+        assertEquals(2020, p.get(505).deathYear());
+        assertNull(p.get(507).deathYear(), "смерть без рождения — пусто");
+        assertEquals(LocalDate.of(1975, 7, 7), p.get(510).birthDate());
+        assertNull(p.get(510).deathDate(), "дата смерти раньше даты рождения — пусто");
+        assertEquals(1975, p.get(510).deathYear(), "а год — не меньше года рождения");
+        assertNull(p.get(513).birthYear(), "2030 — после года снимка");
+        assertNull(p.get(516).gender(), "иное P21");
+        assertNull(p.get(516).birthYear(), "дата не разобрана");
+        assertEquals("F", p.get(517).gender(), "по имени");
+        assertTrue(Set.of("M", "F").contains(p.get(518).gender()), "от seed");
+        for (Cinema.Actor a : c.actors()) assertEquals(a.gender(), p.get(a.id()).gender(), "пол актёра — как в actors");
+        assertEquals(Map.of(GenderPath.P21, 7L, GenderPath.GIVEN_NAME, 4L, GenderPath.SEEDED, 3L, GenderPath.NOT_TAKEN, 2L),
+                c.peopleGenderPaths());
+        assertEquals(List.of("501 USA", "510 QXA", "510 USA"),
+                c.peopleCountries().stream().map(x -> x.movieId() + " " + x.code()).toList(), "ESH — исключён, у Q9002 нет ISO3");
+        Map<Integer, Cinema.Person> sp = people(cinema(Profile.SMALL));
+        assertEquals(List.of(501, 502, 503, 504, 505, 507, 510, 511, 512, 513, 514, 516, 517, 518), List.copyOf(new java.util.TreeSet<>(sp.keySet())));
+        for (Cinema.Person x : sp.values()) assertEquals(p.get(x.id()), x, "человек — как в full");
+    }
+
+    @Test
+    @DisplayName("Съёмочная группа: пять должностей; не человек и без имени — нет; фильм не в наборе — нет")
+    void crew() throws IOException {
+        Cinema c = cinema(Profile.FULL);
+        assertEquals(new java.util.TreeSet<>(List.of("101 501 producer", "101 502 writer", "101 516 writer", "101 517 composer",
+                        "101 518 cinematographer", "112 516 writer", "112 518 editor")),
+                new java.util.TreeSet<>(c.crew().stream().map(x -> x.movieId() + " " + x.personId() + " " + x.job()).toList()));
+        assertTrue(actors(c).keySet().stream().noneMatch(a -> a == 516 || a == 517 || a == 518), "группа без ролей — не актёры");
+        assertEquals(5, cinema(Profile.SMALL).crew().size());
+    }
+
+    @Test
+    @DisplayName("Студии и прокатчики: обе роли; без метки en/mul — нет; негодная en — mul; страна — ISO3 или пусто")
+    void companies() throws IOException {
+        Cinema c = cinema(Profile.FULL);
+        assertEquals(List.of(new Cinema.Company(7001, "Northwind Pictures", "Нордвинд", "USA"),
+                new Cinema.Company(7002, "Bluebird Films", null, null), new Cinema.Company(7004, "Harbor Media", null, null)),
+                c.companies(), "Q7002: страна исключена; Q7004: en с обратной косой, страны нет; Q7003 — только ru");
+        assertEquals(new java.util.TreeSet<>(List.of("101 7001 distribution", "101 7001 production", "101 7002 distribution",
+                "112 7004 distribution")), new java.util.TreeSet<>(c.moviesCompanies().stream()
+                .map(x -> x.movieId() + " " + x.companyId() + " " + x.role()).toList()));
+        assertEquals(List.of(7001, 7002), cinema(Profile.SMALL).companies().stream().map(Cinema.Company::id).toList(),
+                "справочник — только те, на кого ссылается профиль");
+    }
+
+    @Test
+    @DisplayName("Серии: номер — наименьшее целое 1…10 000, иначе пусто; продолжения — P156 и встречное P155, оба в профиле, не сам себе")
+    void seriesAndSequels() throws IOException {
+        Cinema c = cinema(Profile.FULL);
+        assertEquals(List.of(new Cinema.Item(7101, "Alpha Saga", "Сага об Альфе"), new Cinema.Item(7102, "Night Saga", null)), c.series());
+        assertEquals(List.of(new Cinema.MovieSeries(101, 7101, 1), new Cinema.MovieSeries(112, 7101, null),
+                new Cinema.MovieSeries(112, 7102, null), new Cinema.MovieSeries(113, 7102, 10_000),
+                new Cinema.MovieSeries(117, 7101, null)), c.moviesSeries(), "0, 10 001, «3a» — пусто; Q7103 без метки — нет");
+        assertEquals(List.of("101-112", "112-117", "119-120"), pairs(c.sequels()), "Q113 → Q113 — нет; Q102 не в наборе — нет");
+        assertEquals(List.of("101-112"), pairs(cinema(Profile.MEDIUM).sequels()));
+        assertEquals(List.of(), pairs(cinema(Profile.SMALL).sequels()), "Q112 не в small");
+    }
+
+    @Test
+    @DisplayName("Награды: выиграна и номинирована — две строки; год — самый ранний с точностью ≥ года; без метки — нет")
+    void awards() throws IOException {
+        Cinema c = cinema(Profile.FULL);
+        assertEquals(List.of(new Cinema.Item(7201, "Golden Reel", "Золотая катушка"), new Cinema.Item(7202, "Silver Frame", null)),
+                c.awards(), "метка de — не нужна");
+        assertEquals(List.of(new Cinema.MovieAward(101, 7201, false, null), new Cinema.MovieAward(101, 7201, true, 1999),
+                new Cinema.MovieAward(101, 7202, false, null), new Cinema.MovieAward(112, 7202, false, 2002)), c.moviesAwards(),
+                "Q7202 у Q101 — точность десятилетия; Q7203 без метки");
+        assertEquals(1L, tiny().stats().get("film_awards_dates_unreadable"));
+    }
+
+    @Test
+    @DisplayName("Выход по странам: точность до дня, страна с ISO3 без исключённых, город — нет; на страну — самая ранняя")
+    void releases() throws IOException {
+        assertEquals(List.of(new Cinema.Release(101, "QXA", LocalDate.of(1999, 4, 10)), new Cinema.Release(101, "USA",
+                LocalDate.of(1999, 3, 31)), new Cinema.Release(112, "USA", LocalDate.of(2003, 3, 3))), cinema(Profile.FULL).releases());
+    }
+
+    @Test
+    @DisplayName("Названия по языкам: метки LABEL_LANGS и метки на любом языке — годные, одна на язык")
+    void titles() throws IOException {
+        Cinema c = cinema(Profile.FULL);
+        Map<Integer, List<String>> t = new HashMap<>();
+        for (Cinema.Title x : c.titles()) t.computeIfAbsent(x.movieId(), k -> new java.util.ArrayList<>()).add(x.lang() + ":" + x.title());
+        assertEquals(List.of("de:Alpha-Geschichte", "en:Alpha Story", "ru:Альфа"), t.get(101));
+        assertEquals(List.of("de:Deutsches", "fr:Français", "ru:Русское"), t.get(108), "метка ja не из LABEL_LANGS — не в film_labels");
+        assertEquals(List.of("cs:Alternativní název", "ja:日本語の題名"), t.get(124), "ar — негодная");
+        assertEquals(List.of("en:Very Long", "mul:Very Long Mul"), t.get(115));
+        assertEquals(List.of("ru:Только по-русски"), t.get(109));
+        assertEquals(25, c.titles().size());
+        assertNull(t.get(126), "фильм не в наборе");
+    }
+
+    @Test
+    @DisplayName("Места съёмок: GeoNames ID мест P915, два места одного города — одна строка, без ID — нет")
+    void locations() throws IOException {
+        assertEquals(List.of("101-1000001", "101-1000002", "112-1000001"), pairs(cinema(Profile.FULL).locations()));
+        assertEquals(1L, tiny().stats().get("places_geonames_unreadable"));
+    }
+
+    @Test
+    @DisplayName("Снимок v2: каждый новый файл обязателен — без него ошибка с его именем; строки о фильмах не из films.csv — мимо")
+    void v2FilesRequired(@TempDir Path tmp) throws IOException {
+        for (String base : List.of("film_dates_extra", "film_labels_all", "film_releases", "film_crew", "film_links2",
+                "film_series", "film_money", "film_awards", "people_dates", "people_links", "places", "item_labels")) {
+            Map<String, byte[]> drop = new HashMap<>();
+            drop.put("wikidata/" + base + ".csv.gz", null);
+            IOException e = assertThrows(IOException.class, () -> SourceData.read(TinySnapshot.with(tmp, drop)), base);
+            assertTrue(e.getMessage().contains("wikidata/" + base + ".csv"), e.getMessage());
+        }
+        Map<String, byte[]> drop = new HashMap<>();
+        drop.put("wikidata/companies.csv", null);
+        IOException e = assertThrows(IOException.class, () -> SourceData.read(TinySnapshot.with(tmp, drop)));
+        assertTrue(e.getMessage().contains("wikidata/companies.csv"), e.getMessage());
+        SourceData d = tiny();
+        assertTrue(d.stats().get("film_rows_not_in_films") >= 2, "Q999 в film_dates_extra и film_crew");
+        assertTrue(d.crew().get(999) == null && d.datesExtra().get("P571").get(999) == null);
+        assertEquals(1L, d.stats().get("film_money_unreadable"));
+        assertEquals(1L, d.stats().get("people_dates_unreadable"));
     }
 }

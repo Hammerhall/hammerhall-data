@@ -85,7 +85,7 @@ class RulesTest {
     }
 
     @Test
-    @DisplayName("Название: en → mul → P1476 (сначала en, затем по языку) → первый запасной язык; ru — отдельно")
+    @DisplayName("Название: en → mul → P1476 (сначала en, затем по языку) → первый запасной язык → ru; ru — и отдельно")
     void title() {
         List<SourceData.Title> t = List.of(new SourceData.Title("fr", "Le Récit"), new SourceData.Title("en", "The Story"),
                 new SourceData.Title("de", "Die Geschichte"));
@@ -94,7 +94,8 @@ class RulesTest {
         assertEquals("The Story", Rules.title(labels("ru", "Р", "de", "D"), t));
         assertEquals("Die Geschichte", Rules.title(null, List.of(t.get(0), t.get(2))), "без en — по языку: de раньше fr");
         assertEquals("D", Rules.title(labels("ru", "Р", "fr", "F", "de", "D"), List.of()), "de раньше fr в LABEL_LANGS");
-        assertNull(Rules.title(labels("ru", "Р"), null), "только ru — названия нет");
+        assertEquals("Р", Rules.title(labels("ru", "Р"), null), "только ru — название из ru");
+        assertNull(Rules.title(labels(), null), "меток нет — названия нет");
         assertEquals("Р", Rules.titleRu(labels("ru", "Р")));
         assertNull(Rules.titleRu(null));
     }
@@ -214,5 +215,182 @@ class RulesTest {
         assertEquals(4_001, Rules.profileSize(400_001, Profile.SMALL));
         assertEquals(40_000, Rules.profileSize(400_000, Profile.MEDIUM));
         assertEquals(0, Rules.profileSize(0, Profile.SMALL));
+    }
+
+    // ---------------------------------------------------------------- снимок v2: год и название
+
+    @Test
+    @DisplayName("Год с запасными путями: P577, иначе P1191, P571, P2754 — тем же правилом; дата — только из P577")
+    void yearFallback() {
+        Map<String, List<DateStmt>> extra = Map.of(
+                "P1191", List.of(d(1960, 5, 5, 11, true), d(1955, 1, 1, 9, false)),
+                "P571", List.of(d(1948, 1, 1, 9, false)),
+                "P2754", List.of(d(1933, 1, 1, 9, false)));
+        assertEquals(new Rules.Year(1999, LocalDate.of(1999, 3, 31), Rules.YearPath.P577),
+                Rules.year(List.of(d(1999, 3, 31, 11, false)), extra, 2026));
+        assertEquals(new Rules.Year(1960, null, Rules.YearPath.P1191), Rules.year(null, extra, 2026),
+                "P1191: лучший ранг — preferred; дата выхода — не из P1191");
+        assertEquals(new Rules.Year(1960, null, Rules.YearPath.P1191), Rules.year(List.of(d(1870, 1, 1, 9, false)), extra, 2026),
+                "P577 вне окна — года по P577 нет: дальше по очереди");
+        assertEquals(new Rules.Year(1948, null, Rules.YearPath.P571),
+                Rules.year(List.of(), Map.of("P1191", List.of(d(1950, 1, 1, 8, false)), "P571", extra.get("P571")), 2026),
+                "P1191 только с точностью десятилетия");
+        assertEquals(new Rules.Year(1933, null, Rules.YearPath.P2754),
+                Rules.year(null, Map.of("P571", List.of(d(2030, 1, 1, 9, false)), "P2754", extra.get("P2754")), 2026));
+        assertNull(Rules.year(null, Map.of("P571", List.of(d(1850, 1, 1, 9, false))), 2026));
+        assertNull(Rules.year(null, null, 2026));
+        assertNull(Rules.year(null, Map.of("P999", List.of(d(1990, 1, 1, 9, false))), 2026), "другие свойства — не в счёт");
+    }
+
+    @Test
+    @DisplayName("Название с путём: en → mul → P1476 → запасной язык → метка на любом языке (по коду языка, первая годная)")
+    void titled() {
+        List<SourceData.Title> all = List.of(new SourceData.Title("ja", "J"), new SourceData.Title("cs", "Č"),
+                new SourceData.Title("cs", "A"), new SourceData.Title("ar", "Bad\tTab"));
+        assertEquals(new Rules.Titled("E", Rules.TitlePath.LABEL_EN), Rules.titled(labels("en", "E"), null, all));
+        assertEquals(new Rules.Titled("M", Rules.TitlePath.LABEL_MUL), Rules.titled(labels("mul", "M"), null, all));
+        assertEquals(new Rules.Titled("T", Rules.TitlePath.P1476), Rules.titled(null, List.of(new SourceData.Title("fr", "T")), all));
+        assertEquals(new Rules.Titled("D", Rules.TitlePath.LABEL_LATIN), Rules.titled(labels("de", "D"), null, all));
+        assertEquals(new Rules.Titled("A", Rules.TitlePath.LABEL_ANY), Rules.titled(null, null, all),
+                "ar — негодная; cs — первый по коду; из двух меток cs — меньшая по байтам");
+        assertEquals(new Rules.Titled("Р", Rules.TitlePath.LABEL_RU), Rules.titled(labels("ru", "Р"), List.of(),
+                List.of(new SourceData.Title("ja", "J"))), "ru — раньше меток на любом языке");
+        assertEquals(new Rules.Titled("D", Rules.TitlePath.LABEL_LATIN), Rules.titled(labels("ru", "Р", "de", "D"), null, null),
+                "запасной латинский — раньше ru");
+        assertEquals(new Rules.Titled("T", Rules.TitlePath.P1476), Rules.titled(labels("ru", "Р"),
+                List.of(new SourceData.Title("fr", "T")), null), "P1476 — раньше ru");
+        assertNull(Rules.titled(labels(), null, List.of()));
+        assertEquals("E", Rules.title(labels("en", "E"), null), "прежняя цепочка — та же");
+    }
+
+    @Test
+    @DisplayName("Названия по языкам: метки LABEL_LANGS и любые годные, одна на язык (меньшая), языки по байтам")
+    void titlesByLang() {
+        Map<String, String> t = Rules.titles(labels("ru", "Р", "en", "E", "de", "D"), List.of(new SourceData.Title("zh-hant", "Z"),
+                new SourceData.Title("cs", "Č"), new SourceData.Title("cs", "A"), new SourceData.Title("ar", "Bad\tTab"),
+                new SourceData.Title("", "Пусто")));
+        assertEquals(List.of("cs", "de", "en", "ru", "zh-hant"), List.copyOf(t.keySet()));
+        assertEquals("A", t.get("cs"));
+        assertEquals(Map.of(), Rules.titles(null, null));
+    }
+
+    // ---------------------------------------------------------------- снимок v2: деньги
+
+    static SourceData.MoneyStmt money(boolean box, String amount, int unit, boolean pref) {
+        return new SourceData.MoneyStmt(box, new BigDecimal(amount), unit, pref);
+    }
+
+    @Test
+    @DisplayName("Бюджет и сборы: только доллары США; лучший ранг среди них; наибольшая; half-even; ≤ 0 — пусто")
+    void usd() {
+        List<SourceData.MoneyStmt> m = List.of(money(false, "1000000", Rules.USD, true), money(false, "5000000", Rules.USD, false),
+                money(false, "9000000", 4916, true), money(true, "2500000.5", Rules.USD, false), money(true, "2400000", Rules.USD, false));
+        assertEquals(1_000_000L, Rules.usd(m, false));
+        assertEquals(2_500_000L, Rules.usd(m, true), "2 500 000,5 → 2 500 000");
+        assertEquals(2_000_000L, Rules.usd(List.of(money(false, "3000000", 4916, true), money(false, "2000000", Rules.USD, false)), false),
+                "preferred — только в другой валюте: из долларов — normal");
+        assertNull(Rules.usd(List.of(money(false, "0", Rules.USD, true), money(false, "100", Rules.USD, false)), false),
+                "лучший ранг — 0: пусто");
+        assertNull(Rules.usd(List.of(money(false, "0.4", Rules.USD, false)), false));
+        assertEquals(4L, Rules.usd(List.of(money(true, "3.5", Rules.USD, false)), true));
+        assertEquals(2L, Rules.usd(List.of(money(true, "2.5", Rules.USD, false)), true));
+        assertEquals(1500L, Rules.usd(List.of(money(false, "1.5E+3", Rules.USD, false)), false));
+        assertNull(Rules.usd(List.of(money(false, "-5", Rules.USD, false)), false));
+        assertNull(Rules.usd(List.of(money(false, "1E+30", Rules.USD, false)), false), "больше bigint");
+        assertNull(Rules.usd(List.of(money(true, "7000000", 4916, false)), true));
+        assertNull(Rules.usd(List.of(money(true, "7000000", Rules.USD, false)), false), "сборы — не бюджет");
+        assertNull(Rules.usd(null, false));
+    }
+
+    // ---------------------------------------------------------------- снимок v2: люди
+
+    @Test
+    @DisplayName("Даты жизни: лучший ранг; дата — точность дня; год — точность ≥ года; 1700…год снимка; смерть — при рождении не позже")
+    void life() {
+        assertEquals(new Rules.Life(LocalDate.of(1946, 12, 18), 1946, null, null),
+                Rules.life(new SourceData.LifeDates(List.of(d(1946, 12, 18, 11, false)), List.of()), 2026));
+        assertEquals(new Rules.Life(null, 1970, null, null),
+                Rules.life(new SourceData.LifeDates(List.of(d(1970, 1, 1, 9, true), d(1969, 5, 5, 11, false)), List.of()), 2026),
+                "preferred — только с точностью года");
+        assertEquals(Rules.Life.NONE, Rules.life(new SourceData.LifeDates(List.of(d(1650, 1, 1, 11, false)),
+                List.of(d(1720, 1, 1, 9, false))), 2026), "до 1700 — пусто, и смерти без рождения нет");
+        assertEquals(new Rules.Life(LocalDate.of(1950, 1, 1), 1950, null, null), Rules.life(new SourceData.LifeDates(
+                List.of(d(1950, 1, 1, 11, false)), List.of(d(1940, 1, 1, 11, false))), 2026), "смерть раньше рождения");
+        assertEquals(new Rules.Life(null, 1980, null, 2020), Rules.life(new SourceData.LifeDates(
+                List.of(d(1980, 6, 1, 10, false), d(1979, 1, 1, 8, false)), List.of(d(2020, 2, 30, 11, false))), 2026),
+                "30 февраля — не дата, год — есть");
+        assertEquals(new Rules.Life(LocalDate.of(1975, 7, 7), 1975, null, 1975), Rules.life(new SourceData.LifeDates(
+                List.of(d(1975, 7, 7, 11, false)), List.of(d(1975, 7, 6, 11, false))), 2026), "дата и год — каждое своим сравнением");
+        assertEquals(Rules.Life.NONE, Rules.life(new SourceData.LifeDates(List.of(d(2030, 1, 1, 9, false)), List.of()), 2026));
+        assertEquals(new Rules.Life(LocalDate.of(1700, 1, 1), 1700, LocalDate.of(2026, 12, 31), 2026), Rules.life(
+                new SourceData.LifeDates(List.of(d(1700, 1, 1, 11, false)), List.of(d(2026, 12, 31, 11, false))), 2026), "границы");
+        assertEquals(new Rules.Life(LocalDate.of(1901, 2, 3), 1900, null, null), Rules.life(new SourceData.LifeDates(
+                List.of(d(1900, 1, 1, 9, false), d(1901, 2, 3, 11, false)), List.of()), 2026), "год — самой ранней, дата — своя");
+        assertEquals(Rules.Life.NONE, Rules.life(null, 2026));
+        assertEquals(new Rules.Event(null, null), Rules.event(List.of(d(-50, 1, 1, 11, false)), 2026), "до н. э.");
+    }
+
+    @Test
+    @DisplayName("Город по месту: первое место по номеру → GeoNames ID; у места его нет — пусто (следующее не берём)")
+    void city() {
+        Map<Integer, Integer> places = Map.of(6000, 1_000_001, 6001, 1_000_002);
+        assertEquals(1_000_001, Rules.city(new int[]{6000, 6001}, places));
+        assertNull(Rules.city(new int[]{5999, 6000}, places));
+        assertNull(Rules.city(new int[0], places));
+        assertNull(Rules.city(null, places));
+    }
+
+    // ---------------------------------------------------------------- снимок v2: справочники и связи
+
+    @Test
+    @DisplayName("Название студии, серии, награды: en → mul; ru — отдельно; нет — не берём")
+    void itemName() {
+        assertEquals("E", Rules.itemName(new String[]{"E", "M", "Р"}));
+        assertEquals("M", Rules.itemName(new String[]{null, "M", "Р"}));
+        assertNull(Rules.itemName(new String[]{null, null, "Р"}));
+        assertNull(Rules.itemName(null));
+        assertEquals("Р", Rules.itemNameRu(new String[]{"E", null, "Р"}));
+        assertNull(Rules.itemNameRu(null));
+    }
+
+    @Test
+    @DisplayName("Номер в серии: наименьшее целое (только цифры) от 1 до 10 000; иначе пусто")
+    void ordinal() {
+        assertEquals(1, Rules.ordinal(Arrays.asList("2", "1", null)));
+        assertEquals(10_000, Rules.ordinal(List.of("10000", "10001")));
+        assertEquals(5, Rules.ordinal(List.of("abc", "5", "0")));
+        assertEquals(7, Rules.ordinal(List.of("007")));
+        assertNull(Rules.ordinal(List.of("0", "-1", "3a", "1.5", "+2", "99999999999")));
+        assertNull(Rules.ordinal(Arrays.asList((String) null)));
+        assertNull(Rules.ordinal(List.of()));
+    }
+
+    @Test
+    @DisplayName("Год награды: самый ранний год среди дат с точностью ≥ года; дат нет — пусто")
+    void awardYear() {
+        assertEquals(1999, Rules.awardYear(List.of(d(2000, 3, 26, 11, false), d(1999, 1, 1, 9, false))));
+        assertNull(Rules.awardYear(Arrays.asList(null, d(2001, 1, 1, 8, false))));
+        assertEquals(2002, Rules.awardYear(Arrays.asList(d(2002, 1, 1, 9, false), null)));
+        assertNull(Rules.awardYear(List.of()));
+    }
+
+    @Test
+    @DisplayName("Дата выхода в стране: точность ровно день, дата по календарю, год 1…9999")
+    void releaseDay() {
+        assertEquals(LocalDate.of(1999, 4, 10), Rules.releaseDay(d(1999, 4, 10, 11, false)));
+        assertNull(Rules.releaseDay(d(1999, 2, 1, 10, false)));
+        assertNull(Rules.releaseDay(d(1999, 2, 30, 11, false)));
+        assertNull(Rules.releaseDay(d(0, 1, 1, 11, false)));
+        assertNull(Rules.releaseDay(d(10_000, 1, 1, 11, false)));
+        assertNull(Rules.releaseDay(null));
+    }
+
+    @Test
+    @DisplayName("Должности группы и роли компаний — по порядку свойств снимка")
+    void jobs() {
+        assertEquals(List.of("P58", "P86", "P344", "P162", "P1040"), SourceData.CREW_PROPS);
+        assertEquals(List.of("writer", "composer", "cinematographer", "producer", "editor"), Rules.CREW_JOBS);
+        assertEquals("production", Rules.PRODUCTION);
+        assertEquals("distribution", Rules.DISTRIBUTION);
     }
 }

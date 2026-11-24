@@ -1,0 +1,294 @@
+# Люди сервиса: имена для отображаемого имени («Анна К.») и для логинов. Все сочетания выдуманы.
+# Имена: «имя вес латиница…» — вес — частота среди зрителей (рождённых в 1950–2010 годах), латиница — написания
+# для логинов (полное и уменьшительные). Фамилии: «фамилия вес латиница» — дают первую букву в отображаемом имени и
+# основу логина (женская форма латиницей — с «a» на конце у -ov, -ev, -in, -yn). В списках нет фамилий известных
+# публичных людей. Ники: отображаемое имя одним словом — общие и по полу.
+
+[male]
+Александр 10 aleksandr alexander alex sasha shura
+Дмитрий 9 dmitry dmitriy dima dimon
+Сергей 8 sergey sergei serega serg
+Андрей 8 andrey andrei andy
+Алексей 8 alexey aleksey lesha lyosha
+Максим 8 maxim maksim max
+Иван 7 ivan vanya vano
+Евгений 6 evgeny evgeniy zhenya
+Михаил 6 mikhail misha
+Артём 6 artem artyom tema
+Никита 5 nikita nik
+Владимир 5 vladimir vova volodya
+Николай 5 nikolay nikolai kolya
+Павел 5 pavel pasha
+Роман 5 roman roma
+Денис 5 denis den
+Илья 5 ilya ilyusha
+Кирилл 5 kirill kir
+Олег 4 oleg
+Игорь 4 igor
+Антон 4 anton tosha
+Егор 4 egor egorka
+Даниил 4 daniil danya dan
+Виктор 3 viktor vitya
+Юрий 3 yury yuriy yura
+Матвей 3 matvey
+Тимур 3 timur
+Вадим 3 vadim
+Константин 3 konstantin kostya
+Вячеслав 2 vyacheslav slava
+Руслан 2 ruslan
+Марк 2 mark
+Тимофей 2 timofey tima
+Григорий 2 grigory grisha
+Станислав 2 stanislav stas
+Василий 2 vasily vasya
+Борис 2 boris borya
+Глеб 2 gleb
+Ярослав 2 yaroslav yarik
+Арсений 2 arseny arseniy senya
+Фёдор 2 fedor fedya
+Степан 2 stepan styopa
+Леонид 1 leonid lenya
+Валерий 1 valery valera
+Анатолий 1 anatoly tolik
+Геннадий 1 gennady gena
+Эдуард 1 eduard edik
+Георгий 1 georgy gosha
+Семён 1 semyon semen syoma
+Лев 1 lev leva
+Савелий 1 savely sava
+Пётр 1 petr petya
+Ростислав 1 rostislav rostik
+Филипп 1 filipp filya
+Захар 1 zakhar
+Мирон 1 miron
+Аркадий 1 arkady arkasha
+Всеволод 1 vsevolod seva
+
+[female]
+Анна 9 anna anya ann
+Мария 9 maria mariya masha mary
+Елена 8 elena lena lenochka
+Анастасия 7 anastasia nastya nastena
+Ольга 7 olga olya
+Наталья 7 natalia natalya natasha
+Екатерина 7 ekaterina katya kate
+Татьяна 6 tatiana tatyana tanya
+Ирина 6 irina ira
+Юлия 6 yulia julia yulya
+Дарья 6 darya daria dasha
+Светлана 5 svetlana sveta
+Ксения 5 ksenia kseniya ksyusha
+Марина 5 marina
+Алина 5 alina
+Виктория 5 victoria viktoria vika
+Полина 5 polina polya
+Елизавета 4 elizaveta liza
+Александра 4 aleksandra alexandra sasha
+Софья 4 sofya sofia sonya
+Валерия 3 valeria valeriya lera
+Алиса 3 alisa alice
+Вероника 3 veronika nika
+Кристина 3 kristina kris
+Арина 3 arina
+Евгения 2 evgenia evgeniya zhenya
+Людмила 2 lyudmila mila
+Галина 2 galina galya
+Надежда 2 nadezhda nadya
+Вера 2 vera verochka
+Оксана 2 oksana
+Яна 2 yana
+Диана 2 diana
+Варвара 2 varvara varya
+Ульяна 2 ulyana ulya
+Карина 2 karina
+Маргарита 2 margarita rita
+Ева 2 eva
+Любовь 1 lyubov lyuba
+Милана 1 milana
+Лилия 1 liliya lilia lili
+Зоя 1 zoya
+Нина 1 nina
+Тамара 1 tamara toma
+Лариса 1 larisa lara
+Инна 1 inna
+Майя 1 maya mayya
+Злата 1 zlata
+Василиса 1 vasilisa vasilisa
+Таисия 1 taisia taya
+Регина 1 regina
+Эльвира 1 elvira
+
+[surnames]
+Иванов 10 ivanov
+Смирнов 9 smirnov
+Кузнецов 9 kuznetsov
+Попов 8 popov
+Васильев 7 vasiliev
+Петров 7 petrov
+Соколов 7 sokolov
+Михайлов 6 mikhailov
+Новиков 6 novikov
+Фёдоров 6 fedorov
+Морозов 6 morozov
+Волков 6 volkov
+Алексеев 5 alekseev
+Лебедев 5 lebedev
+Семёнов 5 semenov
+Егоров 5 egorov
+Павлов 5 pavlov
+Козлов 5 kozlov
+Степанов 5 stepanov
+Николаев 5 nikolaev
+Орлов 4 orlov
+Андреев 4 andreev
+Макаров 4 makarov
+Никитин 4 nikitin
+Захаров 4 zakharov
+Зайцев 4 zaitsev
+Соловьёв 4 soloviev
+Борисов 4 borisov
+Яковлев 4 yakovlev
+Григорьев 4 grigoriev
+Романов 4 romanov
+Воробьёв 4 vorobiev
+Сергеев 4 sergeev
+Кузьмин 3 kuzmin
+Фролов 3 frolov
+Александров 3 aleksandrov
+Дмитриев 3 dmitriev
+Королёв 3 korolev
+Гусев 3 gusev
+Киселёв 3 kiselev
+Ильин 3 ilyin
+Максимов 3 maksimov
+Поляков 3 polyakov
+Сорокин 3 sorokin
+Виноградов 3 vinogradov
+Ковалёв 3 kovalev
+Белов 3 belov
+Антонов 3 antonov
+Тарасов 3 tarasov
+Баранов 3 baranov
+Филиппов 3 filippov
+Комаров 3 komarov
+Давыдов 3 davydov
+Беляев 3 belyaev
+Герасимов 3 gerasimov
+Богданов 3 bogdanov
+Осипов 3 osipov
+Сидоров 3 sidorov
+Матвеев 3 matveev
+Титов 3 titov
+Марков 2 markov
+Крылов 2 krylov
+Куликов 2 kulikov
+Карпов 2 karpov
+Мельников 2 melnikov
+Денисов 2 denisov
+Гаврилов 2 gavrilov
+Тихонов 2 tikhonov
+Казаков 2 kazakov
+Афанасьев 2 afanasiev
+Данилов 2 danilov
+Савельев 2 saveliev
+Тимофеев 2 timofeev
+Фомин 2 fomin
+Чернов 2 chernov
+Абрамов 2 abramov
+Мартынов 2 martynov
+Ефимов 2 efimov
+Федотов 2 fedotov
+Щербаков 2 shcherbakov
+Назаров 2 nazarov
+Исаев 2 isaev
+Чернышёв 2 chernyshev
+Быков 2 bykov
+Маслов 2 maslov
+Родионов 2 rodionov
+Коновалов 2 konovalov
+Лазарев 2 lazarev
+Воронин 2 voronin
+Климов 2 klimov
+Филатов 2 filatov
+Пономарёв 2 ponomarev
+Голубев 2 golubev
+Кудрявцев 2 kudryavtsev
+Прохоров 2 prokhorov
+Наумов 2 naumov
+Потапов 2 potapov
+Журавлёв 2 zhuravlev
+Овчинников 2 ovchinnikov
+Трофимов 2 trofimov
+Леонов 2 leonov
+Соболев 2 sobolev
+Ермаков 2 ermakov
+Колесников 2 kolesnikov
+Гончаров 2 goncharov
+Емельянов 2 emelyanov
+Никифоров 2 nikiforov
+Грачёв 2 grachev
+Котов 2 kotov
+Гришин 2 grishin
+Ефремов 2 efremov
+Архипов 2 arkhipov
+Громов 2 gromov
+Кириллов 2 kirillov
+Малышев 2 malyshev
+Панов 2 panov
+Моисеев 2 moiseev
+Румянцев 2 rumyantsev
+Акимов 2 akimov
+Кондратьев 2 kondratiev
+Бирюков 2 biryukov
+Горбунов 2 gorbunov
+Анисимов 2 anisimov
+Ерёмин 2 eremin
+Тихомиров 1 tikhomirov
+Лукин 1 lukin
+Чистяков 1 chistyakov
+Шубин 1 shubin
+Зуев 1 zuev
+Широков 1 shirokov
+Шилов 1 shilov
+Юдин 1 yudin
+Цветков 1 tsvetkov
+Уваров 1 uvarov
+Харитонов 1 kharitonov
+Худяков 1 khudyakov
+Эминов 1 eminov
+Юрьев 1 yuriev
+Яшин 1 yashin
+Ким 2 kim
+Алиев 1 aliev
+Хасанов 1 khasanov
+Гарипов 1 garipov
+Сафин 1 safin
+Ахметов 1 akhmetov
+Мамедов 1 mamedov
+Шевченко 2 shevchenko
+Бондаренко 2 bondarenko
+Коваленко 2 kovalenko
+Ткаченко 2 tkachenko
+Мельник 1 melnik
+Кравец 1 kravets
+Левин 1 levin
+Акопян 1 akopyan
+Оганесян 1 oganesyan
+Гусейнов 1 guseinov
+Исмаилов 1 ismailov
+
+# Ники — отображаемое имя одним словом (иногда вместо «Имя Ф.»)
+[nick.any]
+Киноман | Синефил | Кинолюб | Зритель | Полуночник | Сова | Лис | Ёжик | Енот | Барсук | Филин | Тихий зритель |
+Ночной зритель | Попкорн | Кот в пледе | Мечтатель | Странник | Путник | Молчун | Скептик | Оптимист | Читатель |
+Кинокритик-любитель | Солнце | Северянин | Южанин | Дачник | Турист | Капитан | Штурман | Пилот | Летописец |
+Наблюдатель | Гость | Сосед | Котофей | Медвежонок | Бельчонок | Совёнок | Рыжий | Тёмная лошадка | Зелёный чай |
+Кофеман | Плед и кино | Вечерний сеанс | Последний ряд | Первый ряд | Титры до конца | Без спойлеров | Пересматриватель
+
+[nick.M]
+Киноманьяк | Добрый молодец | Старый ворчун | Дядя Ваня | Капитан Немо | Мистер Икс | Сам себе критик | Бородач |
+Папа двоих | Вечный студент | Рыжий кот | Большой медведь
+
+[nick.F]
+Киноманка | Лисичка | Совушка | Кошка с попкорном | Мисс Марпл | Мама в декрете | Рыжая | Белочка | Звёздочка |
+Ромашка | Вечная студентка | Синефилка | Мечтательница | Путешественница

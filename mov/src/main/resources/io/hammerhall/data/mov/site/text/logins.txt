@@ -1,0 +1,39 @@
+# Слова для логинов (только строчная латиница): ники собираются из имён и фамилий (names.txt), слов ниже, цифр и
+# «_». Слова через пробел или перевод строки. В списках нет торговых марок и названий сервисов.
+
+[adj]
+silent lazy happy sunny crazy quiet little big brave wild cool dark blue red green black white grey golden silver
+lucky sleepy funny fast slow wise old young true sweet shy bright cosmic retro urban northern southern frosty misty
+rainy stormy mighty tiny fluffy sneaky noisy honest gentle smart clever mad epic lonely magic rusty velvet crimson
+amber lunar solar polar wandering hidden secret calm cozy lost free iron stone wooden paper electric neon pixel
+vintage classic final first last midnight evening morning autumn winter summer spring arctic tropical salty spicy
+sour bitter fuzzy jolly merry grumpy curious dreamy humble proud swift loud mellow crispy sharp soft hard cold warm
+
+[noun]
+fox cat wolf owl bear panda tiger lynx otter badger hedgehog rabbit bunny kitten puppy hawk eagle falcon crow sparrow
+swan dolphin whale shark turtle penguin koala lion deer moose beaver squirrel raccoon ferret mouse dragon unicorn
+phoenix ghost ninja pirate pilot captain rider ranger wanderer dreamer viewer watcher critic reader writer traveler
+sailor wizard knight robot android cyborg alien comet star moon sun cloud storm rain snow frost wind river ocean
+forest mountain maple cactus cookie muffin pancake donut coffee latte tea pepper ginger cherry lemon mango kiwi peach
+plum berry pixel byte beat jazz blues vinyl echo shadow spark flame ember nova orbit rocket meteor galaxy planet
+island harbor lighthouse compass anchor lantern candle velvet sofa blanket pillow slipper tram train bicycle scooter
+violin guitar piano drum bard poet artist painter sketch frame scene ticket reel popcorn screen
+
+[ru]
+kotik kot koshka lisa lisenok volk medved mishka zayka ezhik sova belka enot barsuk filin sokol berkut chizhik
+solnce solnyshko zvezda luna nebo more veter dozhd sneg osen vesna leto zima tuman raduga oblako
+pirozhok plyushka bulka vatrushka pelmen blinchik chai kofe malina vishnya yagoda romashka berezka kedr vasilek
+kolobok domovoy bogatyr kapitan shturman putnik strannik mechtatel molchun lentyai sonya dachnik turist
+kinoshka kinchik popkorn pultik divan pled tapki chaynik samovar varenye kompot sushka pryanik
+
+[kino]
+kino film movie cinema cine reel popcorn screen frame scene premiere sequel trailer credits
+
+[fan]
+fan geek lover buff maniac critic watcher viewer man guru nerd freak
+
+[prefix]
+mr miss the real just iam its not super mega ultra old young little big doctor professor agent
+
+[city]
+msk spb nsk ekb kzn nn smr ufa krd vlg rnd prm omsk tula

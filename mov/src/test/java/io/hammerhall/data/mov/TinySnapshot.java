@@ -33,6 +33,20 @@ import java.util.zip.ZipOutputStream;
  * seed; роли из P4633 и персонажа, несколько ролей, повтор, роль со знаком табуляции; страны (исключённый код, без
  * ISO3, два ISO3) и языки (ISO 639-1, только 639-3, без кода).
  *
+ * <p>Файлы снимка v2 — тоже все, с ветками правил: год по P1191 (лучший ранг), P571 (P1191 хуже года), P2754 (P571
+ * после года снимка), по запасному свойству при P577 вне окна, без года и по запасным; название из меток на любом языке
+ * (негодная метка, две метки языка); бюджет и сборы (лучший ранг среди сумм в долларах, другая валюта, ноль и меньше,
+ * половина — к чётному, запись с порядком, нечитаемая сумма); даты жизни (лучший ранг, точность, до 1700 и после года
+ * снимка, смерть раньше рождения по дате и по году, дата не по календарю); город рождения (первое место по номеру,
+ * место без GeoNames ID и без строки); гражданство (исключённый код, без ISO3, два кода); съёмочная группа (все пять
+ * должностей, не человек, без имени, иное P21, фильм не в наборе); студии и прокатчики (обе роли у одной, без метки
+ * en/mul, негодная метка en, страна исключённая и пустая); места съёмок (два места на один город, без GeoNames ID);
+ * продолжения (P156 и встречное P155, сам себе, фильм не в наборе); серии (номера 1…10 000 и мимо, без метки); награды
+ * (выиграна и номинирована, год по самой ранней дате, точность хуже года, без даты, без метки); выход по странам
+ * (самая ранняя на страну, исключённая страна, город, точность месяца, дата не по календарю); строки о фильме не из
+ * {@code films.csv}. Название только из метки {@code ru} — Q109 (P1476 со знаком табуляции негоден); без названия
+ * совсем — Q126 (меток нет ни в одном файле).
+ *
  * <p>{@link #entries()} — записи снимка (путь → байты): тесты правят копию и пишут свой снимок ({@link #with}).
  */
 public final class TinySnapshot {
@@ -129,7 +143,7 @@ public final class TinySnapshot {
             "Q101|Q11424", "Q102|Q11424", "Q103|Q11424", "Q103|Q24856", "Q104|Q11424", "Q105|Q11424", "Q106|Q11424",
             "Q107|Q11424", "Q108|Q11424", "Q109|Q11424", "Q110|Q17517379", "Q111|Q93204", "Q112|Q11424", "Q113|Q11424",
             "Q114|Q11424", "Q115|Q11424", "Q116|Q11424", "Q116|Q193977", "Q117|Q11424", "Q118|Q11424", "Q119|Q11424",
-            "Q120|Q11424");
+            "Q120|Q11424", "Q121|Q11424", "Q122|Q11424", "Q123|Q11424", "Q124|Q11424", "Q125|Q11424", "Q126|Q11424");
 
     static final String FILM_DATES = csv("film,date,precision,rank",
             "Q101|1998-01-01T00:00:00Z|9|normal", "Q101|1999-03-31T00:00:00Z|11|preferred",
@@ -152,7 +166,10 @@ public final class TinySnapshot {
             "Q117|1991-01-01T00:00:00Z|9|normal",
             "Q118|-0001-01-01T00:00:00Z|9|normal",
             "Q119|2005-01-01T00:00:00Z|9|normal",
-            "Q120|1979-01-01T00:00:00Z|9|normal");
+            "Q120|1979-01-01T00:00:00Z|9|normal",
+            "Q124|2010-01-01T00:00:00Z|9|normal",
+            "Q125|1870-01-01T00:00:00Z|9|normal",
+            "Q126|2011-01-01T00:00:00Z|9|normal");
 
     static final String FILM_LABELS = csv("film,lang,label",
             "Q101|en|Alpha Story", "Q101|ru|Альфа", "Q101|de|Alpha-Geschichte",
@@ -174,7 +191,8 @@ public final class TinySnapshot {
             "Q117|en|Scary Laughs",
             "Q118|en|Ancient",
             "Q119|en|Gamma Night", "Q119|ru|Ночь гаммы",
-            "Q120|en|Delta Dawn");
+            "Q120|en|Delta Dawn",
+            "Q121|en|First Showing", "Q122|en|Made Long Ago", "Q123|en|Production Days", "Q125|en|Second Chance");
 
     static final String FILM_TITLES = csv("film,lang,title",
             "Q107|fr|Le Récit", "Q107|en|The Story", "Q107|de|Die Geschichte",
@@ -240,7 +258,8 @@ public final class TinySnapshot {
     static final String PEOPLE = csv("person,human,gender,sitelinks",
             "Q501|1|Q6581097|40", "Q502|1|Q6581097|30", "Q503|1|Q6581072|20", "Q504|1|Q2449503|5", "Q505|1|Q1052281|5",
             "Q506|1|Q48270|3", "Q507|1||1", "Q508|1|Q6581072|1", "Q509|0||0", "Q510|1||2", "Q511|1||0", "Q512|1||0",
-            "Q513|1|Q6581072|4", "Q514|1|Q6581097|0", "Q515|1||0");
+            "Q513|1|Q6581072|4", "Q514|1|Q6581097|0", "Q515|1||0", "Q516|1|Q48270|0", "Q517|1||0", "Q518|1||0",
+            "Q519|1||0", "Q520|1|Q6581097|0");
 
     static final String PEOPLE_LABELS = csv("person,lang,label",
             "Q501|en|Steven Halden", "Q501|ru|Стивен Халден",
@@ -257,7 +276,8 @@ public final class TinySnapshot {
             "Q512|en|Kim Lee",
             "Q513|mul|Ana Torres",
             "Q514|en|(unnamed)", "Q514|mul|Somebody Else",
-            "Q515|en|Ole Back\\slash", "Q515|fr|Ole Lund");
+            "Q515|en|Ole Back\\slash", "Q515|fr|Ole Lund",
+            "Q516|en|Robin Ash", "Q517|en|Maria Ortiz", "Q518|en|Sam Reed", "Q520|en|Carl Stone");
 
     static final String PEOPLE_NAMES = csv("person,kind,item,ordinal",
             "Q501|family|Q801|", "Q501|given|Q904|",
@@ -266,20 +286,116 @@ public final class TinySnapshot {
             "Q510|given|Q902|",
             "Q511|given|Q903|",
             "Q512|family|Q805|2", "Q512|family|Q804|1",
-            "Q515|given|Q902|2", "Q515|given|Q901|1");
+            "Q515|given|Q902|2", "Q515|given|Q901|1",
+            "Q517|given|Q902|");
 
     static final String NAME_ITEMS = csv("item,label_en,label_mul,kind",
             "Q801|Halden||family", "Q802|Zhang||family", "Q804||Kim|family", "Q805|Lee||family",
             "Q901|Hans||male", "Q902|Maria||female", "Q903|Al||unisex", "Q904|Steven||male");
 
     static final String COUNTRIES = csv("item,iso2,iso3",
-            "Q30|US|USA", "Q9001|EH|ESH", "Q9002|QZ|", "Q9003|QX|QXB", "Q9003|QX|QXA");
+            "Q30|US|USA", "Q9001|EH|ESH", "Q9002|QZ|", "Q9003|QX|QXB", "Q9003|QX|QXA", "Q6000||");
 
     static final String LANGUAGES = csv("item,iso1,iso3,label_en",
             "Q1860|en|eng|English", "Q9010||qya|Made-up", "Q9011|||Nameless");
 
     static final String CHARACTERS = csv("item,label_en,label_mul",
             "Q701|Captain Rook|", "Q702||Ghost", "Q703|Back\\slash|Clean Name", "Q704|Unused|");
+
+
+    // ---------------------------------------------------------------- снимок v2
+
+    /** Запасные даты года: Q121 — P1191, Q122 — P571, Q123 — P2754, Q125 — P1191 при P577 1870; Q104 — года нет. */
+    static final String FILM_DATES_EXTRA = csv("film,prop,date,precision,rank",
+            "Q101|P1191|1990-01-01T00:00:00Z|9|normal",
+            "Q104|P571|1850-01-01T00:00:00Z|9|normal",
+            "Q121|P1191|1960-05-05T00:00:00Z|11|preferred", "Q121|P1191|1955-01-01T00:00:00Z|9|normal",
+            "Q122|P1191|1950-01-01T00:00:00Z|8|normal", "Q122|P571|1948-01-01T00:00:00Z|9|normal",
+            "Q123|P571|2030-01-01T00:00:00Z|9|normal", "Q123|P2754|1933-01-01T00:00:00Z|9|normal",
+            "Q125|P1191|1990-01-01T00:00:00Z|9|normal",
+            "Q999|P571|1990-01-01T00:00:00Z|9|normal");
+
+    /** Метки на любых языках — у Q124 нет ни метки из LABEL_LANGS, ни P1476. */
+    static final String FILM_LABELS_ALL = csv("film,lang,label",
+            "Q124|ar|Bad\tTitle", "Q124|cs|Český název", "Q124|cs|Alternativní název", "Q124|ja|日本語の題名");
+
+    /** Выход по странам: film,date,precision,place. */
+    static final String FILM_RELEASES = csv("film,date,precision,place",
+            "Q101|1999-03-31T00:00:00Z|11|Q30", "Q101|1999-05-01T00:00:00Z|11|Q30", "Q101|1999-06-01T00:00:00Z|11|Q9001",
+            "Q101|1999-04-10T00:00:00Z|11|Q9003", "Q101|1999-02-01T00:00:00Z|10|Q30", "Q101|1999-02-30T00:00:00Z|11|Q30",
+            "Q101|1999-01-15T00:00:00Z|11|Q6000",
+            "Q112|2003-03-03T00:00:00Z|11|Q30");
+
+    /** Съёмочная группа: Q509 — не человек, Q519 — без имени, Q516 — иное P21, Q102 — дубль, Q999 — не фильм снимка. */
+    static final String FILM_CREW = csv("film,prop,person",
+            "Q101|P58|Q516", "Q101|P58|Q502", "Q101|P86|Q517", "Q101|P344|Q518", "Q101|P162|Q501", "Q101|P162|Q509",
+            "Q101|P1040|Q519",
+            "Q102|P86|Q520",
+            "Q112|P58|Q516", "Q112|P1040|Q518",
+            "Q999|P58|Q516");
+
+    static final String FILM_LINKS2 = csv("film,prop,value",
+            "Q101|P272|Q7001", "Q101|P750|Q7002", "Q101|P750|Q7001",
+            "Q101|P915|Q6000", "Q101|P915|Q6001", "Q101|P915|Q6005", "Q101|P915|Q6002",
+            "Q101|P156|Q112",
+            "Q112|P272|Q7003", "Q112|P750|Q7004", "Q112|P915|Q6000", "Q112|P155|Q101", "Q112|P156|Q117",
+            "Q113|P156|Q113",
+            "Q119|P155|Q102",
+            "Q120|P155|Q119");
+
+    static final String FILM_SERIES = csv("film,series,ordinal",
+            "Q101|Q7101|2", "Q101|Q7101|1", "Q112|Q7101|0", "Q112|Q7102|10001", "Q113|Q7102|10000", "Q117|Q7101|3a",
+            "Q117|Q7103|1");
+
+    /** Суммы: Q4917 — доллар США, Q4916 — другая валюта. */
+    static final String FILM_MONEY = csv("film,prop,amount,unit,rank",
+            "Q101|P2130|+1000000|Q4917|preferred", "Q101|P2130|+5000000|Q4917|normal", "Q101|P2130|+9000000|Q4916|preferred",
+            "Q101|P2142|+2500000.5|Q4917|normal", "Q101|P2142|+2400000|Q4917|normal", "Q101|P2142|abc|Q4917|normal",
+            "Q107|P2130|0|Q4917|preferred", "Q107|P2130|100|Q4917|normal",
+            "Q110|P2130|0.4|Q4917|normal", "Q110|P2142|3.5|Q4917|normal",
+            "Q111|P2142|2.5|Q4917|normal",
+            "Q112|P2130|+3000000|Q4916|preferred", "Q112|P2130|+2000000|Q4917|normal", "Q112|P2142|+7000000|Q4916|normal",
+            "Q113|P2130|1.5E+3|Q4917|normal",
+            "Q117|P2130|-5|Q4917|normal");
+
+    static final String FILM_AWARDS = csv("film,prop,award,date,precision",
+            "Q101|P166|Q7201|2000-03-26T00:00:00Z|11", "Q101|P166|Q7201|1999-01-01T00:00:00Z|9", "Q101|P1411|Q7201||",
+            "Q101|P1411|Q7202|2001-01-01T00:00:00Z|8",
+            "Q112|P166|Q7203|2004-01-01T00:00:00Z|9", "Q112|P1411|Q7202|2002-01-01T00:00:00Z|9",
+            "Q112|P1411|Q7202|2003-xx|9");
+
+    static final String PEOPLE_DATES = csv("person,prop,date,precision,rank",
+            "Q501|P569|1946-12-18T00:00:00Z|11|normal",
+            "Q502|P569|1970-01-01T00:00:00Z|9|preferred", "Q502|P569|1969-05-05T00:00:00Z|11|normal",
+            "Q503|P569|1650-01-01T00:00:00Z|11|normal", "Q503|P570|1720-01-01T00:00:00Z|9|normal",
+            "Q504|P569|1950-01-01T00:00:00Z|11|normal", "Q504|P570|1940-01-01T00:00:00Z|11|normal",
+            "Q505|P569|1980-06-01T00:00:00Z|10|normal", "Q505|P569|1979-01-01T00:00:00Z|8|normal",
+            "Q505|P570|2020-02-30T00:00:00Z|11|normal",
+            "Q506|P569|1900-03-04T00:00:00Z|11|normal", "Q506|P570|1999-12-31T00:00:00Z|11|normal",
+            "Q507|P570|2000-01-01T00:00:00Z|9|normal",
+            "Q510|P569|1975-07-07T00:00:00Z|11|normal", "Q510|P570|1975-07-06T00:00:00Z|11|normal",
+            "Q513|P569|2030-01-01T00:00:00Z|9|normal",
+            "Q516|P569|bad-date|11|normal");
+
+    static final String PEOPLE_LINKS = csv("person,prop,value",
+            "Q501|P19|Q6001", "Q501|P19|Q6000", "Q501|P27|Q30", "Q501|P27|Q9001",
+            "Q502|P19|Q6002", "Q502|P27|Q9002",
+            "Q503|P19|Q6003",
+            "Q510|P27|Q30", "Q510|P27|Q9003");
+
+    /** Места: Q6002 — без GeoNames ID, Q6004 — с нечитаемым, Q6005 — тот же город, что Q6001. */
+    static final String PLACES = csv("item,geonames,country,label_en",
+            "Q6000|1000001|Q30|Rivermouth", "Q6001|1000002|Q30|Hillford", "Q6002||Q30|Old Mill", "Q6004|abc|Q30|Bad Id",
+            "Q6005|1000002|Q30|Hillford North");
+
+    static final String ITEM_LABELS = csv("item,lang,label",
+            "Q7001|en|Northwind Pictures", "Q7001|ru|Нордвинд", "Q7002|mul|Bluebird Films", "Q7003|ru|Только русское",
+            "Q7004|en|Bad\\Name", "Q7004|mul|Harbor Media",
+            "Q7101|en|Alpha Saga", "Q7101|ru|Сага об Альфе", "Q7102|mul|Night Saga",
+            "Q7201|en|Golden Reel", "Q7201|ru|Золотая катушка", "Q7202|mul|Silver Frame", "Q7202|de|Silberrahmen");
+
+    static final String COMPANIES = csv("item,country",
+            "Q7001|Q30", "Q7002|Q9001", "Q7004|");
 
     // ---------------------------------------------------------------- снимок
 
@@ -307,6 +423,19 @@ public final class TinySnapshot {
         e.put("wikidata/countries.csv", utf8(COUNTRIES));
         e.put("wikidata/languages.csv", utf8(LANGUAGES));
         e.put("wikidata/characters.csv.gz", gz(CHARACTERS));
+        e.put("wikidata/film_dates_extra.csv.gz", gz(FILM_DATES_EXTRA));
+        e.put("wikidata/film_labels_all.csv.gz", gz(FILM_LABELS_ALL));
+        e.put("wikidata/film_releases.csv.gz", gz(FILM_RELEASES));
+        e.put("wikidata/film_crew.csv.gz", gz(FILM_CREW));
+        e.put("wikidata/film_links2.csv.gz", gz(FILM_LINKS2));
+        e.put("wikidata/film_series.csv.gz", gz(FILM_SERIES));
+        e.put("wikidata/film_money.csv.gz", gz(FILM_MONEY));
+        e.put("wikidata/film_awards.csv.gz", gz(FILM_AWARDS));
+        e.put("wikidata/people_dates.csv.gz", gz(PEOPLE_DATES));
+        e.put("wikidata/people_links.csv.gz", gz(PEOPLE_LINKS));
+        e.put("wikidata/places.csv.gz", gz(PLACES));
+        e.put("wikidata/item_labels.csv.gz", gz(ITEM_LABELS));
+        e.put("wikidata/companies.csv", utf8(COMPANIES));
         List<String> sums = new ArrayList<>();
         for (String k : new TreeMap<>(e).keySet()) sums.add("0".repeat(64) + "  " + k);
         e.put("SHA256SUMS", utf8(String.join("\n", sums) + "\n"));

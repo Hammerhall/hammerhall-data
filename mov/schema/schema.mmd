@@ -6,22 +6,24 @@ erDiagram
     }
     movies {
         int id PK "Фильм — номер элемента Wikidata (Q42 → 42)"
-        text title "Название: метка en, иначе mul, иначе P1476, иначе метка запасного языка"
+        text title "Название: метка en, иначе mul, иначе P1476, иначе метка запасного языка, иначе метка ru, иначе метка на любом языке"
         text title_ru "Название по-русски (метка ru)"
-        smallint year "Год выхода: самая ранняя дата P577 с точностью не ниже года"
+        smallint year "Год выхода: самая ранняя дата P577 с точностью не ниже года; нет — P1191, P571, P2754"
         date release_date "Дата выхода: самая ранняя дата P577 с точностью до дня"
         int runtime "Хронометраж, минуты (P2047)"
         decimal rank "Рейтинг 1.0–9.9 — синтетический: из открытых признаков Wikidata и шума от seed, не оценка качества"
+        bigint budget_usd "Бюджет, долларов США (P2130 в долларах США, наибольший из лучшего ранга)"
+        bigint box_office_usd "Сборы, долларов США (P2142 в долларах США, наибольшие из лучшего ранга)"
     }
     actors {
-        int id PK "Актёр — номер элемента Wikidata"
+        int id PK, FK "Актёр — номер элемента Wikidata (он же — в people)"
         text first_name "Имя (у мононима — пусто)"
         text last_name "Фамилия (у мононима — имя целиком)"
         text gender "Пол: по P21, иначе по первому имени P735, иначе от seed и id"
         text name_ru "Имя по-русски (метка ru целиком)"
     }
     directors {
-        int id PK "Режиссёр — номер элемента Wikidata"
+        int id PK, FK "Режиссёр — номер элемента Wikidata (он же — в people)"
         text first_name "Имя (у мононима — пусто)"
         text last_name "Фамилия (у мононима — имя целиком)"
         text name_ru "Имя по-русски (метка ru целиком)"
@@ -52,6 +54,239 @@ erDiagram
         int movie_id PK, FK "Фильм"
         text language_code PK "Язык — ISO 639-1, иначе ISO 639-3"
     }
+    people {
+        int id PK "Человек — номер элемента Wikidata"
+        text first_name "Имя (у мононима — пусто)"
+        text last_name "Фамилия (у мононима — имя целиком)"
+        text name_ru "Имя по-русски (метка ru целиком)"
+        text gender "Пол: по P21 (иное значение — пусто), иначе по первому имени P735, иначе от seed и id; у актёра — как в actors"
+        date birth_date "Дата рождения: самая ранняя P569 с точностью до дня"
+        smallint birth_year "Год рождения: самая ранняя P569 с точностью не ниже года"
+        date death_date "Дата смерти (P570) — при дате рождения не позже"
+        smallint death_year "Год смерти (P570) — при годе рождения не больше"
+        int birth_city_id "Город рождения — GeoNames ID места P19, он же id города набора «Мир» (wld-data-v1, cities.id); связь мягкая, без внешнего ключа"
+    }
+    people_countries {
+        int person_id PK, FK "Человек"
+        text country_code PK "Страна — ISO 3166-1 alpha-3"
+    }
+    movies_crew {
+        int movie_id PK, FK "Фильм"
+        int person_id PK, FK "Человек"
+        text job PK "Должность"
+    }
+    companies {
+        int id PK "Компания — номер элемента Wikidata"
+        text name "Название: метка en, иначе mul"
+        text name_ru "Название по-русски (метка ru)"
+        text country_code "Страна (P17) — ISO 3166-1 alpha-3"
+    }
+    movies_companies {
+        int movie_id PK, FK "Фильм"
+        int company_id PK, FK "Компания"
+        text role PK "Роль: студия (P272) или прокатчик (P750)"
+    }
+    series {
+        int id PK "Серия — номер элемента Wikidata"
+        text name "Название: метка en, иначе mul"
+        text name_ru "Название по-русски (метка ru)"
+    }
+    movies_series {
+        int movie_id PK, FK "Фильм"
+        int series_id PK, FK "Серия"
+        int ordinal "Номер в серии: наименьшее целое P1545 от 1 до 10000"
+    }
+    movies_sequels {
+        int movie_id PK, FK "Фильм"
+        int next_movie_id PK, FK "Следующий фильм"
+    }
+    awards {
+        int id PK "Награда — номер элемента Wikidata"
+        text name "Название: метка en, иначе mul"
+        text name_ru "Название по-русски (метка ru)"
+    }
+    movies_awards {
+        int movie_id PK, FK "Фильм"
+        int award_id PK, FK "Награда"
+        bool won PK "Награда получена (P166) — t, номинация (P1411) — f"
+        smallint year "Год: самый ранний год P585 с точностью не ниже года"
+    }
+    movies_releases {
+        int movie_id PK, FK "Фильм"
+        text country_code PK "Страна — ISO 3166-1 alpha-3"
+        date release_date "Дата выхода в стране"
+    }
+    movies_titles {
+        int movie_id PK, FK "Фильм"
+        text lang PK "Язык — код языка метки Wikidata"
+        text title "Название (метка)"
+    }
+    movies_locations {
+        int movie_id PK, FK "Фильм"
+        int city_id PK "Город — GeoNames ID места P915, он же id города набора «Мир» (wld-data-v1, cities.id); связь мягкая, без внешнего ключа"
+    }
+    plans {
+        int id PK "Тариф"
+        text code "Код тарифа"
+        text name "Название по-русски"
+        money monthly_rub "Цена в месяц при вводе тарифа, ₽ (у годового — цена года / 12)"
+        smallint period_months "Период оплаты, месяцев: 1 или 12 (у бесплатного — 1)"
+        smallint max_streams "Одновременных просмотров"
+        text max_quality "Наибольшее качество"
+        bool ads "С рекламой"
+        date introduced_on "Введён"
+        date retired_on "Снят с продажи"
+    }
+    plan_prices {
+        int plan_id PK, FK "Тариф"
+        date valid_from PK "Действует с (00:00 по Москве)"
+        money price_rub "Цена за период оплаты, ₽"
+    }
+    promo_codes {
+        int id PK "Промокод"
+        text code "Код"
+        text kind "Вид: пробные дни или скидка в процентах"
+        smallint value "Пробных дней или процент скидки"
+        bool partner "Партнёрский"
+        date valid_from "Действует с"
+        date valid_to "Действует по (включительно)"
+        int max_uses "Предел применений; пусто — без предела"
+    }
+    users {
+        int id PK "Пользователь — по порядку регистрации"
+        text login "Логин"
+        text display_name "Отображаемое имя: имя и первая буква фамилии"
+        text gender "Пол"
+        smallint birth_year "Год рождения"
+        int city_id "Город — id города World (wld-data-v1, cities.id = geonameid); мягкая ссылка"
+        moment registered_at "Регистрация"
+        text channel "Канал прихода"
+        int referrer_id FK "Пригласивший пользователь (канал referral)"
+        int promo_code_id FK "Промокод при регистрации"
+        moment deleted_at "Учётная запись удалена"
+    }
+    devices {
+        int id PK "Устройство — по первому появлению"
+        int user_id FK "Пользователь"
+        text kind "Вид"
+        text os "Операционная система"
+        moment first_seen_at "Первое появление"
+        moment last_seen_at "Последнее появление (на срез выпуска)"
+    }
+    subscriptions {
+        int id PK "Подписка — по началу"
+        int user_id FK "Пользователь"
+        int plan_id FK "Тариф"
+        moment started_at "Начало (у подписок, шедших на начало окна, — настоящее, раньше окна)"
+        moment trial_ends_at "Конец пробного периода; пусто — без пробного"
+        moment ends_at "Конец доступа: конец текущего оплаченного периода (у идущей — после среза) или момент окончания"
+        text status "Состояние на срез"
+        bool auto_renew "Продлевается сама"
+        moment cancelled_at "Отменена (или истекла после трёх неудачных списаний)"
+        text cancel_reason "Причина отмены"
+    }
+    payments {
+        int id PK "Оплата — по моменту"
+        int user_id FK "Пользователь"
+        int subscription_id FK "Подписка (списание за период)"
+        int purchase_id FK "Покупка или прокат"
+        money amount_rub "Сумма, ₽"
+        text method "Способ оплаты"
+        text status "Итог"
+        moment created_at "Попытка списания"
+        moment refunded_at "Возврат"
+    }
+    catalog {
+        int movie_id PK, FK "Фильм"
+        moment added_at PK "Пришёл в каталог"
+        moment removed_at "Ушёл из каталога; пусто — в каталоге на срез"
+        text access "Доступ: по подписке, прокат и покупка, бесплатно с рекламой"
+        money rent_price_rub "Прокат на 48 ч в первые 60 дней окна, ₽; позже — на 40 % дешевле (не ниже 99 ₽, «на 9»)"
+        money buy_price_rub "Покупка, ₽"
+        moment subscription_from "С этого момента фильм окна rent_buy — и по подписке"
+    }
+    purchases {
+        int id PK "Покупка — по моменту"
+        int user_id FK "Пользователь"
+        int movie_id FK "Фильм"
+        text kind "Прокат или покупка"
+        money price_rub "Цена, ₽"
+        moment created_at "Момент покупки"
+        moment expires_at "Конец проката (через 48 ч); у покупки — пусто"
+    }
+    views {
+        int id PK "Просмотр — по началу"
+        int user_id FK "Пользователь"
+        int device_id FK "Устройство"
+        int movie_id FK "Фильм"
+        moment started_at "Начало"
+        int watched_min "Просмотрено минут (идущий на срез — до среза)"
+        bool completed "Досмотрен"
+        text quality "Качество"
+        text source "Доступ: подписка, прокат, покупка, бесплатно"
+    }
+    ratings {
+        int user_id PK, FK "Пользователь"
+        int movie_id PK, FK "Фильм"
+        smallint rating "Оценка 1–10"
+        moment rated_at "Момент последней оценки"
+        smallint changes "Сколько раз оценку меняли"
+    }
+    reviews {
+        int id PK "Рецензия — по моменту"
+        int user_id FK "Автор"
+        int movie_id FK "Фильм"
+        smallint rating "Оценка автора на момент рецензии"
+        text title "Заголовок"
+        text body "Текст"
+        moment created_at "Написана"
+        moment edited_at "Последняя правка"
+        text status "Видна или скрыта"
+    }
+    review_votes {
+        int review_id PK, FK "Рецензия"
+        int user_id PK, FK "Голосующий"
+        bool useful "Полезна"
+        moment voted_at "Момент голоса"
+    }
+    watchlist {
+        int user_id PK, FK "Пользователь"
+        int movie_id PK, FK "Фильм"
+        moment added_at PK "Добавлен"
+        moment removed_at "Убран; пусто — в списке на срез"
+        text removed_reason "Почему убран"
+    }
+    follows {
+        int follower_id PK, FK "Кто подписан"
+        int followee_id PK, FK "На кого"
+        moment followed_at "Подписался"
+        moment unfollowed_at "Отписался"
+    }
+    collections {
+        int id PK "Подборка — по созданию"
+        int user_id FK "Автор"
+        text title "Название"
+        bool is_public "Открыта всем"
+        moment created_at "Создана"
+    }
+    collection_items {
+        int collection_id PK, FK "Подборка"
+        int movie_id PK, FK "Фильм"
+        smallint position "Место в подборке, с 1"
+        moment added_at "Добавлен"
+    }
+    tags {
+        int id PK "Тег"
+        text name "Тег"
+    }
+    movie_tags {
+        int user_id PK, FK "Пользователь"
+        int movie_id PK, FK "Фильм"
+        int tag_id PK, FK "Тег"
+        moment tagged_at "Момент"
+    }
+    people ||--o{ actors : "id"
+    people ||--o{ directors : "id"
     actors ||--o{ roles : "actor_id"
     movies ||--o{ roles : "movie_id"
     directors ||--o{ movies_directors : "director_id"
@@ -62,3 +297,48 @@ erDiagram
     genres ||--o{ directors_genres : "genre_id"
     movies ||--o{ movies_countries : "movie_id"
     movies ||--o{ movies_languages : "movie_id"
+    people ||--o{ people_countries : "person_id"
+    movies ||--o{ movies_crew : "movie_id"
+    people ||--o{ movies_crew : "person_id"
+    movies ||--o{ movies_companies : "movie_id"
+    companies ||--o{ movies_companies : "company_id"
+    movies ||--o{ movies_series : "movie_id"
+    series ||--o{ movies_series : "series_id"
+    movies ||--o{ movies_sequels : "movie_id"
+    movies ||--o{ movies_sequels : "next_movie_id"
+    movies ||--o{ movies_awards : "movie_id"
+    awards ||--o{ movies_awards : "award_id"
+    movies ||--o{ movies_releases : "movie_id"
+    movies ||--o{ movies_titles : "movie_id"
+    movies ||--o{ movies_locations : "movie_id"
+    plans ||--o{ plan_prices : "plan_id"
+    users |o--o{ users : "referrer_id"
+    promo_codes |o--o{ users : "promo_code_id"
+    users ||--o{ devices : "user_id"
+    users ||--o{ subscriptions : "user_id"
+    plans ||--o{ subscriptions : "plan_id"
+    users ||--o{ payments : "user_id"
+    subscriptions |o--o{ payments : "subscription_id"
+    purchases |o--o{ payments : "purchase_id"
+    movies ||--o{ catalog : "movie_id"
+    users ||--o{ purchases : "user_id"
+    movies ||--o{ purchases : "movie_id"
+    users ||--o{ views : "user_id"
+    devices ||--o{ views : "device_id"
+    movies ||--o{ views : "movie_id"
+    users ||--o{ ratings : "user_id"
+    movies ||--o{ ratings : "movie_id"
+    users ||--o{ reviews : "user_id"
+    movies ||--o{ reviews : "movie_id"
+    reviews ||--o{ review_votes : "review_id"
+    users ||--o{ review_votes : "user_id"
+    users ||--o{ watchlist : "user_id"
+    movies ||--o{ watchlist : "movie_id"
+    users ||--o{ follows : "follower_id"
+    users ||--o{ follows : "followee_id"
+    users ||--o{ collections : "user_id"
+    collections ||--o{ collection_items : "collection_id"
+    movies ||--o{ collection_items : "movie_id"
+    users ||--o{ movie_tags : "user_id"
+    movies ||--o{ movie_tags : "movie_id"
+    tags ||--o{ movie_tags : "tag_id"

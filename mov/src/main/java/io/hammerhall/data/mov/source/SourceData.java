@@ -41,6 +41,21 @@ import java.util.TreeSet;
  * @param countries     {@code countries.csv}: элемент страны → коды ISO
  * @param languages     {@code languages.csv}: элемент языка → коды ISO
  * @param characters    {@code characters.csv}: персонаж → метки {@code en}, {@code mul}
+ * @param datesExtra    {@code film_dates_extra.csv}: свойство ({@link #YEAR_FALLBACK}) → фильм → его утверждения
+ * @param labelsAll     {@code film_labels_all.csv}: все метки фильма без метки из {@link Wikidata#LABEL_LANGS} и без
+ *                      P1476 — язык и текст (только годные для TSV)
+ * @param releases      {@code film_releases.csv}: P577 фильма с местом публикации P291
+ * @param crew          {@code film_crew.csv}: съёмочная группа фильма по {@link #CREW_PROPS}
+ * @param links2        {@code film_links2.csv}: студии, прокатчики, места съёмок, предыдущий и следующий фильм
+ * @param series        {@code film_series.csv}: серии P179 фильма с P1545
+ * @param money         {@code film_money.csv}: бюджет P2130 и сборы P2142 фильма
+ * @param awards        {@code film_awards.csv}: награды P166 и номинации P1411 фильма с датой P585
+ * @param peopleDates   {@code people_dates.csv}: рождение P569 и смерть P570 человека
+ * @param peopleLinks   {@code people_links.csv}: место рождения P19 и гражданство P27 человека
+ * @param places        {@code places.csv}: место (значение P19, P915) → GeoNames ID (только у мест, где он есть)
+ * @param itemLabels    {@code item_labels.csv}: студия, прокатчик, серия, награда → метки {@code en}, {@code mul},
+ *                      {@code ru} (нет — {@code null})
+ * @param companies     {@code companies.csv}: студия или прокатчик → страна P17 (только у тех, где она есть)
  * @param stats         счётчики чтения (для журнала и манифеста)
  */
 public record SourceData(String snapshot, String fetchedAt, Map<Integer, Boolean> classes, Map<Integer, int[]> filmClasses,
@@ -49,7 +64,12 @@ public record SourceData(String snapshot, String fetchedAt, Map<Integer, Boolean
                          Map<Integer, int[]> genreParents, Map<Integer, Person> people, Map<Integer, String[]> peopleLabels,
                          Map<Integer, PersonNames> peopleNames, Map<Integer, NameItem> nameItems,
                          Map<Integer, Codes> countries, Map<Integer, Codes> languages, Map<Integer, String[]> characters,
-                         Map<String, Long> stats) {
+                         Map<String, Map<Integer, List<DateStmt>>> datesExtra, Map<Integer, List<Title>> labelsAll,
+                         Map<Integer, List<PlaceDate>> releases, Map<Integer, Crew> crew, Map<Integer, Links2> links2,
+                         Map<Integer, List<SeriesRef>> series, Map<Integer, List<MoneyStmt>> money,
+                         Map<Integer, List<AwardStmt>> awards, Map<Integer, LifeDates> peopleDates,
+                         Map<Integer, PersonLinks> peopleLinks, Map<Integer, Integer> places, Map<Integer, String[]> itemLabels,
+                         Map<Integer, Integer> companies, Map<String, Long> stats) {
 
     public static final String FETCH = "fetch.json";
     public static final String WD = "wikidata/";
@@ -60,11 +80,40 @@ public record SourceData(String snapshot, String fetchedAt, Map<Integer, Boolean
             GENRE_ITEMS = WD + "genre_items", PEOPLE = WD + "people", PEOPLE_LABELS = WD + "people_labels",
             PEOPLE_NAMES = WD + "people_names", NAME_ITEMS = WD + "name_items", COUNTRIES = WD + "countries",
             LANGUAGES = WD + "languages", CHARACTERS = WD + "characters";
+    /** Таблицы снимка v2 ({@code mov-source-20261124} и новее): без любой из них снимок не читается. */
+    public static final String FILM_DATES_EXTRA = WD + "film_dates_extra", FILM_LABELS_ALL = WD + "film_labels_all",
+            FILM_RELEASES = WD + "film_releases", FILM_CREW = WD + "film_crew", FILM_LINKS2 = WD + "film_links2",
+            FILM_SERIES = WD + "film_series", FILM_MONEY = WD + "film_money", FILM_AWARDS = WD + "film_awards",
+            PEOPLE_DATES = WD + "people_dates", PEOPLE_LINKS = WD + "people_links", PLACES = WD + "places",
+            ITEM_LABELS = WD + "item_labels", COMPANIES = WD + "companies";
+    /** Таблицы, которые есть только в снимке v2. */
+    public static final List<String> TABLES_V2 = List.of(FILM_DATES_EXTRA, FILM_LABELS_ALL, FILM_RELEASES, FILM_CREW,
+            FILM_LINKS2, FILM_SERIES, FILM_MONEY, FILM_AWARDS, PEOPLE_DATES, PEOPLE_LINKS, PLACES, ITEM_LABELS, COMPANIES);
+    /** Все таблицы снимка — по порядку чтения. */
+    public static final List<String> TABLES = java.util.stream.Stream.concat(java.util.stream.Stream.of(CLASSES, FILMS, FILM_DATES,
+            FILM_LABELS, FILM_TITLES, FILM_LINKS, FILM_DURATIONS, FILM_SIGNALS, FILM_CAST, GENRE_ITEMS, PEOPLE, PEOPLE_LABELS,
+            PEOPLE_NAMES, NAME_ITEMS, COUNTRIES, LANGUAGES, CHARACTERS), TABLES_V2.stream()).toList();
 
     /** Свойства {@code film_links}: жанр, режиссёр, страна, язык. */
     public static final String P136 = "P136", P57 = "P57", P495 = "P495", P364 = "P364";
     /** Свойства {@code film_cast}: актёр, актёр озвучивания. */
     public static final String P161 = "P161", P725 = "P725";
+    /** Свойства {@code film_dates_extra}: первый показ, создание, дата производства. */
+    public static final String P1191 = "P1191", P571 = "P571", P2754 = "P2754";
+    /** Запасные свойства года фильма — по очереди, если по P577 года нет. */
+    public static final List<String> YEAR_FALLBACK = List.of(P1191, P571, P2754);
+    /** Свойства {@code film_crew}: сценарист, композитор, оператор, продюсер, монтажёр — по этому порядку. */
+    public static final List<String> CREW_PROPS = List.of("P58", "P86", "P344", "P162", "P1040");
+    /** Свойства {@code film_links2}: студия, прокатчик, место съёмок, предыдущий фильм, следующий фильм. */
+    public static final String P272 = "P272", P750 = "P750", P915 = "P915", P155 = "P155", P156 = "P156";
+    /** Свойства {@code film_money}: бюджет, сборы. */
+    public static final String P2130 = "P2130", P2142 = "P2142";
+    /** Свойства {@code film_awards}: награда, номинация. */
+    public static final String P166 = "P166", P1411 = "P1411";
+    /** Свойства {@code people_dates}: рождение, смерть. */
+    public static final String P569 = "P569", P570 = "P570";
+    /** Свойства {@code people_links}: место рождения, гражданство. */
+    public static final String P19 = "P19", P27 = "P27";
 
     /**
      * Утверждение P577: дата ({@code year} со знаком; {@code month}, {@code day} — как в записи сервиса), точность,
@@ -166,12 +215,71 @@ public record SourceData(String snapshot, String fetchedAt, Map<Integer, Boolean
         }
     }
 
+    /** Утверждение P577 с местом публикации P291 ({@code film_releases}): место — номер элемента. */
+    public record PlaceDate(int place, DateStmt date) {
+    }
+
+    /** Съёмочная группа фильма: люди по свойствам {@link #CREW_PROPS} (по тому же порядку), номера по возрастанию. */
+    public record Crew(int[][] byProp) {
+        public static final Crew NONE = new Crew(new int[CREW_PROPS.size()][0]);
+
+        /** Люди свойства {@code CREW_PROPS.get(i)}. */
+        public int[] of(int i) {
+            return byProp[i];
+        }
+    }
+
+    /** Связи фильма из {@code film_links2} — номера элементов по возрастанию, без повторов. */
+    public record Links2(int[] studios, int[] distributors, int[] locations, int[] previous, int[] next) {
+        public static final Links2 NONE = new Links2(new int[0], new int[0], new int[0], new int[0], new int[0]);
+    }
+
+    /** Серия фильма P179 и номер в ней P1545 (строкой как есть; нет — {@code null}). */
+    public record SeriesRef(int series, String ordinal) {
+    }
+
+    /**
+     * Сумма P2130 (бюджет) или P2142 (сборы): {@code boxOffice} — сборы; сумма как есть; валюта — номер элемента
+     * ({@code 0} — нет); ранг {@code preferred} (иначе {@code normal}).
+     */
+    public record MoneyStmt(boolean boxOffice, BigDecimal amount, int unit, boolean preferred) {
+    }
+
+    /** Награда P166 ({@code won}) или номинация P1411; дата P585 ({@code null} — нет или не разобрать). */
+    public record AwardStmt(int award, boolean won, DateStmt date) {
+    }
+
+    /** Утверждения P569 (рождение) и P570 (смерть) человека. */
+    public record LifeDates(List<DateStmt> birth, List<DateStmt> death) {
+        public static final LifeDates NONE = new LifeDates(List.of(), List.of());
+    }
+
+    /** Места рождения P19 и гражданство P27 человека — номера элементов по возрастанию, без повторов. */
+    public record PersonLinks(int[] birthPlaces, int[] citizenships) {
+        public static final PersonLinks NONE = new PersonLinks(new int[0], new int[0]);
+    }
+
+    /** Метки элемента {@code item_labels}: номер языка в массиве. */
+    public static final int ITEM_EN = 0, ITEM_MUL = 1, ITEM_RU = 2;
+    static final List<String> ITEM_LANGS = List.of("en", "mul", "ru");
+
     // ---------------------------------------------------------------- чтение
 
-    /** Прочитать снимок. */
+    /**
+     * Прочитать снимок. Сначала — все ли таблицы на месте ({@link #TABLES}): нет хоть одной (например, снимок v1 без
+     * файлов v2) — ошибка с её именем, до чтения больших файлов.
+     */
     public static SourceData read(Path zip) throws IOException {
         Map<String, Long> stats = new LinkedHashMap<>();
         try (Snapshot s = Snapshot.open(zip)) {
+            for (String t : TABLES) {
+                try {
+                    s.csvName(t);
+                } catch (IOException e) {
+                    if (!TABLES_V2.contains(t)) throw e;
+                    throw new IOException(e.getMessage() + " — таблица снимка v2: снимок старше v2, его надо снять заново", e);
+                }
+            }
             Object fj = Json.parse(s.text(FETCH));
             if (!(fj instanceof Map<?, ?> fetch)) throw new IOException(FETCH + ": не объект JSON");
             String snapshot = String.valueOf(fetch.get("snapshot"));
@@ -369,10 +477,246 @@ public record SourceData(String snapshot, String fetchedAt, Map<Integer, Boolean
                         Wikidata.usable(mul) ? mul : null});
             });
 
+            // ---- снимок v2: фильмы
+            Map<String, Map<Integer, List<DateStmt>>> datesExtra = new LinkedHashMap<>();
+            for (String p : YEAR_FALLBACK) datesExtra.put(p, new HashMap<>());
+            each(s, FILM_DATES_EXTRA, List.of("film", "prop", "date", "precision", "rank"), stats, (t, r) -> {
+                int f = Wikidata.q(t.get(r, "film"));
+                if (!filmClasses.containsKey(f)) {
+                    skipped[0]++;
+                    return;
+                }
+                Map<Integer, List<DateStmt>> m = datesExtra.get(t.get(r, "prop"));
+                if (m == null) throw t.bad("film_dates_extra: свойство «" + t.get(r, "prop") + "» — не " + String.join(", ", YEAR_FALLBACK));
+                DateStmt d = date(t.get(r, "date"), t.get(r, "precision"), t.get(r, "rank"));
+                if (d == null) {
+                    stats.merge("film_dates_extra_unreadable", 1L, Long::sum);
+                    return;
+                }
+                m.computeIfAbsent(f, k -> new ArrayList<>(1)).add(d);
+            });
+
+            Map<Integer, List<Title>> labelsAll = new HashMap<>();
+            each(s, FILM_LABELS_ALL, List.of("film", "lang", "label"), stats, (t, r) -> {
+                int f = Wikidata.q(t.get(r, "film"));
+                if (!filmClasses.containsKey(f)) {
+                    skipped[0]++;
+                    return;
+                }
+                String lang = t.get(r, "lang").strip(), label = t.get(r, "label");
+                if (Wikidata.usable(lang) && Wikidata.usable(label)) {
+                    labelsAll.computeIfAbsent(f, k -> new ArrayList<>(1)).add(new Title(lang, label));
+                }
+            });
+
+            Map<Integer, List<PlaceDate>> releases = new HashMap<>();
+            each(s, FILM_RELEASES, List.of("film", "date", "precision", "place"), stats, (t, r) -> {
+                int f = Wikidata.q(t.get(r, "film"));
+                if (!filmClasses.containsKey(f)) {
+                    skipped[0]++;
+                    return;
+                }
+                int place = Wikidata.qOrZero(t.get(r, "place"));
+                DateStmt d = date(t.get(r, "date"), t.get(r, "precision"), "normal");
+                if (place == 0 || d == null) {
+                    stats.merge("film_releases_unreadable", 1L, Long::sum);
+                    return;
+                }
+                releases.computeIfAbsent(f, k -> new ArrayList<>(1)).add(new PlaceDate(place, d));
+            });
+
+            Map<Integer, IntList[]> cr = new HashMap<>();
+            each(s, FILM_CREW, List.of("film", "prop", "person"), stats, (t, r) -> {
+                int f = Wikidata.q(t.get(r, "film"));
+                if (!filmClasses.containsKey(f)) {
+                    skipped[0]++;
+                    return;
+                }
+                int slot = CREW_PROPS.indexOf(t.get(r, "prop"));
+                if (slot < 0) throw t.bad("film_crew: свойство «" + t.get(r, "prop") + "» — не " + String.join(", ", CREW_PROPS));
+                add(cr, f, slot, CREW_PROPS.size(), Wikidata.qOrZero(t.get(r, "person")), stats, "film_crew_not_items");
+            });
+            Map<Integer, Crew> crew = new HashMap<>();
+            for (Map.Entry<Integer, IntList[]> e : cr.entrySet()) {
+                int[][] a = new int[CREW_PROPS.size()][];
+                for (int i = 0; i < a.length; i++) a[i] = IntList.sorted(e.getValue()[i]);
+                crew.put(e.getKey(), new Crew(a));
+            }
+            cr.clear();
+
+            Map<Integer, IntList[]> l2 = new HashMap<>();
+            each(s, FILM_LINKS2, List.of("film", "prop", "value"), stats, (t, r) -> {
+                int f = Wikidata.q(t.get(r, "film"));
+                if (!filmClasses.containsKey(f)) {
+                    skipped[0]++;
+                    return;
+                }
+                int slot = switch (t.get(r, "prop")) {
+                    case P272 -> 0;
+                    case P750 -> 1;
+                    case P915 -> 2;
+                    case P155 -> 3;
+                    case P156 -> 4;
+                    default -> throw t.bad("film_links2: свойство «" + t.get(r, "prop") + "» — не P272, P750, P915, P155, P156");
+                };
+                add(l2, f, slot, 5, Wikidata.qOrZero(t.get(r, "value")), stats, "film_links2_not_items");
+            });
+            Map<Integer, Links2> links2 = new HashMap<>();
+            for (Map.Entry<Integer, IntList[]> e : l2.entrySet()) {
+                IntList[] a = e.getValue();
+                links2.put(e.getKey(), new Links2(IntList.sorted(a[0]), IntList.sorted(a[1]), IntList.sorted(a[2]),
+                        IntList.sorted(a[3]), IntList.sorted(a[4])));
+            }
+            l2.clear();
+
+            Map<Integer, List<SeriesRef>> series = new HashMap<>();
+            each(s, FILM_SERIES, List.of("film", "series", "ordinal"), stats, (t, r) -> {
+                int f = Wikidata.q(t.get(r, "film"));
+                if (!filmClasses.containsKey(f)) {
+                    skipped[0]++;
+                    return;
+                }
+                int x = Wikidata.qOrZero(t.get(r, "series"));
+                if (x == 0) {
+                    stats.merge("film_series_not_items", 1L, Long::sum);
+                    return;
+                }
+                String o = t.get(r, "ordinal");
+                series.computeIfAbsent(f, k -> new ArrayList<>(1)).add(new SeriesRef(x, o.isEmpty() ? null : o));
+            });
+
+            Map<Integer, List<MoneyStmt>> money = new HashMap<>();
+            each(s, FILM_MONEY, List.of("film", "prop", "amount", "unit", "rank"), stats, (t, r) -> {
+                int f = Wikidata.q(t.get(r, "film"));
+                if (!filmClasses.containsKey(f)) {
+                    skipped[0]++;
+                    return;
+                }
+                String prop = t.get(r, "prop");
+                if (!prop.equals(P2130) && !prop.equals(P2142)) throw t.bad("film_money: свойство «" + prop + "» — не P2130, P2142");
+                String rk = t.get(r, "rank").strip();
+                BigDecimal amount;
+                try {
+                    amount = new BigDecimal(t.get(r, "amount").strip());
+                } catch (NumberFormatException e) {
+                    amount = null;
+                }
+                if (amount == null || (!rk.equals("preferred") && !rk.equals("normal"))) {
+                    stats.merge("film_money_unreadable", 1L, Long::sum);
+                    return;
+                }
+                money.computeIfAbsent(f, k -> new ArrayList<>(1)).add(new MoneyStmt(prop.equals(P2142), amount,
+                        Wikidata.qOrZero(t.get(r, "unit")), rk.equals("preferred")));
+            });
+
+            Map<Integer, List<AwardStmt>> awards = new HashMap<>();
+            each(s, FILM_AWARDS, List.of("film", "prop", "award", "date", "precision"), stats, (t, r) -> {
+                int f = Wikidata.q(t.get(r, "film"));
+                if (!filmClasses.containsKey(f)) {
+                    skipped[0]++;
+                    return;
+                }
+                String prop = t.get(r, "prop");
+                if (!prop.equals(P166) && !prop.equals(P1411)) throw t.bad("film_awards: свойство «" + prop + "» — не P166, P1411");
+                int a = Wikidata.qOrZero(t.get(r, "award"));
+                if (a == 0) {
+                    stats.merge("film_awards_not_items", 1L, Long::sum);
+                    return;
+                }
+                String text = t.get(r, "date");
+                DateStmt d = text.isBlank() ? null : date(text, t.get(r, "precision"), "normal");
+                if (!text.isBlank() && d == null) stats.merge("film_awards_dates_unreadable", 1L, Long::sum);
+                awards.computeIfAbsent(f, k -> new ArrayList<>(1)).add(new AwardStmt(a, prop.equals(P166), d));
+            });
+            stats.put("film_rows_not_in_films", skipped[0]);
+
+            // ---- снимок v2: люди, места, студии, серии, награды
+            Map<Integer, List<List<DateStmt>>> pd = new HashMap<>();
+            each(s, PEOPLE_DATES, List.of("person", "prop", "date", "precision", "rank"), stats, (t, r) -> {
+                String prop = t.get(r, "prop");
+                if (!prop.equals(P569) && !prop.equals(P570)) throw t.bad("people_dates: свойство «" + prop + "» — не P569, P570");
+                DateStmt d = date(t.get(r, "date"), t.get(r, "precision"), t.get(r, "rank"));
+                if (d == null) {
+                    stats.merge("people_dates_unreadable", 1L, Long::sum);
+                    return;
+                }
+                pd.computeIfAbsent(Wikidata.q(t.get(r, "person")), k -> List.of(new ArrayList<>(1), new ArrayList<>(1)))
+                        .get(prop.equals(P569) ? 0 : 1).add(d);
+            });
+            Map<Integer, LifeDates> peopleDates = new HashMap<>();
+            for (Map.Entry<Integer, List<List<DateStmt>>> e : pd.entrySet()) {
+                peopleDates.put(e.getKey(), new LifeDates(List.copyOf(e.getValue().get(0)), List.copyOf(e.getValue().get(1))));
+            }
+            pd.clear();
+
+            Map<Integer, IntList[]> pl = new HashMap<>();
+            each(s, PEOPLE_LINKS, List.of("person", "prop", "value"), stats, (t, r) -> {
+                int slot = switch (t.get(r, "prop")) {
+                    case P19 -> 0;
+                    case P27 -> 1;
+                    default -> throw t.bad("people_links: свойство «" + t.get(r, "prop") + "» — не P19, P27");
+                };
+                add(pl, Wikidata.q(t.get(r, "person")), slot, 2, Wikidata.qOrZero(t.get(r, "value")), stats, "people_links_not_items");
+            });
+            Map<Integer, PersonLinks> peopleLinks = new HashMap<>();
+            for (Map.Entry<Integer, IntList[]> e : pl.entrySet()) {
+                peopleLinks.put(e.getKey(), new PersonLinks(IntList.sorted(e.getValue()[0]), IntList.sorted(e.getValue()[1])));
+            }
+            pl.clear();
+
+            Map<Integer, Integer> places = new HashMap<>();
+            each(s, PLACES, List.of("item", "geonames", "country", "label_en"), stats, (t, r) -> {
+                int item = Wikidata.q(t.get(r, "item"));
+                String g = t.get(r, "geonames").strip();
+                if (g.isEmpty()) return;
+                int id = geonames(g);
+                if (id == 0) {
+                    stats.merge("places_geonames_unreadable", 1L, Long::sum);
+                    return;
+                }
+                places.merge(item, id, Math::min);
+            });
+
+            Map<Integer, String[]> itemLabels = new HashMap<>();
+            each(s, ITEM_LABELS, List.of("item", "lang", "label"), stats, (t, r) -> {
+                int i = ITEM_LANGS.indexOf(t.get(r, "lang").strip());
+                String label = t.get(r, "label");
+                if (i < 0 || !Wikidata.usable(label)) return;
+                String[] a = itemLabels.computeIfAbsent(Wikidata.q(t.get(r, "item")), k -> new String[ITEM_LANGS.size()]);
+                if (a[i] == null || Snapshot.compareBytes(label, a[i]) < 0) a[i] = label;
+            });
+
+            Map<Integer, Integer> companies = new HashMap<>();
+            each(s, COMPANIES, List.of("item", "country"), stats, (t, r) -> {
+                int c = Wikidata.qOrZero(t.get(r, "country"));
+                if (c != 0) companies.merge(Wikidata.q(t.get(r, "item")), c, Math::min);
+            });
+
             return new SourceData(snapshot, fetchedAt, Collections.unmodifiableMap(classes), filmClasses, dates, filmLabels,
                     titles, links, seconds, signals, cast, genreParents, people, peopleLabels, peopleNames, nameItems,
-                    countries, languages, characters, stats);
+                    countries, languages, characters, datesExtra, labelsAll, releases, crew, links2, series, money, awards,
+                    peopleDates, peopleLinks, places, itemLabels, companies, stats);
         }
+    }
+
+    /** Значение-элемент в ячейку {@code slot} из {@code slots}; не элемент ({@code 0}) — мимо, со счётчиком {@code stat}. */
+    private static void add(Map<Integer, IntList[]> m, int key, int slot, int slots, int value, Map<String, Long> stats,
+                            String stat) {
+        if (value == 0) {
+            stats.merge(stat, 1L, Long::sum);
+            return;
+        }
+        IntList[] a = m.computeIfAbsent(key, k -> new IntList[slots]);
+        if (a[slot] == null) a[slot] = new IntList();
+        a[slot].add(value);
+    }
+
+    /** GeoNames ID (P1566): целое без знака, 1…{@code Integer.MAX_VALUE}; иначе {@code 0}. */
+    static int geonames(String s) {
+        if (s.isEmpty() || s.length() > 10) return 0;
+        for (int i = 0; i < s.length(); i++) if (s.charAt(i) < '0' || s.charAt(i) > '9') return 0;
+        long v = Long.parseLong(s);
+        return v >= 1 && v <= Integer.MAX_VALUE ? (int) v : 0;
     }
 
     /** Строка файла снимка. */

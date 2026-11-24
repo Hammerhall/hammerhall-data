@@ -1,0 +1,18 @@
+// mov-data-v1 — группа «Люди»: все поля её таблиц; таблицы других групп, на которые они ссылаются, — серой рамкой.
+// Сгенерировано из описания схемы; руками не править. Картинка (SVG): tools/schema-svg.sh mov.
+digraph schema {
+  graph [rankdir=LR, fontname="DejaVu Sans", fontsize=13, nodesep=0.35, ranksep=0.9, pad=0.3, splines=true, newrank=true];
+  node [shape=plain, fontname="DejaVu Sans", fontsize=11];
+  edge [dir=both, arrowtail=none, arrowhead=crow, arrowsize=0.9, color="#333333"];
+  subgraph "cluster_people" {
+    label=<<B>Люди</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "people" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>people</B><BR/>Люди</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="id"><FONT FACE="DejaVu Sans Mono"># </FONT>id</TD></TR><TR><TD ALIGN="LEFT" PORT="first_name"><FONT FACE="DejaVu Sans Mono">○ </FONT>first_name</TD></TR><TR><TD ALIGN="LEFT" PORT="last_name"><FONT FACE="DejaVu Sans Mono">∗ </FONT>last_name</TD></TR><TR><TD ALIGN="LEFT" PORT="name_ru"><FONT FACE="DejaVu Sans Mono">○ </FONT>name_ru</TD></TR><TR><TD ALIGN="LEFT" PORT="gender"><FONT FACE="DejaVu Sans Mono">○ </FONT>gender</TD></TR><TR><TD ALIGN="LEFT" PORT="birth_date"><FONT FACE="DejaVu Sans Mono">○ </FONT>birth_date</TD></TR><TR><TD ALIGN="LEFT" PORT="birth_year"><FONT FACE="DejaVu Sans Mono">○ </FONT>birth_year</TD></TR><TR><TD ALIGN="LEFT" PORT="death_date"><FONT FACE="DejaVu Sans Mono">○ </FONT>death_date</TD></TR><TR><TD ALIGN="LEFT" PORT="death_year"><FONT FACE="DejaVu Sans Mono">○ </FONT>death_year</TD></TR><TR><TD ALIGN="LEFT" PORT="birth_city_id"><FONT FACE="DejaVu Sans Mono">○ </FONT>birth_city_id</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
+    "people_countries" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>people_countries</B><BR/>Гражданство людей</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="person_id"><FONT FACE="DejaVu Sans Mono"># </FONT>person_id</TD></TR><TR><TD ALIGN="LEFT" PORT="country_code"><FONT FACE="DejaVu Sans Mono"># </FONT>country_code</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
+    "movies_crew" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_crew</B><BR/>Съёмочные группы</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="movie_id"><FONT FACE="DejaVu Sans Mono"># </FONT>movie_id</TD></TR><TR><TD ALIGN="LEFT" PORT="person_id"><FONT FACE="DejaVu Sans Mono"># </FONT>person_id</TD></TR><TR><TD ALIGN="LEFT" PORT="job"><FONT FACE="DejaVu Sans Mono"># </FONT>job</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
+  }
+  "movies" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#999999" BGCOLOR="white"><TR><TD><FONT COLOR="#666666">movies<BR/>Фильмы</FONT></TD></TR></TABLE>>];
+  "people":"id" -> "people_countries":"person_id";
+  "movies" -> "movies_crew":"movie_id";
+  "people":"id" -> "movies_crew":"person_id";
+}

@@ -1,4 +1,4 @@
-// mov-data-v1 — схема: все таблицы со всеми полями, группы — рамками.
+// mov-data-v1 — карта схемы: таблицы по группам без полей, связи между таблицами (одна на пару; в справочные группы — не рисуются).
 // Сгенерировано из описания схемы; руками не править. Картинка (SVG): tools/schema-svg.sh mov.
 digraph schema {
   graph [rankdir=LR, fontname="DejaVu Sans", fontsize=13, nodesep=0.35, ranksep=0.9, pad=0.3, splines=true, newrank=true];
@@ -7,25 +7,125 @@ digraph schema {
   subgraph "cluster_cinema" {
     label=<<B>Кино</B>>;
     style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
-    "genres" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>genres</B><BR/>Жанры</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="id"><FONT FACE="DejaVu Sans Mono"># </FONT>id</TD></TR><TR><TD ALIGN="LEFT" PORT="name"><FONT FACE="DejaVu Sans Mono">∗ </FONT>name</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
-    "movies" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies</B><BR/>Фильмы</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="id"><FONT FACE="DejaVu Sans Mono"># </FONT>id</TD></TR><TR><TD ALIGN="LEFT" PORT="title"><FONT FACE="DejaVu Sans Mono">∗ </FONT>title</TD></TR><TR><TD ALIGN="LEFT" PORT="title_ru"><FONT FACE="DejaVu Sans Mono">○ </FONT>title_ru</TD></TR><TR><TD ALIGN="LEFT" PORT="year"><FONT FACE="DejaVu Sans Mono">∗ </FONT>year</TD></TR><TR><TD ALIGN="LEFT" PORT="release_date"><FONT FACE="DejaVu Sans Mono">○ </FONT>release_date</TD></TR><TR><TD ALIGN="LEFT" PORT="runtime"><FONT FACE="DejaVu Sans Mono">○ </FONT>runtime</TD></TR><TR><TD ALIGN="LEFT" PORT="rank"><FONT FACE="DejaVu Sans Mono">∗ </FONT>rank</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
-    "actors" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>actors</B><BR/>Актёры</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="id"><FONT FACE="DejaVu Sans Mono"># </FONT>id</TD></TR><TR><TD ALIGN="LEFT" PORT="first_name"><FONT FACE="DejaVu Sans Mono">○ </FONT>first_name</TD></TR><TR><TD ALIGN="LEFT" PORT="last_name"><FONT FACE="DejaVu Sans Mono">∗ </FONT>last_name</TD></TR><TR><TD ALIGN="LEFT" PORT="gender"><FONT FACE="DejaVu Sans Mono">∗ </FONT>gender</TD></TR><TR><TD ALIGN="LEFT" PORT="name_ru"><FONT FACE="DejaVu Sans Mono">○ </FONT>name_ru</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
-    "directors" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>directors</B><BR/>Режиссёры</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="id"><FONT FACE="DejaVu Sans Mono"># </FONT>id</TD></TR><TR><TD ALIGN="LEFT" PORT="first_name"><FONT FACE="DejaVu Sans Mono">○ </FONT>first_name</TD></TR><TR><TD ALIGN="LEFT" PORT="last_name"><FONT FACE="DejaVu Sans Mono">∗ </FONT>last_name</TD></TR><TR><TD ALIGN="LEFT" PORT="name_ru"><FONT FACE="DejaVu Sans Mono">○ </FONT>name_ru</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
-    "roles" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>roles</B><BR/>Роли</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="actor_id"><FONT FACE="DejaVu Sans Mono"># </FONT>actor_id</TD></TR><TR><TD ALIGN="LEFT" PORT="movie_id"><FONT FACE="DejaVu Sans Mono"># </FONT>movie_id</TD></TR><TR><TD ALIGN="LEFT" PORT="role"><FONT FACE="DejaVu Sans Mono">○ </FONT>role</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
-    "movies_directors" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_directors</B><BR/>Режиссёры фильмов</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="director_id"><FONT FACE="DejaVu Sans Mono"># </FONT>director_id</TD></TR><TR><TD ALIGN="LEFT" PORT="movie_id"><FONT FACE="DejaVu Sans Mono"># </FONT>movie_id</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
-    "movies_genres" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_genres</B><BR/>Жанры фильмов</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="movie_id"><FONT FACE="DejaVu Sans Mono"># </FONT>movie_id</TD></TR><TR><TD ALIGN="LEFT" PORT="genre_id"><FONT FACE="DejaVu Sans Mono"># </FONT>genre_id</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
-    "directors_genres" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>directors_genres</B><BR/>Жанры режиссёров</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="director_id"><FONT FACE="DejaVu Sans Mono"># </FONT>director_id</TD></TR><TR><TD ALIGN="LEFT" PORT="genre_id"><FONT FACE="DejaVu Sans Mono"># </FONT>genre_id</TD></TR><TR><TD ALIGN="LEFT" PORT="prob"><FONT FACE="DejaVu Sans Mono">∗ </FONT>prob</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
-    "movies_countries" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_countries</B><BR/>Страны фильмов</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="movie_id"><FONT FACE="DejaVu Sans Mono"># </FONT>movie_id</TD></TR><TR><TD ALIGN="LEFT" PORT="country_code"><FONT FACE="DejaVu Sans Mono"># </FONT>country_code</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
-    "movies_languages" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_languages</B><BR/>Языки фильмов</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="movie_id"><FONT FACE="DejaVu Sans Mono"># </FONT>movie_id</TD></TR><TR><TD ALIGN="LEFT" PORT="language_code"><FONT FACE="DejaVu Sans Mono"># </FONT>language_code</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
+    "genres" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>genres</B><BR/>Жанры</TD></TR></TABLE>>];
+    "movies" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies</B><BR/>Фильмы</TD></TR></TABLE>>];
+    "actors" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>actors</B><BR/>Актёры</TD></TR></TABLE>>];
+    "directors" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>directors</B><BR/>Режиссёры</TD></TR></TABLE>>];
+    "roles" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>roles</B><BR/>Роли</TD></TR></TABLE>>];
+    "movies_directors" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_directors</B><BR/>Режиссёры фильмов</TD></TR></TABLE>>];
+    "movies_genres" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_genres</B><BR/>Жанры фильмов</TD></TR></TABLE>>];
+    "directors_genres" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>directors_genres</B><BR/>Жанры режиссёров</TD></TR></TABLE>>];
+    "movies_countries" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_countries</B><BR/>Страны фильмов</TD></TR></TABLE>>];
+    "movies_languages" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_languages</B><BR/>Языки фильмов</TD></TR></TABLE>>];
   }
-  "actors":"id" -> "roles":"actor_id";
-  "movies":"id" -> "roles":"movie_id";
-  "directors":"id" -> "movies_directors":"director_id";
-  "movies":"id" -> "movies_directors":"movie_id";
-  "movies":"id" -> "movies_genres":"movie_id";
-  "genres":"id" -> "movies_genres":"genre_id";
-  "directors":"id" -> "directors_genres":"director_id";
-  "genres":"id" -> "directors_genres":"genre_id";
-  "movies":"id" -> "movies_countries":"movie_id";
-  "movies":"id" -> "movies_languages":"movie_id";
+  subgraph "cluster_people" {
+    label=<<B>Люди</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "people" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>people</B><BR/>Люди</TD></TR></TABLE>>];
+    "people_countries" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>people_countries</B><BR/>Гражданство людей</TD></TR></TABLE>>];
+    "movies_crew" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_crew</B><BR/>Съёмочные группы</TD></TR></TABLE>>];
+  }
+  subgraph "cluster_studios" {
+    label=<<B>Студии и награды</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "companies" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>companies</B><BR/>Студии и прокатчики</TD></TR></TABLE>>];
+    "movies_companies" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_companies</B><BR/>Студии фильмов</TD></TR></TABLE>>];
+    "series" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>series</B><BR/>Серии</TD></TR></TABLE>>];
+    "movies_series" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_series</B><BR/>Фильмы в сериях</TD></TR></TABLE>>];
+    "movies_sequels" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_sequels</B><BR/>Продолжения</TD></TR></TABLE>>];
+    "awards" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>awards</B><BR/>Награды</TD></TR></TABLE>>];
+    "movies_awards" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_awards</B><BR/>Награды фильмов</TD></TR></TABLE>>];
+  }
+  subgraph "cluster_releases" {
+    label=<<B>Выход и названия</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "movies_releases" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_releases</B><BR/>Выход по странам</TD></TR></TABLE>>];
+    "movies_titles" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_titles</B><BR/>Названия фильмов</TD></TR></TABLE>>];
+    "movies_locations" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_locations</B><BR/>Места съёмок</TD></TR></TABLE>>];
+  }
+  subgraph "cluster_service" {
+    label=<<B>Сервис</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "plans" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>plans</B><BR/>Тарифы</TD></TR></TABLE>>];
+    "plan_prices" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>plan_prices</B><BR/>Цены тарифов</TD></TR></TABLE>>];
+    "promo_codes" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>promo_codes</B><BR/>Промокоды</TD></TR></TABLE>>];
+    "catalog" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>catalog</B><BR/>Каталог</TD></TR></TABLE>>];
+  }
+  subgraph "cluster_viewers" {
+    label=<<B>Зрители</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "users" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>users</B><BR/>Пользователи</TD></TR></TABLE>>];
+    "devices" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>devices</B><BR/>Устройства</TD></TR></TABLE>>];
+    "subscriptions" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>subscriptions</B><BR/>Подписки</TD></TR></TABLE>>];
+    "payments" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>payments</B><BR/>Оплаты</TD></TR></TABLE>>];
+    "purchases" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>purchases</B><BR/>Покупки</TD></TR></TABLE>>];
+    "views" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>views</B><BR/>Просмотры</TD></TR></TABLE>>];
+  }
+  subgraph "cluster_community" {
+    label=<<B>Сообщество</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "ratings" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>ratings</B><BR/>Оценки</TD></TR></TABLE>>];
+    "reviews" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>reviews</B><BR/>Рецензии</TD></TR></TABLE>>];
+    "review_votes" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>review_votes</B><BR/>Голоса за рецензии</TD></TR></TABLE>>];
+    "watchlist" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>watchlist</B><BR/>Списки «посмотреть»</TD></TR></TABLE>>];
+    "follows" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>follows</B><BR/>Подписки на людей</TD></TR></TABLE>>];
+    "collections" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>collections</B><BR/>Подборки</TD></TR></TABLE>>];
+    "collection_items" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>collection_items</B><BR/>Фильмы подборок</TD></TR></TABLE>>];
+    "tags" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>tags</B><BR/>Теги</TD></TR></TABLE>>];
+    "movie_tags" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movie_tags</B><BR/>Теги фильмов</TD></TR></TABLE>>];
+  }
+  "people" -> "actors";
+  "people" -> "directors";
+  "actors" -> "roles";
+  "movies" -> "roles";
+  "directors" -> "movies_directors";
+  "movies" -> "movies_directors";
+  "movies" -> "movies_genres";
+  "genres" -> "movies_genres";
+  "directors" -> "directors_genres";
+  "genres" -> "directors_genres";
+  "movies" -> "movies_countries";
+  "movies" -> "movies_languages";
+  "people" -> "people_countries";
+  "movies" -> "movies_crew";
+  "people" -> "movies_crew";
+  "movies" -> "movies_companies";
+  "companies" -> "movies_companies";
+  "movies" -> "movies_series";
+  "series" -> "movies_series";
+  "movies" -> "movies_sequels";
+  "movies" -> "movies_awards";
+  "awards" -> "movies_awards";
+  "movies" -> "movies_releases";
+  "movies" -> "movies_titles";
+  "movies" -> "movies_locations";
+  "plans" -> "plan_prices";
+  "promo_codes" -> "users" [style=dashed];
+  "users" -> "devices";
+  "users" -> "subscriptions";
+  "plans" -> "subscriptions";
+  "users" -> "payments";
+  "subscriptions" -> "payments" [style=dashed];
+  "purchases" -> "payments" [style=dashed];
+  "movies" -> "catalog";
+  "users" -> "purchases";
+  "movies" -> "purchases";
+  "users" -> "views";
+  "devices" -> "views";
+  "movies" -> "views";
+  "users" -> "ratings";
+  "movies" -> "ratings";
+  "users" -> "reviews";
+  "movies" -> "reviews";
+  "reviews" -> "review_votes";
+  "users" -> "review_votes";
+  "users" -> "watchlist";
+  "movies" -> "watchlist";
+  "users" -> "follows";
+  "users" -> "collections";
+  "collections" -> "collection_items";
+  "movies" -> "collection_items";
+  "users" -> "movie_tags";
+  "movies" -> "movie_tags";
+  "tags" -> "movie_tags";
 }

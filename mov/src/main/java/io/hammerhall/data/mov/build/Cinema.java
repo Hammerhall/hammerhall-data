@@ -24,12 +24,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Набор целиком — функция снимка источников, профиля, seed и списков исключений ({@link #build}): строки десяти таблиц в
- * порядке их ключей. Сначала собирается {@code full} — все фильмы, люди и роли (по нему считаются популярность и
- * рейтинг); профиль — первые фильмы по популярности, люди и связи — только по ним.
+ * Набор целиком — функция снимка источников, профиля, seed и списков исключений ({@link #build}): строки таблиц
+ * ({@code MovSchema.TABLES}). Сначала собирается {@code full} — все фильмы, люди и роли (по нему считаются
+ * популярность и рейтинг); профиль — первые фильмы по популярности, люди, связи и справочники (студии, серии,
+ * награды) — только по ним.
  */
 public final class Cinema {
-    public record Movie(int id, String title, String titleRu, int year, LocalDate releaseDate, Integer runtime, BigDecimal rank) {
+    public record Movie(int id, String title, String titleRu, int year, LocalDate releaseDate, Integer runtime, BigDecimal rank,
+                        Long budgetUsd, Long boxOfficeUsd) {
     }
 
     public record Actor(int id, String firstName, String lastName, String gender, String nameRu) {
@@ -41,45 +43,97 @@ public final class Cinema {
     public record Role(int actorId, int movieId, String role) {
     }
 
-    /** Пара id: {@code movies_directors} (режиссёр, фильм), {@code movies_genres} (фильм, жанр). */
+    /**
+     * Пара id: {@code movies_directors} (режиссёр, фильм), {@code movies_genres} (фильм, жанр),
+     * {@code movies_sequels} (фильм, следующий фильм), {@code movies_locations} (фильм, город).
+     */
     public record Pair(int a, int b) {
     }
 
     public record DirectorGenre(int directorId, int genreId, BigDecimal prob) {
     }
 
-    /** Код фильма: {@code movies_countries}, {@code movies_languages}. */
+    /** Код: {@code movies_countries}, {@code movies_languages} (фильм, код), {@code people_countries} (человек, код). */
     public record Code(int movieId, String code) {
     }
 
+    /** Человек {@code people}: актёр, режиссёр или член съёмочной группы фильма профиля. */
+    public record Person(int id, String firstName, String lastName, String nameRu, String gender, LocalDate birthDate,
+                         Integer birthYear, LocalDate deathDate, Integer deathYear, Integer birthCityId) {
+    }
+
+    /** Строка {@code movies_crew}: фильм, человек, должность ({@link Rules#CREW_JOBS}). */
+    public record CrewMember(int movieId, int personId, String job) {
+    }
+
+    /** Студия или прокатчик {@code companies}. */
+    public record Company(int id, String name, String nameRu, String countryCode) {
+    }
+
+    /** Строка {@code movies_companies}: роль — {@link Rules#PRODUCTION} или {@link Rules#DISTRIBUTION}. */
+    public record MovieCompany(int movieId, int companyId, String role) {
+    }
+
+    /** Элемент справочника с названием: {@code series}, {@code awards}. */
+    public record Item(int id, String name, String nameRu) {
+    }
+
+    public record MovieSeries(int movieId, int seriesId, Integer ordinal) {
+    }
+
+    public record MovieAward(int movieId, int awardId, boolean won, Integer year) {
+    }
+
+    /** Строка {@code movies_releases}: фильм, страна (ISO 3166-1 alpha-3), дата выхода в ней. */
+    public record Release(int movieId, String countryCode, LocalDate releaseDate) {
+    }
+
+    /** Строка {@code movies_titles}: фильм, язык метки Wikidata, название. */
+    public record Title(int movieId, String lang, String title) {
+    }
+
+    /** Строки всех таблиц профиля — копятся при сборке. */
+    private static final class Rows {
+        final List<Movie> movies = new ArrayList<>();
+        final List<Actor> actors = new ArrayList<>();
+        final List<Director> directors = new ArrayList<>();
+        final List<Role> roles = new ArrayList<>();
+        final List<Pair> moviesDirectors = new ArrayList<>(), moviesGenres = new ArrayList<>();
+        final List<DirectorGenre> directorsGenres = new ArrayList<>();
+        final List<Code> moviesCountries = new ArrayList<>(), moviesLanguages = new ArrayList<>();
+        final List<Person> people = new ArrayList<>();
+        final List<Code> peopleCountries = new ArrayList<>();
+        final List<CrewMember> crew = new ArrayList<>();
+        final List<Company> companies = new ArrayList<>();
+        final List<MovieCompany> moviesCompanies = new ArrayList<>();
+        final List<Item> series = new ArrayList<>();
+        final List<MovieSeries> moviesSeries = new ArrayList<>();
+        final List<Pair> sequels = new ArrayList<>();
+        final List<Item> awards = new ArrayList<>();
+        final List<MovieAward> moviesAwards = new ArrayList<>();
+        final List<Release> releases = new ArrayList<>();
+        final List<Title> titles = new ArrayList<>();
+        final List<Pair> locations = new ArrayList<>();
+    }
+
     private final Profile profile;
-    private final List<Movie> movies;
-    private final List<Actor> actors;
-    private final List<Director> directors;
-    private final List<Role> roles;
-    private final List<Pair> moviesDirectors, moviesGenres;
-    private final List<DirectorGenre> directorsGenres;
-    private final List<Code> moviesCountries, moviesLanguages;
-    private final Map<Names.GenderPath, Long> genderPaths;
+    private final Rows rows;
+    private final Map<Names.GenderPath, Long> genderPaths, peopleGenderPaths;
+    private final Map<Rules.YearPath, Long> yearPaths;
+    private final Map<Rules.TitlePath, Long> titlePaths;
     private final BigDecimal femaleShare;
     private final int moviesFull;
     private final Map<String, Long> stats;
 
-    private Cinema(Profile profile, List<Movie> movies, List<Actor> actors, List<Director> directors, List<Role> roles,
-                   List<Pair> moviesDirectors, List<Pair> moviesGenres, List<DirectorGenre> directorsGenres,
-                   List<Code> moviesCountries, List<Code> moviesLanguages, Map<Names.GenderPath, Long> genderPaths,
-                   BigDecimal femaleShare, int moviesFull, Map<String, Long> stats) {
+    private Cinema(Profile profile, Rows rows, Map<Names.GenderPath, Long> genderPaths,
+                   Map<Names.GenderPath, Long> peopleGenderPaths, Map<Rules.YearPath, Long> yearPaths,
+                   Map<Rules.TitlePath, Long> titlePaths, BigDecimal femaleShare, int moviesFull, Map<String, Long> stats) {
         this.profile = profile;
-        this.movies = List.copyOf(movies);
-        this.actors = List.copyOf(actors);
-        this.directors = List.copyOf(directors);
-        this.roles = List.copyOf(roles);
-        this.moviesDirectors = List.copyOf(moviesDirectors);
-        this.moviesGenres = List.copyOf(moviesGenres);
-        this.directorsGenres = List.copyOf(directorsGenres);
-        this.moviesCountries = List.copyOf(moviesCountries);
-        this.moviesLanguages = List.copyOf(moviesLanguages);
+        this.rows = rows;
         this.genderPaths = Collections.unmodifiableMap(new EnumMap<>(genderPaths));
+        this.peopleGenderPaths = Collections.unmodifiableMap(new EnumMap<>(peopleGenderPaths));
+        this.yearPaths = Collections.unmodifiableMap(new EnumMap<>(yearPaths));
+        this.titlePaths = Collections.unmodifiableMap(new EnumMap<>(titlePaths));
         this.femaleShare = femaleShare;
         this.moviesFull = moviesFull;
         this.stats = Collections.unmodifiableMap(stats);
@@ -90,44 +144,115 @@ public final class Cinema {
     }
 
     public List<Movie> movies() {
-        return movies;
+        return Collections.unmodifiableList(rows.movies);
     }
 
     public List<Actor> actors() {
-        return actors;
+        return Collections.unmodifiableList(rows.actors);
     }
 
     public List<Director> directors() {
-        return directors;
+        return Collections.unmodifiableList(rows.directors);
     }
 
     public List<Role> roles() {
-        return roles;
+        return Collections.unmodifiableList(rows.roles);
     }
 
     public List<Pair> moviesDirectors() {
-        return moviesDirectors;
+        return Collections.unmodifiableList(rows.moviesDirectors);
     }
 
     public List<Pair> moviesGenres() {
-        return moviesGenres;
+        return Collections.unmodifiableList(rows.moviesGenres);
     }
 
     public List<DirectorGenre> directorsGenres() {
-        return directorsGenres;
+        return Collections.unmodifiableList(rows.directorsGenres);
     }
 
     public List<Code> moviesCountries() {
-        return moviesCountries;
+        return Collections.unmodifiableList(rows.moviesCountries);
     }
 
     public List<Code> moviesLanguages() {
-        return moviesLanguages;
+        return Collections.unmodifiableList(rows.moviesLanguages);
+    }
+
+    /** {@code people}: актёры, режиссёры и съёмочная группа профиля — по возрастанию id. */
+    public List<Person> people() {
+        return Collections.unmodifiableList(rows.people);
+    }
+
+    /** {@code people_countries}: (человек, код страны). */
+    public List<Code> peopleCountries() {
+        return Collections.unmodifiableList(rows.peopleCountries);
+    }
+
+    public List<CrewMember> crew() {
+        return Collections.unmodifiableList(rows.crew);
+    }
+
+    public List<Company> companies() {
+        return Collections.unmodifiableList(rows.companies);
+    }
+
+    public List<MovieCompany> moviesCompanies() {
+        return Collections.unmodifiableList(rows.moviesCompanies);
+    }
+
+    public List<Item> series() {
+        return Collections.unmodifiableList(rows.series);
+    }
+
+    public List<MovieSeries> moviesSeries() {
+        return Collections.unmodifiableList(rows.moviesSeries);
+    }
+
+    /** {@code movies_sequels}: (фильм, следующий фильм). */
+    public List<Pair> sequels() {
+        return Collections.unmodifiableList(rows.sequels);
+    }
+
+    public List<Item> awards() {
+        return Collections.unmodifiableList(rows.awards);
+    }
+
+    public List<MovieAward> moviesAwards() {
+        return Collections.unmodifiableList(rows.moviesAwards);
+    }
+
+    public List<Release> releases() {
+        return Collections.unmodifiableList(rows.releases);
+    }
+
+    public List<Title> titles() {
+        return Collections.unmodifiableList(rows.titles);
+    }
+
+    /** {@code movies_locations}: (фильм, город). */
+    public List<Pair> locations() {
+        return Collections.unmodifiableList(rows.locations);
     }
 
     /** Актёров профиля по пути пола; {@link Names.GenderPath#NOT_TAKEN} — люди состава профиля, которых нет в актёрах. */
     public Map<Names.GenderPath, Long> genderPaths() {
         return genderPaths;
+    }
+
+    /** Людей профиля ({@code people}) по пути пола; {@link Names.GenderPath#NOT_TAKEN} — иное P21, пол пустой. */
+    public Map<Names.GenderPath, Long> peopleGenderPaths() {
+        return peopleGenderPaths;
+    }
+
+    /** Фильмов профиля по пути года. */
+    public Map<Rules.YearPath, Long> yearPaths() {
+        return yearPaths;
+    }
+
+    /** Фильмов профиля по пути названия. */
+    public Map<Rules.TitlePath, Long> titlePaths() {
+        return titlePaths;
     }
 
     /** Доля {@code F} среди актёров {@code full} с полом из источника — вероятность {@code F} там, где источник молчит. */
@@ -156,12 +281,22 @@ public final class Cinema {
     }
 
     /** Фильм {@code full} до рейтинга. */
-    private record Film(int id, String title, String titleRu, Rules.Released released, Integer runtime, TreeSet<Integer> genres,
-                        SourceData.Links links) {
+    private record Film(int id, String title, Rules.TitlePath titlePath, String titleRu, Rules.Year year, Integer runtime,
+                        TreeSet<Integer> genres, SourceData.Links links) {
     }
 
-    /** Человек, годный в набор: имя, фамилия, имя по-русски, пол актёра (с путём). */
+    /** Человек, годный в набор: имя, фамилия, имя по-русски, пол по источнику (с путём). */
     private record Human(String first, String last, String nameRu, Names.Gender gender) {
+    }
+
+    /** Утверждения свойств {@code film_dates_extra} одного фильма: свойство → утверждения. */
+    private static Map<String, List<SourceData.DateStmt>> extraDates(SourceData src, int film) {
+        Map<String, List<SourceData.DateStmt>> m = new HashMap<>();
+        for (Map.Entry<String, Map<Integer, List<SourceData.DateStmt>>> e : src.datesExtra().entrySet()) {
+            List<SourceData.DateStmt> d = e.getValue().get(film);
+            if (d != null) m.put(e.getKey(), d);
+        }
+        return m;
     }
 
     /** Собрать набор: правила — {@link Rules}, {@link Genres}, {@link Names}, {@link Rank}; случайность — {@code streams}. */
@@ -179,20 +314,20 @@ public final class Cinema {
                 badClass++;
                 continue;
             }
-            Rules.Released rel = Rules.released(src.dates().get(id), lastYear);
-            if (rel == null) {
+            Rules.Year year = Rules.year(src.dates().get(id), extraDates(src, id), lastYear);
+            if (year == null) {
                 noYear++;
                 continue;
             }
             String[] labels = src.filmLabels().get(id);
-            String title = Rules.title(labels, src.titles().get(id));
+            Rules.Titled title = Rules.titled(labels, src.titles().get(id), src.labelsAll().get(id));
             if (title == null) {
                 noTitle++;
                 continue;
             }
             Integer runtime = Rules.runtime(src.seconds().get(id));
             SourceData.Links links = src.links().getOrDefault(id, SourceData.Links.NONE);
-            pre.put(id, new Film(id, title, Rules.titleRu(labels), rel, runtime,
+            pre.put(id, new Film(id, title.title(), title.path(), Rules.titleRu(labels), year, runtime,
                     Genres.ofFilm(src.filmClasses().get(id), runtime, links.genres(), genres), links));
         }
         Set<Integer> dups = Rules.imdbDuplicates(pre.keySet(), src.signals());
@@ -216,7 +351,7 @@ public final class Cinema {
         stats.put("movies_full_with_p136", withP136);
         stats.put("movies_full_with_p136_genre", withP136Genre);
 
-        // ---- люди: годен ли человек (человек, есть имя); пол актёра
+        // ---- люди: годен ли человек (человек, есть имя); пол по источнику
         Map<Integer, Human> humans = new HashMap<>();
         Set<Integer> notHumans = new HashSet<>();
         java.util.function.IntFunction<Human> human = id -> {
@@ -287,24 +422,34 @@ public final class Cinema {
         boolean[] in = new boolean[n];
         for (int i = 0; i < size; i++) in[byPop[i]] = true;
 
-        // ---- таблицы профиля
-        List<Movie> movies = new ArrayList<>();
-        List<Pair> moviesGenres = new ArrayList<>(), moviesDirectors = new ArrayList<>();
-        List<Code> countries = new ArrayList<>(), languages = new ArrayList<>();
+        // ---- таблицы профиля: фильмы и их связи
+        Rows out = new Rows();
         Set<Integer> profileFilms = new HashSet<>();
+        for (int i = 0; i < n; i++) if (in[i]) profileFilms.add(films.get(i).id());
         TreeMap<Integer, List<Integer>> filmsOfDirector = new TreeMap<>();
         Map<Integer, TreeSet<Integer>> genresOf = new HashMap<>();
+        Map<Rules.YearPath, Long> yearPaths = new EnumMap<>(Rules.YearPath.class);
+        for (Rules.YearPath p : Rules.YearPath.values()) yearPaths.put(p, 0L);
+        Map<Rules.TitlePath, Long> titlePaths = new EnumMap<>(Rules.TitlePath.class);
+        for (Rules.TitlePath p : Rules.TitlePath.values()) titlePaths.put(p, 0L);
+        TreeSet<Integer> crewPeople = new TreeSet<>(), companyIds = new TreeSet<>(), seriesIds = new TreeSet<>(),
+                awardIds = new TreeSet<>();
+        TreeSet<Long> sequels = new TreeSet<>();
         for (int i = 0; i < n; i++) {
             if (!in[i]) continue;
             Film f = films.get(i);
-            profileFilms.add(f.id());
-            movies.add(new Movie(f.id(), f.title(), f.titleRu(), f.released().year(), f.released().date(), f.runtime(), rank[i]));
-            genresOf.put(f.id(), f.genres());
-            for (int g : f.genres()) moviesGenres.add(new Pair(f.id(), g));
+            int id = f.id();
+            List<SourceData.MoneyStmt> money = src.money().get(id);
+            out.movies.add(new Movie(id, f.title(), f.titleRu(), f.year().year(), f.year().date(), f.runtime(), rank[i],
+                    Rules.usd(money, false), Rules.usd(money, true)));
+            yearPaths.merge(f.year().path(), 1L, Long::sum);
+            titlePaths.merge(f.titlePath(), 1L, Long::sum);
+            genresOf.put(id, f.genres());
+            for (int g : f.genres()) out.moviesGenres.add(new Pair(id, g));
             for (int d : f.links().directors()) {
                 if (human.apply(d) == null) continue;
-                moviesDirectors.add(new Pair(d, f.id()));
-                filmsOfDirector.computeIfAbsent(d, k -> new ArrayList<>()).add(f.id());
+                out.moviesDirectors.add(new Pair(d, id));
+                filmsOfDirector.computeIfAbsent(d, k -> new ArrayList<>()).add(id);
             }
             TreeSet<String> cc = new TreeSet<>(), lc = new TreeSet<>();
             for (int c : f.links().countries()) {
@@ -315,15 +460,83 @@ public final class Cinema {
                 String code = Rules.languageCode(src.languages().get(l));
                 if (code != null) lc.add(code);
             }
-            for (String c : cc) countries.add(new Code(f.id(), c));
-            for (String c : lc) languages.add(new Code(f.id(), c));
-        }
+            for (String c : cc) out.moviesCountries.add(new Code(id, c));
+            for (String c : lc) out.moviesLanguages.add(new Code(id, c));
 
-        List<Director> directors = new ArrayList<>();
-        List<DirectorGenre> directorsGenres = new ArrayList<>();
+            // съёмочная группа: люди (человек, есть имя)
+            SourceData.Crew crew = src.crew().getOrDefault(id, SourceData.Crew.NONE);
+            for (int j = 0; j < Rules.CREW_JOBS.size(); j++) {
+                for (int p : crew.of(j)) {
+                    if (human.apply(p) == null) continue;
+                    out.crew.add(new CrewMember(id, p, Rules.CREW_JOBS.get(j)));
+                    crewPeople.add(p);
+                }
+            }
+
+            // студии и прокатчики, места съёмок, продолжения
+            SourceData.Links2 l2 = src.links2().getOrDefault(id, SourceData.Links2.NONE);
+            for (int c : l2.studios()) {
+                if (Rules.itemName(src.itemLabels().get(c)) == null) continue;
+                out.moviesCompanies.add(new MovieCompany(id, c, Rules.PRODUCTION));
+                companyIds.add(c);
+            }
+            for (int c : l2.distributors()) {
+                if (Rules.itemName(src.itemLabels().get(c)) == null) continue;
+                out.moviesCompanies.add(new MovieCompany(id, c, Rules.DISTRIBUTION));
+                companyIds.add(c);
+            }
+            TreeSet<Integer> cities = new TreeSet<>();
+            for (int p : l2.locations()) {
+                Integer city = src.places().get(p);
+                if (city != null) cities.add(city);
+            }
+            for (int c : cities) out.locations.add(new Pair(id, c));
+            for (int x : l2.next()) if (x != id && profileFilms.contains(x)) sequels.add(((long) id << 32) | x);
+            for (int x : l2.previous()) if (x != id && profileFilms.contains(x)) sequels.add(((long) x << 32) | id);
+
+            // серии: пара «фильм, серия» — одна строка, номер — из всех P1545 пары
+            TreeMap<Integer, List<String>> ser = new TreeMap<>();
+            for (SourceData.SeriesRef s : src.series().getOrDefault(id, List.of())) {
+                ser.computeIfAbsent(s.series(), k -> new ArrayList<>(1)).add(s.ordinal());
+            }
+            for (Map.Entry<Integer, List<String>> s : ser.entrySet()) {
+                if (Rules.itemName(src.itemLabels().get(s.getKey())) == null) continue;
+                out.moviesSeries.add(new MovieSeries(id, s.getKey(), Rules.ordinal(s.getValue())));
+                seriesIds.add(s.getKey());
+            }
+
+            // награды и номинации: тройка «фильм, награда, выиграна ли» — одна строка, год — из всех её дат
+            TreeMap<Long, List<SourceData.DateStmt>> aw = new TreeMap<>();
+            for (SourceData.AwardStmt a : src.awards().getOrDefault(id, List.of())) {
+                aw.computeIfAbsent(((long) a.award() << 1) | (a.won() ? 1 : 0), k -> new ArrayList<>(1)).add(a.date());
+            }
+            for (Map.Entry<Long, List<SourceData.DateStmt>> a : aw.entrySet()) {
+                int award = (int) (a.getKey() >>> 1);
+                if (Rules.itemName(src.itemLabels().get(award)) == null) continue;
+                out.moviesAwards.add(new MovieAward(id, award, (a.getKey() & 1) == 1, Rules.awardYear(a.getValue())));
+                awardIds.add(award);
+            }
+
+            // выход по странам: точность до дня, страна с ISO3; на страну — самая ранняя дата
+            TreeMap<String, LocalDate> rel = new TreeMap<>();
+            for (SourceData.PlaceDate pd : src.releases().getOrDefault(id, List.of())) {
+                LocalDate day = Rules.releaseDay(pd.date());
+                if (day == null) continue;
+                String code = Rules.countryCode(src.countries().get(pd.place()), ex);
+                if (code != null) rel.merge(code, day, (a, b) -> a.isAfter(b) ? b : a);
+            }
+            for (Map.Entry<String, LocalDate> r : rel.entrySet()) out.releases.add(new Release(id, r.getKey(), r.getValue()));
+
+            // названия по языкам
+            for (Map.Entry<String, String> t : Rules.titles(src.filmLabels().get(id), src.labelsAll().get(id)).entrySet()) {
+                out.titles.add(new Title(id, t.getKey(), t.getValue()));
+            }
+        }
+        for (long s : sequels) out.sequels.add(new Pair((int) (s >>> 32), (int) s));
+
         for (Map.Entry<Integer, List<Integer>> e : filmsOfDirector.entrySet()) {
             Human h = humans.get(e.getKey());
-            directors.add(new Director(e.getKey(), h.first(), h.last(), h.nameRu()));
+            out.directors.add(new Director(e.getKey(), h.first(), h.last(), h.nameRu()));
             int withGenre = 0;
             TreeMap<Integer, Integer> perGenre = new TreeMap<>();
             for (int f : new TreeSet<>(e.getValue())) {
@@ -333,19 +546,18 @@ public final class Cinema {
                 for (int x : g) perGenre.merge(x, 1, Integer::sum);
             }
             for (Map.Entry<Integer, Integer> g : perGenre.entrySet()) {
-                directorsGenres.add(new DirectorGenre(e.getKey(), g.getKey(), Rules.prob(g.getValue(), withGenre)));
+                out.directorsGenres.add(new DirectorGenre(e.getKey(), g.getKey(), Rules.prob(g.getValue(), withGenre)));
             }
         }
 
         // роли и актёры профиля; пол, где источник молчит, — от доли F среди актёров full с полом из источника (одна на
         // все профили: пол актёра — один во всех профилях)
-        List<Role> roles = new ArrayList<>();
         TreeSet<Integer> actorIds = new TreeSet<>(), fullActors = new TreeSet<>();
         for (long k : pairs) {
             int a = (int) (k >>> 32), f = (int) k;
             fullActors.add(a);
             if (!profileFilms.contains(f)) continue;
-            roles.add(new Role(a, f, Rules.roles(rolesOf.get(k))));
+            out.roles.add(new Role(a, f, Rules.roles(rolesOf.get(k))));
             actorIds.add(a);
         }
         long known = 0, female = 0;
@@ -368,24 +580,76 @@ public final class Cinema {
         paths.put(Names.GenderPath.NOT_TAKEN, (long) notTakenInProfile.size());
         double share = known == 0 ? 0.5 : (double) female / known;
         RandomStreams.Stream genderStream = streams.stream(GENDER_STREAM);
-        List<Actor> actors = new ArrayList<>();
         for (int a : actorIds) {
             Human h = humans.get(a);
-            String g = h.gender().gender() != null ? h.gender().gender() : Names.seeded(genderStream.unit(a), share);
-            actors.add(new Actor(a, h.first(), h.last(), g, h.nameRu()));
+            out.actors.add(new Actor(a, h.first(), h.last(), gender(a, h, genderStream, share), h.nameRu()));
         }
 
-        stats.put("movies", (long) movies.size());
-        stats.put("actors", (long) actors.size());
-        stats.put("directors", (long) directors.size());
-        stats.put("roles", (long) roles.size());
+        // люди профиля: актёры, режиссёры и группа — один раз; пол — как у актёров, иное P21 — пусто
+        TreeSet<Integer> peopleIds = new TreeSet<>(actorIds);
+        peopleIds.addAll(filmsOfDirector.keySet());
+        peopleIds.addAll(crewPeople);
+        Map<Names.GenderPath, Long> peoplePaths = new EnumMap<>(Names.GenderPath.class);
+        for (Names.GenderPath gp : Names.GenderPath.values()) peoplePaths.put(gp, 0L);
+        for (int p : peopleIds) {
+            Human h = humans.get(p);
+            peoplePaths.merge(h.gender().path(), 1L, Long::sum);
+            Rules.Life life = Rules.life(src.peopleDates().get(p), lastYear);
+            SourceData.PersonLinks pl = src.peopleLinks().getOrDefault(p, SourceData.PersonLinks.NONE);
+            out.people.add(new Person(p, h.first(), h.last(), h.nameRu(), gender(p, h, genderStream, share), life.birthDate(),
+                    life.birthYear(), life.deathDate(), life.deathYear(), Rules.city(pl.birthPlaces(), src.places())));
+            TreeSet<String> cc = new TreeSet<>();
+            for (int c : pl.citizenships()) {
+                String code = Rules.countryCode(src.countries().get(c), ex);
+                if (code != null) cc.add(code);
+            }
+            for (String c : cc) out.peopleCountries.add(new Code(p, c));
+        }
+
+        // справочники — только те, на кого есть ссылка в профиле
+        for (int c : companyIds) {
+            String[] l = src.itemLabels().get(c);
+            Integer country = src.companies().get(c);
+            out.companies.add(new Company(c, Rules.itemName(l), Rules.itemNameRu(l),
+                    country == null ? null : Rules.countryCode(src.countries().get(country), ex)));
+        }
+        for (int s : seriesIds) {
+            String[] l = src.itemLabels().get(s);
+            out.series.add(new Item(s, Rules.itemName(l), Rules.itemNameRu(l)));
+        }
+        for (int a : awardIds) {
+            String[] l = src.itemLabels().get(a);
+            out.awards.add(new Item(a, Rules.itemName(l), Rules.itemNameRu(l)));
+        }
+
+        stats.put("movies", (long) out.movies.size());
+        for (Rules.YearPath p : Rules.YearPath.values()) stats.put("movies_year_" + p.name().toLowerCase(java.util.Locale.ROOT), yearPaths.get(p));
+        for (Rules.TitlePath p : Rules.TitlePath.values()) stats.put("movies_title_" + p.name().toLowerCase(java.util.Locale.ROOT), titlePaths.get(p));
+        stats.put("actors", (long) out.actors.size());
+        stats.put("directors", (long) out.directors.size());
+        stats.put("roles", (long) out.roles.size());
         stats.put("roles_full", (long) pairs.length);
+        stats.put("people", (long) out.people.size());
+        stats.put("movies_crew", (long) out.crew.size());
+        stats.put("companies", (long) out.companies.size());
+        stats.put("series", (long) out.series.size());
+        stats.put("awards", (long) out.awards.size());
         stats.put("people_not_taken", (long) notHumans.size());
         BigDecimal shareOut = known == 0 ? null : Rules.prob((int) female, (int) known);
-        return new Cinema(profile, movies, actors, directors, roles, moviesDirectors, moviesGenres, directorsGenres, countries,
-                languages, paths, shareOut, n, stats);
+        return new Cinema(profile, out, paths, peoplePaths, yearPaths, titlePaths, shareOut, n, stats);
     }
 
-    /** Имя потока пола актёра там, где источник молчит. */
+    /**
+     * Пол человека: из источника (P21, иначе первое имя P735); источник молчит — от seed и id ({@link Names#seeded},
+     * поток {@link #GENDER_STREAM}, доля {@code F} — {@code share}); иное P21 — {@code null}. У актёра — то же, что в
+     * {@code actors}.
+     */
+    private static String gender(int id, Human h, RandomStreams.Stream stream, double share) {
+        if (h.gender().gender() != null) return h.gender().gender();
+        if (h.gender().path() == Names.GenderPath.NOT_TAKEN) return null;
+        return Names.seeded(stream.unit(id), share);
+    }
+
+    /** Имя потока пола там, где источник молчит (актёры и люди). */
     public static final String GENDER_STREAM = "actors.gender";
 }

@@ -59,9 +59,11 @@ class MovReleaseTest {
         assertEquals("12\tFilm noir", genres.get(12));
         assertEquals("19\tSci-Fi", genres.get(19));
         List<String> movies = lines(tmp.resolve("movies.tsv.gz"));
-        assertEquals("id\ttitle\ttitle_ru\tyear\trelease_date\truntime\trank", movies.getFirst());
+        assertEquals("id\ttitle\ttitle_ru\tyear\trelease_date\truntime\trank\tbudget_usd\tbox_office_usd", movies.getFirst());
         assertTrue(movies.get(1).startsWith("101\tAlpha Story\tАльфа\t1999\t1999-03-31\t90\t"), movies.get(1));
+        assertTrue(movies.get(1).endsWith("\t1000000\t2500000"), movies.get(1));
         assertTrue(movies.get(2).startsWith("107\tThe Story\tИстория\t1950\t\t\t"), movies.get(2));
+        assertTrue(movies.get(2).endsWith("\t\t"), movies.get(2));
         assertEquals("id\tfirst_name\tlast_name\tgender\tname_ru", lines(tmp.resolve("actors.tsv.gz")).getFirst());
         assertTrue(lines(tmp.resolve("actors.tsv.gz")).contains("505\t\tZelda\tF\t"));
         assertEquals(List.of("id\tfirst_name\tlast_name\tname_ru", "501\tSteven\tHalden\tСтивен Халден", "506\tJohn\tSmith\t"),
@@ -80,6 +82,49 @@ class MovReleaseTest {
     }
 
     @Test
+    @DisplayName("Выпуск, новые таблицы: заголовки, порядок по ключу, NULL — пустое поле, won — t/f")
+    void releaseRowsV2(@TempDir Path tmp) throws IOException {
+        Release.Result r = run(new MovDataset(), "full", tmp);
+        assertTrue(r.ok(), r.report().render());
+        List<String> people = lines(tmp.resolve("people.tsv.gz"));
+        assertEquals("id\tfirst_name\tlast_name\tname_ru\tgender\tbirth_date\tbirth_year\tdeath_date\tdeath_year\tbirth_city_id",
+                people.getFirst());
+        assertEquals("501\tSteven\tHalden\tСтивен Халден\tM\t1946-12-18\t1946\t\t\t1000001", people.get(1));
+        assertTrue(people.contains("506\tJohn\tSmith\t\t\t1900-03-04\t1900\t1999-12-31\t1999\t"), people.toString());
+        assertEquals(17, people.size());
+        assertEquals(List.of("person_id\tcountry_code", "501\tUSA", "510\tQXA", "510\tUSA"), lines(tmp.resolve("people_countries.tsv.gz")));
+        assertEquals(List.of("movie_id\tperson_id\tjob", "101\t501\tproducer", "101\t502\twriter", "101\t516\twriter",
+                "101\t517\tcomposer", "101\t518\tcinematographer", "112\t516\twriter", "112\t518\teditor"),
+                lines(tmp.resolve("movies_crew.tsv.gz")));
+        assertEquals(List.of("id\tname\tname_ru\tcountry_code", "7001\tNorthwind Pictures\tНордвинд\tUSA", "7002\tBluebird Films\t\t",
+                "7004\tHarbor Media\t\t"), lines(tmp.resolve("companies.tsv.gz")));
+        assertEquals(List.of("movie_id\tcompany_id\trole", "101\t7001\tdistribution", "101\t7001\tproduction",
+                "101\t7002\tdistribution", "112\t7004\tdistribution"), lines(tmp.resolve("movies_companies.tsv.gz")));
+        assertEquals(List.of("id\tname\tname_ru", "7101\tAlpha Saga\tСага об Альфе", "7102\tNight Saga\t"),
+                lines(tmp.resolve("series.tsv.gz")));
+        assertEquals(List.of("movie_id\tseries_id\tordinal", "101\t7101\t1", "112\t7101\t", "112\t7102\t", "113\t7102\t10000",
+                "117\t7101\t"), lines(tmp.resolve("movies_series.tsv.gz")));
+        assertEquals(List.of("movie_id\tnext_movie_id", "101\t112", "112\t117", "119\t120"), lines(tmp.resolve("movies_sequels.tsv.gz")));
+        assertEquals(List.of("id\tname\tname_ru", "7201\tGolden Reel\tЗолотая катушка", "7202\tSilver Frame\t"),
+                lines(tmp.resolve("awards.tsv.gz")));
+        assertEquals(List.of("movie_id\taward_id\twon\tyear", "101\t7201\tf\t", "101\t7201\tt\t1999", "101\t7202\tf\t",
+                "112\t7202\tf\t2002"), lines(tmp.resolve("movies_awards.tsv.gz")));
+        assertEquals(List.of("movie_id\tcountry_code\trelease_date", "101\tQXA\t1999-04-10", "101\tUSA\t1999-03-31",
+                "112\tUSA\t2003-03-03"), lines(tmp.resolve("movies_releases.tsv.gz")));
+        List<String> titles = lines(tmp.resolve("movies_titles.tsv.gz"));
+        assertEquals("movie_id\tlang\ttitle", titles.getFirst());
+        assertEquals(List.of("101\tde\tAlpha-Geschichte", "101\ten\tAlpha Story", "101\tru\tАльфа"), titles.subList(1, 4));
+        assertTrue(titles.contains("124\tcs\tAlternativní název") && titles.contains("124\tja\t日本語の題名"), titles.toString());
+        assertEquals(26, titles.size());
+        assertEquals(List.of("movie_id\tcity_id", "101\t1000001", "101\t1000002", "112\t1000001"),
+                lines(tmp.resolve("movies_locations.tsv.gz")));
+        String constraints = Files.readString(tmp.resolve("schema-constraints.sql"), StandardCharsets.UTF_8);
+        assertTrue(constraints.contains("FOREIGN KEY (person_id) REFERENCES people (id)"), constraints);
+        assertTrue(constraints.contains("FOREIGN KEY (next_movie_id) REFERENCES movies (id)"), constraints);
+        assertFalse(constraints.contains("city_id) REFERENCES"), "город — мягкая связь с «Миром», без внешнего ключа");
+    }
+
+    @Test
     @DisplayName("Повторяемость: тот же снимок, профиль и seed — тот же выпуск; рейтинг фильма — один во всех профилях")
     @SuppressWarnings("unchecked")
     void sameSnapshotSameRelease(@TempDir Path tmp) throws IOException {
@@ -91,7 +136,7 @@ class MovReleaseTest {
         Map<String, String> sa = new LinkedHashMap<>(), sf = new LinkedHashMap<>();
         for (Map<String, Object> x : (List<Map<String, Object>>) a.get("files")) sa.put((String) x.get("table"), (String) x.get("sha256_tsv"));
         for (Map<String, Object> x : (List<Map<String, Object>>) f.get("files")) sf.put((String) x.get("table"), (String) x.get("sha256_tsv"));
-        assertEquals(MovSchema.TABLES, new ArrayList<>(sa.keySet()));
+        assertEquals(MovSchema.TABLES, new ArrayList<>(sa.keySet()).subList(0, MovSchema.TABLES.size()));
         assertEquals(sf.get("genres"), sa.get("genres"));
         assertNotEquals(sf.get("movies"), sa.get("movies"));
         List<String> fm = lines(tmp.resolve("f").resolve("movies.tsv.gz"));
@@ -99,7 +144,7 @@ class MovReleaseTest {
         Map<String, Object> in = ((List<Map<String, Object>>) a.get("inputs")).getFirst();
         assertEquals(MovDataset.SNAPSHOT + ".zip", in.get("name"), "имя — из fetch.json, не из имени файла");
         Map<String, Object> sel = (Map<String, Object>) a.get("selection");
-        assertEquals(12L, sel.get("movies_full"));
+        assertEquals(18L, sel.get("movies_full"));
         assertEquals(2L, sel.get("movies"));
         Map<String, Object> g = (Map<String, Object>) a.get("actors_gender");
         assertEquals(6L, g.get("p21"));
@@ -107,6 +152,16 @@ class MovReleaseTest {
         assertEquals(2L, g.get("seeded"));
         assertEquals("0.4444", g.get("seeded_female_share"));
         assertEquals(1L, g.get("not_taken_other_p21"));
+        Map<String, Object> pg = (Map<String, Object>) a.get("people_gender");
+        assertEquals(Map.of("p21", 7L, "given_name", 4L, "seeded", 3L, "null_other_p21", 1L), pg);
+        Map<String, Object> y = (Map<String, Object>) f.get("movies_year");
+        assertEquals(List.of("p577", "p1191", "p571", "p2754"), new ArrayList<>(y.keySet()));
+        assertEquals(Map.of("p577", 14L, "p1191", 2L, "p571", 1L, "p2754", 1L), y);
+        Map<String, Object> t = (Map<String, Object>) f.get("movies_title");
+        assertEquals(List.of("label_en", "label_mul", "p1476", "label_latin", "label_ru", "label_any"), new ArrayList<>(t.keySet()));
+        assertEquals(Map.of("label_en", 13L, "label_mul", 1L, "p1476", 1L, "label_latin", 1L, "label_ru", 1L, "label_any", 1L), t);
+        assertEquals(Map.of("label_en", 2L, "label_mul", 0L, "p1476", 0L, "label_latin", 0L, "label_ru", 0L, "label_any", 0L),
+                a.get("movies_title"));
     }
 
     @Test
@@ -127,7 +182,9 @@ class MovReleaseTest {
         for (Map<String, Object> m : (List<Map<String, Object>>) manifest(tmp.resolve("y")).get("files")) y.put((String) m.get("table"), (String) m.get("sha256_tsv"));
         assertNotEquals(x.get("movies"), y.get("movies"));
         for (String t : List.of("genres", "directors", "roles", "movies_directors", "movies_genres", "directors_genres",
-                "movies_countries", "movies_languages")) {
+                "movies_countries", "movies_languages", "people_countries", "movies_crew", "companies", "movies_companies",
+                "series", "movies_series", "movies_sequels", "awards", "movies_awards", "movies_releases", "movies_titles",
+                "movies_locations")) {
             assertEquals(x.get(t), y.get(t), t);
         }
     }
@@ -140,12 +197,19 @@ class MovReleaseTest {
         for (String s : List.of("Wikidata", "CC0 1.0", "publicdomain/zero/1.0", MovDataset.SNAPSHOT)) assertTrue(license.contains(s), s);
         String md = Files.readString(tmp.resolve("SOURCE.md"), StandardCharsets.UTF_8);
         assertTrue(md.contains("## Профиль `small`"), md);
-        assertTrue(md.contains("1 % самых известных (1 из 12"), md);
+        assertTrue(md.contains("1 % самых известных (1 из 18"), md);
         assertTrue(md.contains("синтетический, не оценка качества фильма"), md);
         assertTrue(md.contains("по P21 (мужской — `M`, женский — `F`) — 6;"), md);
         assertTrue(md.contains("по первому имени P735 (мужское — `M`, женское — `F`) — 2;"), md);
         assertTrue(md.contains("(0.4444) — 2."), md);
         assertTrue(md.contains("| `roles.tsv.gz` | 10 |"), md);
+        assertTrue(md.contains("Фильмов профиля по пути года: P577 — 1, P1191 — 0, P571 — 0, P2754 — 0."), md);
+        assertTrue(md.contains("Фильмов профиля по пути названия: `en` — 1, `mul` — 0, P1476 — 0, запасной язык — 0, `ru` — 0, "
+                + "другой язык — 0."), md);
+        assertTrue(md.contains("Людей по пути\n   пола: P21 — 7, имя — 3, от seed — 3, пусто — 1."), md);
+        assertTrue(md.contains("| `people.tsv.gz` | 14 |"), md);
+        assertTrue(md.contains("| `movies_locations.tsv.gz` | 2 |"), md);
+        assertTrue(md.contains("`schema-studios.svg` — Студии и награды"), md);
         for (String code : Exclusions.COUNTRIES3) assertFalse(md.contains(code), code);
     }
 

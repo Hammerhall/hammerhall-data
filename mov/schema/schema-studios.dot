@@ -1,0 +1,27 @@
+// mov-data-v1 — группа «Студии и награды»: все поля её таблиц; таблицы других групп, на которые они ссылаются, — серой рамкой.
+// Сгенерировано из описания схемы; руками не править. Картинка (SVG): tools/schema-svg.sh mov.
+digraph schema {
+  graph [rankdir=LR, fontname="DejaVu Sans", fontsize=13, nodesep=0.35, ranksep=0.9, pad=0.3, splines=true, newrank=true];
+  node [shape=plain, fontname="DejaVu Sans", fontsize=11];
+  edge [dir=both, arrowtail=none, arrowhead=crow, arrowsize=0.9, color="#333333"];
+  subgraph "cluster_studios" {
+    label=<<B>Студии и награды</B>>;
+    style="rounded,filled"; fillcolor="#ececec"; color="#bbbbbb"; margin=14;
+    "companies" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>companies</B><BR/>Студии и прокатчики</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="id"><FONT FACE="DejaVu Sans Mono"># </FONT>id</TD></TR><TR><TD ALIGN="LEFT" PORT="name"><FONT FACE="DejaVu Sans Mono">∗ </FONT>name</TD></TR><TR><TD ALIGN="LEFT" PORT="name_ru"><FONT FACE="DejaVu Sans Mono">○ </FONT>name_ru</TD></TR><TR><TD ALIGN="LEFT" PORT="country_code"><FONT FACE="DejaVu Sans Mono">○ </FONT>country_code</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
+    "movies_companies" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_companies</B><BR/>Студии фильмов</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="movie_id"><FONT FACE="DejaVu Sans Mono"># </FONT>movie_id</TD></TR><TR><TD ALIGN="LEFT" PORT="company_id"><FONT FACE="DejaVu Sans Mono"># </FONT>company_id</TD></TR><TR><TD ALIGN="LEFT" PORT="role"><FONT FACE="DejaVu Sans Mono"># </FONT>role</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
+    "series" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>series</B><BR/>Серии</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="id"><FONT FACE="DejaVu Sans Mono"># </FONT>id</TD></TR><TR><TD ALIGN="LEFT" PORT="name"><FONT FACE="DejaVu Sans Mono">∗ </FONT>name</TD></TR><TR><TD ALIGN="LEFT" PORT="name_ru"><FONT FACE="DejaVu Sans Mono">○ </FONT>name_ru</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
+    "movies_series" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_series</B><BR/>Фильмы в сериях</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="movie_id"><FONT FACE="DejaVu Sans Mono"># </FONT>movie_id</TD></TR><TR><TD ALIGN="LEFT" PORT="series_id"><FONT FACE="DejaVu Sans Mono"># </FONT>series_id</TD></TR><TR><TD ALIGN="LEFT" PORT="ordinal"><FONT FACE="DejaVu Sans Mono">○ </FONT>ordinal</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
+    "movies_sequels" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_sequels</B><BR/>Продолжения</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="movie_id"><FONT FACE="DejaVu Sans Mono"># </FONT>movie_id</TD></TR><TR><TD ALIGN="LEFT" PORT="next_movie_id"><FONT FACE="DejaVu Sans Mono"># </FONT>next_movie_id</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
+    "awards" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>awards</B><BR/>Награды</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="id"><FONT FACE="DejaVu Sans Mono"># </FONT>id</TD></TR><TR><TD ALIGN="LEFT" PORT="name"><FONT FACE="DejaVu Sans Mono">∗ </FONT>name</TD></TR><TR><TD ALIGN="LEFT" PORT="name_ru"><FONT FACE="DejaVu Sans Mono">○ </FONT>name_ru</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
+    "movies_awards" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3" BGCOLOR="white"><TR><TD BGCOLOR="#cfcfcf" CELLPADDING="6"><B>movies_awards</B><BR/>Награды фильмов</TD></TR><TR><TD CELLPADDING="1"></TD></TR><TR><TD ALIGN="LEFT" PORT="movie_id"><FONT FACE="DejaVu Sans Mono"># </FONT>movie_id</TD></TR><TR><TD ALIGN="LEFT" PORT="award_id"><FONT FACE="DejaVu Sans Mono"># </FONT>award_id</TD></TR><TR><TD ALIGN="LEFT" PORT="won"><FONT FACE="DejaVu Sans Mono"># </FONT>won</TD></TR><TR><TD ALIGN="LEFT" PORT="year"><FONT FACE="DejaVu Sans Mono">○ </FONT>year</TD></TR><TR><TD CELLPADDING="1"></TD></TR></TABLE>>];
+  }
+  "movies" [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#999999" BGCOLOR="white"><TR><TD><FONT COLOR="#666666">movies<BR/>Фильмы</FONT></TD></TR></TABLE>>];
+  "movies" -> "movies_companies":"movie_id";
+  "companies":"id" -> "movies_companies":"company_id";
+  "movies" -> "movies_series":"movie_id";
+  "series":"id" -> "movies_series":"series_id";
+  "movies" -> "movies_sequels":"movie_id";
+  "movies" -> "movies_sequels":"next_movie_id";
+  "movies" -> "movies_awards":"movie_id";
+  "awards":"id" -> "movies_awards":"award_id";
+}

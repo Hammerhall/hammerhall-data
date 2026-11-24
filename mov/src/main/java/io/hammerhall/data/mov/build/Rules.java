@@ -86,6 +86,33 @@ public final class Rules {
         return new Released(year, date);
     }
 
+    /** Откуда год фильма: P577, иначе по очереди запасные свойства ({@link SourceData#YEAR_FALLBACK}). */
+    public enum YearPath {
+        P577, P1191, P571, P2754
+    }
+
+    /** Год и дата выхода фильма и откуда год. */
+    public record Year(int year, LocalDate date, YearPath path) {
+    }
+
+    /**
+     * Год фильма с запасными путями: по P577 ({@link #released}); нет — по очереди P1191 (первый показ), P571
+     * (создание), P2754 (дата производства), каждое — тем же правилом (лучший ранг, точность не ниже года, самая
+     * ранняя, год в {@code FIRST_YEAR…lastYear}). Дата выхода — только из P577: год по запасному свойству — без даты.
+     * Нет ни по одному — {@code null} (фильм не берётся).
+     *
+     * @param extra свойство → утверждения фильма ({@code film_dates_extra}); нет свойства — нет утверждений
+     */
+    public static Year year(List<SourceData.DateStmt> p577, Map<String, List<SourceData.DateStmt>> extra, int lastYear) {
+        Released r = released(p577, lastYear);
+        if (r != null) return new Year(r.year(), r.date(), YearPath.P577);
+        for (String p : SourceData.YEAR_FALLBACK) {
+            r = released(extra == null ? null : extra.get(p), lastYear);
+            if (r != null) return new Year(r.year(), null, YearPath.valueOf(p));
+        }
+        return null;
+    }
+
     /** P1476: сначала язык {@code en}, затем остальные — по языку, затем по тексту (по байтам). */
     static final Comparator<SourceData.Title> TITLE_ORDER = Comparator
             .<SourceData.Title>comparingInt(t -> t.lang().equals("en") ? 0 : 1)
@@ -94,16 +121,77 @@ public final class Rules {
 
     /**
      * Название фильма: метка {@code en} → {@code mul} → P1476 ({@link #TITLE_ORDER}) → метка первого запасного языка
-     * ({@link Wikidata#LABEL_LANGS} после {@code ru}). Нет — {@code null} (фильм не берётся).
+     * ({@link Wikidata#LABEL_LANGS} после {@code ru}) → метка {@code ru}. Нет — {@code null} (фильм не берётся).
      */
     public static String title(String[] labels, List<SourceData.Title> titles) {
-        if (labels != null && labels[Wikidata.EN] != null) return labels[Wikidata.EN];
-        if (labels != null && labels[Wikidata.MUL] != null) return labels[Wikidata.MUL];
-        if (titles != null && !titles.isEmpty()) return titles.stream().min(TITLE_ORDER).orElseThrow().title();
+        Titled t = titled(labels, titles, null);
+        return t == null ? null : t.title();
+    }
+
+    /** Откуда название фильма. */
+    public enum TitlePath {
+        /** Метка {@code en}. */
+        LABEL_EN,
+        /** Метка {@code mul}. */
+        LABEL_MUL,
+        /** P1476. */
+        P1476,
+        /** Метка запасного языка ({@link Wikidata#LABEL_LANGS} после {@code ru}). */
+        LABEL_LATIN,
+        /** Метка {@code ru} (название — то же, что {@code title_ru}). */
+        LABEL_RU,
+        /** Метка на любом другом языке ({@code film_labels_all}). */
+        LABEL_ANY
+    }
+
+    /** Название фильма и откуда оно. */
+    public record Titled(String title, TitlePath path) {
+    }
+
+    /** Метки {@code film_labels_all}: по коду языка, затем по тексту (по байтам). */
+    static final Comparator<SourceData.Title> LABEL_ORDER = Comparator
+            .<SourceData.Title, String>comparing(SourceData.Title::lang, Snapshot::compareBytes)
+            .thenComparing(SourceData.Title::title, Snapshot::compareBytes);
+
+    /**
+     * Название фильма: цепочка {@link #title}; нет — метка из {@code film_labels_all}: языки по байтам кода, первая
+     * годная (в снимке уже только годные). Нет — {@code null} (фильм не берётся).
+     *
+     * @param all метки фильма на любых языках ({@code film_labels_all}) или {@code null}
+     */
+    public static Titled titled(String[] labels, List<SourceData.Title> titles, List<SourceData.Title> all) {
+        if (labels != null && labels[Wikidata.EN] != null) return new Titled(labels[Wikidata.EN], TitlePath.LABEL_EN);
+        if (labels != null && labels[Wikidata.MUL] != null) return new Titled(labels[Wikidata.MUL], TitlePath.LABEL_MUL);
+        if (titles != null && !titles.isEmpty()) return new Titled(titles.stream().min(TITLE_ORDER).orElseThrow().title(), TitlePath.P1476);
         if (labels != null) {
-            for (int i = Wikidata.FIRST_LATIN; i < labels.length; i++) if (labels[i] != null) return labels[i];
+            for (int i = Wikidata.FIRST_LATIN; i < labels.length; i++) if (labels[i] != null) return new Titled(labels[i], TitlePath.LABEL_LATIN);
+            if (labels[Wikidata.RU] != null) return new Titled(labels[Wikidata.RU], TitlePath.LABEL_RU);
+        }
+        if (all != null) {
+            for (SourceData.Title t : all.stream().sorted(LABEL_ORDER).toList()) {
+                if (Wikidata.usable(t.title())) return new Titled(t.title(), TitlePath.LABEL_ANY);
+            }
         }
         return null;
+    }
+
+    /**
+     * Названия фильма по языкам ({@code movies_titles}): метки {@link Wikidata#LABEL_LANGS} и метки
+     * {@code film_labels_all} — годные, одна на язык: у языка несколько — меньшая по байтам. Язык → название, языки —
+     * по байтам кода.
+     */
+    public static Map<String, String> titles(String[] labels, List<SourceData.Title> all) {
+        Map<String, String> out = new java.util.TreeMap<>(Snapshot::compareBytes);
+        if (labels != null) {
+            for (int i = 0; i < labels.length; i++) if (labels[i] != null) out.put(Wikidata.LABEL_LANGS.get(i), labels[i]);
+        }
+        if (all != null) {
+            for (SourceData.Title t : all) {
+                if (!Wikidata.usable(t.lang()) || !Wikidata.usable(t.title())) continue;
+                out.merge(t.lang(), t.title(), (a, b) -> Snapshot.compareBytes(a, b) <= 0 ? a : b);
+            }
+        }
+        return out;
     }
 
     /** Название по-русски: метка {@code ru} или пусто. */
@@ -220,6 +308,170 @@ public final class Rules {
         for (String c : codes.first()) if (c.matches("[a-z]{2}")) return c;
         for (String c : codes.second()) if (c.matches("[a-z]{3}")) return c;
         return null;
+    }
+
+    // ---------------------------------------------------------------- деньги
+
+    /** Доллар США (Q4917) — единственная валюта бюджета и сборов набора. */
+    public static final int USD = 4917;
+
+    /**
+     * Бюджет или сборы фильма в долларах США: из сумм ({@code film_money} одного свойства) — только в долларах США
+     * ({@link #USD}); из них — лучшего ранга ({@code preferred}, если есть, иначе {@code normal}); наибольшая; целое —
+     * половина к чётному по точной записи. Не больше нуля, больше {@code bigint} или сумм нет — {@code null}. Суммы в
+     * других валютах не пересчитываются и не берутся.
+     *
+     * @param boxOffice {@code true} — сборы (P2142), {@code false} — бюджет (P2130)
+     */
+    public static Long usd(List<SourceData.MoneyStmt> money, boolean boxOffice) {
+        if (money == null) return null;
+        boolean anyPreferred = false;
+        for (SourceData.MoneyStmt m : money) anyPreferred |= m.boxOffice() == boxOffice && m.unit() == USD && m.preferred();
+        BigDecimal best = null;
+        for (SourceData.MoneyStmt m : money) {
+            if (m.boxOffice() != boxOffice || m.unit() != USD || m.preferred() != anyPreferred) continue;
+            if (best == null || m.amount().compareTo(best) > 0) best = m.amount();
+        }
+        if (best == null) return null;
+        BigDecimal v = best.setScale(0, RoundingMode.HALF_EVEN);
+        if (v.signum() <= 0 || v.compareTo(BigDecimal.valueOf(Long.MAX_VALUE)) > 0) return null;
+        return v.longValueExact();
+    }
+
+    // ---------------------------------------------------------------- люди: даты, город, страны
+
+    /** Первый год дат жизни человека: раньше — ошибка даты в источнике (или не человек кино). */
+    public static final int FIRST_LIFE_YEAR = 1700;
+
+    /** Даты жизни человека: рождение и смерть — дата (точность до дня) и год; нет — {@code null}. */
+    public record Life(LocalDate birthDate, Integer birthYear, LocalDate deathDate, Integer deathYear) {
+        public static final Life NONE = new Life(null, null, null, null);
+    }
+
+    /** Утверждения лучшего ранга: {@code preferred}, если они есть, иначе {@code normal}. */
+    static List<SourceData.DateStmt> best(List<SourceData.DateStmt> dates) {
+        if (dates == null || dates.isEmpty()) return List.of();
+        boolean anyPreferred = false;
+        for (SourceData.DateStmt d : dates) anyPreferred |= d.preferred();
+        List<SourceData.DateStmt> out = new ArrayList<>(dates.size());
+        for (SourceData.DateStmt d : dates) if (d.preferred() == anyPreferred) out.add(d);
+        return out;
+    }
+
+    /** Дата (точность до дня) и год одного события жизни; нет — {@code null}. */
+    public record Event(LocalDate date, Integer year) {
+    }
+
+    /**
+     * Дата и год одного события жизни (P569 или P570): утверждения лучшего ранга; дата — самая ранняя с точностью до
+     * дня (не дата по календарю — пусто); год — самой ранней с точностью не ниже года. Год (и год даты) вне
+     * {@link #FIRST_LIFE_YEAR}…{@code lastYear} — пусто.
+     */
+    public static Event event(List<SourceData.DateStmt> dates, int lastYear) {
+        SourceData.DateStmt earliest = null, day = null;
+        for (SourceData.DateStmt d : best(dates)) {
+            if (d.precision() < 9) continue;
+            if (earliest == null || d.compareDate(earliest) < 0) earliest = d;
+            if (d.precision() == 11 && (day == null || d.compareDate(day) < 0)) day = d;
+        }
+        Integer year = earliest != null && earliest.year() >= FIRST_LIFE_YEAR && earliest.year() <= lastYear ? earliest.year() : null;
+        LocalDate date = day != null && day.year() >= FIRST_LIFE_YEAR && day.year() <= lastYear ? calendar(day) : null;
+        return new Event(date, year);
+    }
+
+    /**
+     * Даты жизни: рождение и смерть — по {@link #event}; смерть — только если есть рождение не позже неё: дата смерти —
+     * при дате рождения не позже, год смерти — при годе рождения не больше (иначе пусто).
+     */
+    public static Life life(SourceData.LifeDates dates, int lastYear) {
+        if (dates == null) return Life.NONE;
+        Event b = event(dates.birth(), lastYear), d = event(dates.death(), lastYear);
+        LocalDate dd = d.date();
+        Integer dy = d.year();
+        if (dd != null && (b.date() == null || b.date().isAfter(dd))) dd = null;
+        if (dy != null && (b.year() == null || b.year() > dy)) dy = null;
+        return new Life(b.date(), b.year(), dd, dy);
+    }
+
+    /** Дата по календарю из утверждения (год 1…9999, как пишет {@code YYYY-MM-DD}); не дата — {@code null}. */
+    public static LocalDate calendar(SourceData.DateStmt d) {
+        if (d == null || d.year() < 1 || d.year() > 9_999) return null;
+        try {
+            return LocalDate.of(d.year(), d.month(), d.day());
+        } catch (DateTimeException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Город по месту (P19, P915): GeoNames ID места ({@code places}) — id города набора «Мир» ({@code cities.id} =
+     * geonameid); у места его нет — {@code null}. Мест несколько — берётся первое по номеру элемента.
+     *
+     * @param items места по возрастанию номера
+     */
+    public static Integer city(int[] items, Map<Integer, Integer> places) {
+        return items == null || items.length == 0 ? null : places.get(items[0]);
+    }
+
+    // ---------------------------------------------------------------- съёмочная группа, студии, серии, награды
+
+    /** Должность в группе ({@code movies_crew.job}) по свойству {@link SourceData#CREW_PROPS} (тот же порядок). */
+    public static final List<String> CREW_JOBS = List.of("writer", "composer", "cinematographer", "producer", "editor");
+    /** Роль компании в фильме ({@code movies_companies.role}): студия (P272), прокатчик (P750). */
+    public static final String PRODUCTION = "production", DISTRIBUTION = "distribution";
+
+    /** Название элемента-справочника (студия, серия, награда): метка {@code en}, иначе {@code mul}; нет — {@code null}. */
+    public static String itemName(String[] labels) {
+        if (labels == null) return null;
+        return labels[SourceData.ITEM_EN] != null ? labels[SourceData.ITEM_EN] : labels[SourceData.ITEM_MUL];
+    }
+
+    /** Название элемента-справочника по-русски: метка {@code ru}; нет — {@code null}. */
+    public static String itemNameRu(String[] labels) {
+        return labels == null ? null : labels[SourceData.ITEM_RU];
+    }
+
+    /** Номер в серии: P1545 — целое от 1 до стольких. */
+    public static final int MAX_ORDINAL = 10_000;
+
+    /**
+     * Номер фильма в серии: из значений P1545 пары «фильм, серия» — целые (только цифры) от 1 до {@link #MAX_ORDINAL};
+     * из них — наименьшее; нет — {@code null}.
+     */
+    public static Integer ordinal(java.util.Collection<String> ordinals) {
+        Integer best = null;
+        for (String o : ordinals) {
+            if (o == null) continue;
+            String s = o.strip();
+            if (s.isEmpty() || s.length() > 9) continue;
+            boolean digits = true;
+            for (int i = 0; i < s.length(); i++) digits &= s.charAt(i) >= '0' && s.charAt(i) <= '9';
+            if (!digits) continue;
+            int v = Integer.parseInt(s);
+            if (v >= 1 && v <= MAX_ORDINAL && (best == null || v < best)) best = v;
+        }
+        return best;
+    }
+
+    /**
+     * Год награды или номинации: из дат P585 строк тройки «фильм, награда, выиграна ли» — самый ранний год среди дат с
+     * точностью не ниже года; нет — {@code null} (год вне {@code smallint} — как без даты).
+     */
+    public static Integer awardYear(java.util.Collection<SourceData.DateStmt> dates) {
+        Integer best = null;
+        for (SourceData.DateStmt d : dates) {
+            if (d == null || d.precision() < 9 || d.year() < Short.MIN_VALUE || d.year() > Short.MAX_VALUE) continue;
+            if (best == null || d.year() < best) best = d.year();
+        }
+        return best;
+    }
+
+    /**
+     * Дата выхода в стране ({@code movies_releases}): утверждение P577 с местом P291 и точностью до дня, дата по
+     * календарю ({@link #calendar}); иначе — {@code null} (строки нет).
+     */
+    public static LocalDate releaseDay(SourceData.DateStmt d) {
+        return d == null || d.precision() != 11 ? null : calendar(d);
     }
 
     // ---------------------------------------------------------------- жанры режиссёров

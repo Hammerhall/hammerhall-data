@@ -3,8 +3,10 @@ package io.hammerhall.data.mov;
 import java.util.List;
 
 /**
- * Коды, которых нет в наборе: страны фильмов ({@code movies_countries}) — тот же список, что у набора «Мир». Списки —
- * только коды, парами ISO 3166-1 alpha-3 и alpha-2 ({@link #DEFAULT} — списки выпуска, тесты подставляют свои).
+ * Коды, которых нет в наборе: страны фильмов ({@code movies_countries}), гражданство ({@code people_countries}),
+ * страны студий ({@code companies}) и выхода по странам ({@code movies_releases}) — тот же список, что у набора «Мир».
+ * Списки — только коды, парами ISO 3166-1 alpha-3 и alpha-2 ({@link #DEFAULT} — списки выпуска, тесты подставляют
+ * свои).
  *
  * @param countries3 страны — ISO 3166-1 alpha-3
  * @param countries2 те же страны — ISO 3166-1 alpha-2
