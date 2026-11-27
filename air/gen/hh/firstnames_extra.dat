@@ -808,7 +808,7 @@ AU	-	Felix	3	\N
 AU	-	Fiona	3	\N
 AU	-	Francis	2	\N
 AU	-	Frank	17	\N
-AU	-	Fred	6	\N
+AU	-	Fred	5	\N
 AU	-	Gabriel	2	\N
 AU	-	Gabrielle	2	\N
 AU	-	Garry	3	\N
@@ -1989,7 +1989,7 @@ BJ	-	Cyril	4	\N
 BJ	-	Damilare	3	\N
 BJ	-	Damilola	4	\N
 BJ	-	Damola	2	\N
-BJ	-	Daniel	4	\N
+BJ	-	Daniel	3	\N
 BJ	-	David	4	\N
 BJ	-	Dayo	3	\N
 BJ	-	Debbie	3	\N
@@ -2221,7 +2221,7 @@ BR	-	Caroline	2	\N
 BR	-	Cassiano	2	\N
 BR	-	Celso	3	\N
 BR	-	Cesar	4	\N
-BR	-	Charles	4	\N
+BR	-	Charles	3	\N
 BR	-	Chico	5	\N
 BR	-	Christian	3	\N
 BR	-	Clarice	3	\N
@@ -3835,7 +3835,7 @@ CI	-	Geneviève	27	\N
 CI	-	Geoffrey	6	\N
 CI	-	Geoffroy	3	\N
 CI	-	George	17	\N
-CI	-	Georges	212	\N
+CI	-	Georges	211	\N
 CI	-	Georgette	7	\N
 CI	-	Gerald	2	\N
 CI	-	Geraldine	2	\N
@@ -3916,7 +3916,7 @@ CI	-	Jack	7	\N
 CI	-	Jackie	7	\N
 CI	-	Jacky	8	\N
 CI	-	Jacqueline	54	\N
-CI	-	Jacques	334	\N
+CI	-	Jacques	333	\N
 CI	-	Jacques-Henri	2	\N
 CI	-	Jade	4	\N
 CI	-	Jalil	2	\N
@@ -4127,7 +4127,7 @@ CI	-	Manuela	2	\N
 CI	-	Marc	108	\N
 CI	-	Marc-Henri	2	\N
 CI	-	Marc-Olivier	2	\N
-CI	-	Marcel	92	\N
+CI	-	Marcel	91	\N
 CI	-	Marcela	3	\N
 CI	-	Marcelle	15	\N
 CI	-	Marcia	2	\N
@@ -4185,7 +4185,7 @@ CI	-	Matthieu	23	\N
 CI	-	Maud	14	\N
 CI	-	Maureen	3	\N
 CI	-	Maurice	115	\N
-CI	-	Max	44	\N
+CI	-	Max	43	\N
 CI	-	Maxence	5	\N
 CI	-	Maxim	2	\N
 CI	-	Maxime	19	\N
@@ -4778,7 +4778,6 @@ DK	-	Clara	3	\N
 DK	-	Clas	2	\N
 DK	-	Claudia	2	\N
 DK	-	Conny	3	\N
-DK	-	Cornelia	2	\N
 DK	-	Curt	7	\N
 DK	-	Dag	13	\N
 DK	-	Dagmar	4	\N
@@ -7026,7 +7025,6 @@ ES	-	Gabriel	10	\N
 ES	-	Gabriela	3	\N
 ES	-	Gala	2	\N
 ES	-	Galder	2	\N
-ES	-	Garazi	2	\N
 ES	-	Gemma	7	\N
 ES	-	George	2	\N
 ES	-	Georgina	3	\N
@@ -7463,7 +7461,7 @@ ET	-	Cyril	4	\N
 ET	-	Damilare	3	\N
 ET	-	Damilola	4	\N
 ET	-	Damola	2	\N
-ET	-	Daniel	4	\N
+ET	-	Daniel	3	\N
 ET	-	David	4	\N
 ET	-	Dayo	3	\N
 ET	-	Debbie	3	\N
@@ -7737,7 +7735,7 @@ GN	-	Cyril	4	\N
 GN	-	Damilare	3	\N
 GN	-	Damilola	4	\N
 GN	-	Damola	2	\N
-GN	-	Daniel	4	\N
+GN	-	Daniel	3	\N
 GN	-	David	4	\N
 GN	-	Dayo	3	\N
 GN	-	Debbie	3	\N
@@ -9120,7 +9118,7 @@ HT	-	Geneviève	27	\N
 HT	-	Geoffrey	6	\N
 HT	-	Geoffroy	3	\N
 HT	-	George	17	\N
-HT	-	Georges	212	\N
+HT	-	Georges	211	\N
 HT	-	Georgette	7	\N
 HT	-	Gerald	2	\N
 HT	-	Geraldine	2	\N
@@ -9201,7 +9199,7 @@ HT	-	Jack	7	\N
 HT	-	Jackie	7	\N
 HT	-	Jacky	8	\N
 HT	-	Jacqueline	54	\N
-HT	-	Jacques	334	\N
+HT	-	Jacques	333	\N
 HT	-	Jacques-Henri	2	\N
 HT	-	Jade	4	\N
 HT	-	Jalil	2	\N
@@ -9409,7 +9407,7 @@ HT	-	Manuela	2	\N
 HT	-	Marc	108	\N
 HT	-	Marc-Henri	2	\N
 HT	-	Marc-Olivier	2	\N
-HT	-	Marcel	92	\N
+HT	-	Marcel	91	\N
 HT	-	Marcela	3	\N
 HT	-	Marcelle	15	\N
 HT	-	Marcia	2	\N
@@ -9467,7 +9465,7 @@ HT	-	Matthieu	23	\N
 HT	-	Maud	14	\N
 HT	-	Maureen	3	\N
 HT	-	Maurice	115	\N
-HT	-	Max	44	\N
+HT	-	Max	43	\N
 HT	-	Maxence	5	\N
 HT	-	Maxim	2	\N
 HT	-	Maxime	19	\N
@@ -10446,7 +10444,6 @@ IE	-	Francis	2	\N
 IE	-	Frank	8	\N
 IE	-	Gary	3	\N
 IE	-	Gavin	3	\N
-IE	-	Gemma	2	\N
 IE	-	George	7	\N
 IE	-	Geraldine	2	\N
 IE	-	Gerard	7	\N
@@ -10462,7 +10459,7 @@ IE	-	James	10	\N
 IE	-	Jason	3	\N
 IE	-	Jim	4	\N
 IE	-	Joe	4	\N
-IE	-	John	25	\N
+IE	-	John	24	\N
 IE	-	Johnny	4	\N
 IE	-	Jonathan	3	\N
 IE	-	Joseph	4	\N
@@ -11817,7 +11814,6 @@ JM	-	Bobbi	6	\N
 JM	-	Bobbie	4	\N
 JM	-	Bobby	97	\N
 JM	-	Bobs	2	\N
-JM	-	Bonita	2	\N
 JM	-	Bonnie	31	\N
 JM	-	Booker	3	\N
 JM	-	Booth	2	\N
@@ -11832,7 +11828,7 @@ JM	-	Bradley	28	\N
 JM	-	Brady	5	\N
 JM	-	Braeden	2	\N
 JM	-	Bramwell	2	\N
-JM	-	Brandi	5	\N
+JM	-	Brandi	4	\N
 JM	-	Brandon	69	\N
 JM	-	Brandy	3	\N
 JM	-	Breanna	2	\N
@@ -12141,7 +12137,7 @@ JM	-	Daniele	2	\N
 JM	-	Daniella	4	\N
 JM	-	Danielle	42	\N
 JM	-	Dann	3	\N
-JM	-	Danny	115	\N
+JM	-	Danny	114	\N
 JM	-	Dante	7	\N
 JM	-	Daphne	10	\N
 JM	-	Dar	3	\N
@@ -12196,7 +12192,6 @@ JM	-	Del	14	\N
 JM	-	Delia	5	\N
 JM	-	Della	3	\N
 JM	-	Delores	2	\N
-JM	-	Demetra	2	\N
 JM	-	Demetri	2	\N
 JM	-	Demetrius	4	\N
 JM	-	Demi	3	\N
@@ -12360,7 +12355,7 @@ JM	-	Elmore	2	\N
 JM	-	Elodie	2	\N
 JM	-	Elon	2	\N
 JM	-	Elroy	2	\N
-JM	-	Elsa	5	\N
+JM	-	Elsa	4	\N
 JM	-	Elsie	11	\N
 JM	-	Elton	4	\N
 JM	-	Elvis	3	\N
@@ -12474,14 +12469,14 @@ JM	-	Francesco	2	\N
 JM	-	Francine	8	\N
 JM	-	Francis	56	\N
 JM	-	Franco	2	\N
-JM	-	Frank	372	\N
+JM	-	Frank	371	\N
 JM	-	Frankie	34	\N
 JM	-	Franklin	14	\N
 JM	-	Franklyn	4	\N
 JM	-	Franz	9	\N
 JM	-	François	4	\N
 JM	-	Fraser	2	\N
-JM	-	Fred	171	\N
+JM	-	Fred	170	\N
 JM	-	Freda	4	\N
 JM	-	Freddie	33	\N
 JM	-	Freddy	7	\N
@@ -12580,7 +12575,6 @@ JM	-	Grady	3	\N
 JM	-	Graham	49	\N
 JM	-	Grand	2	\N
 JM	-	Grant	30	\N
-JM	-	Granville	3	\N
 JM	-	Gray	2	\N
 JM	-	Grayson	7	\N
 JM	-	Greer	2	\N
@@ -12785,10 +12779,10 @@ JM	-	Jakob	2	\N
 JM	-	Jalen	2	\N
 JM	-	Jam	2	\N
 JM	-	Jamal	6	\N
-JM	-	James	712	\N
+JM	-	James	711	\N
 JM	-	Jameson	2	\N
 JM	-	Jami	3	\N
-JM	-	Jamie	98	\N
+JM	-	Jamie	97	\N
 JM	-	Jamila	2	\N
 JM	-	Jamison	3	\N
 JM	-	Jan	44	\N
@@ -12813,7 +12807,7 @@ JM	-	Jason	193	\N
 JM	-	Jasper	7	\N
 JM	-	Javier	3	\N
 JM	-	Jawed	2	\N
-JM	-	Jay	141	\N
+JM	-	Jay	140	\N
 JM	-	Jayden	2	\N
 JM	-	Jaye	2	\N
 JM	-	Jayne	11	\N
@@ -12884,7 +12878,7 @@ JM	-	Joel	83	\N
 JM	-	Joey	47	\N
 JM	-	Johann	2	\N
 JM	-	Johanna	5	\N
-JM	-	John	1505	\N
+JM	-	John	1503	\N
 JM	-	John-Paul	2	\N
 JM	-	Johnathan	3	\N
 JM	-	Johnnie	10	\N
@@ -12895,7 +12889,7 @@ JM	-	Jolene	4	\N
 JM	-	Jon	161	\N
 JM	-	Jonah	15	\N
 JM	-	Jonas	8	\N
-JM	-	Jonathan	195	\N
+JM	-	Jonathan	194	\N
 JM	-	Jonathon	2	\N
 JM	-	Joni	2	\N
 JM	-	Jonni	2	\N
@@ -13162,7 +13156,7 @@ JM	-	Leopold	6	\N
 JM	-	Leota	2	\N
 JM	-	Leroy	4	\N
 JM	-	Les	30	\N
-JM	-	Lesley	17	\N
+JM	-	Lesley	16	\N
 JM	-	Lesli	3	\N
 JM	-	Leslie	104	\N
 JM	-	Lester	25	\N
@@ -13454,7 +13448,7 @@ JM	-	Meyer	4	\N
 JM	-	Mia	23	\N
 JM	-	Micaela	3	\N
 JM	-	Micah	7	\N
-JM	-	Michael	1055	\N
+JM	-	Michael	1054	\N
 JM	-	Michaela	10	\N
 JM	-	Michel	9	\N
 JM	-	Michele	20	\N
@@ -13466,7 +13460,7 @@ JM	-	Mickie	2	\N
 JM	-	Micky	5	\N
 JM	-	Miguel	13	\N
 JM	-	Mika	5	\N
-JM	-	Mike	288	\N
+JM	-	Mike	287	\N
 JM	-	Mikel	2	\N
 JM	-	Mikey	5	\N
 JM	-	Mikhail	4	\N
@@ -13582,9 +13576,9 @@ JM	-	Nia	7	\N
 JM	-	Niall	5	\N
 JM	-	Nic	6	\N
 JM	-	Nichola	2	\N
-JM	-	Nicholas	104	\N
+JM	-	Nicholas	103	\N
 JM	-	Nichole	3	\N
-JM	-	Nick	192	\N
+JM	-	Nick	191	\N
 JM	-	Nicki	2	\N
 JM	-	Nicky	10	\N
 JM	-	Nico	9	\N
@@ -13681,7 +13675,7 @@ JM	-	Patrice	8	\N
 JM	-	Patricia	76	\N
 JM	-	Patrick	161	\N
 JM	-	Patsy	10	\N
-JM	-	Patti	13	\N
+JM	-	Patti	12	\N
 JM	-	Patty	9	\N
 JM	-	Paul	622	\N
 JM	-	Paula	34	\N
@@ -13774,7 +13768,6 @@ JM	-	Raphael	4	\N
 JM	-	Raquel	6	\N
 JM	-	Rashid	2	\N
 JM	-	Raul	3	\N
-JM	-	Raven	4	\N
 JM	-	Ravi	4	\N
 JM	-	Ray	131	\N
 JM	-	Raye	3	\N
@@ -13823,7 +13816,7 @@ JM	-	Rian	3	\N
 JM	-	Ric	12	\N
 JM	-	Ricardo	6	\N
 JM	-	Rich	27	\N
-JM	-	Richard	668	\N
+JM	-	Richard	667	\N
 JM	-	Richie	8	\N
 JM	-	Rick	109	\N
 JM	-	Rickey	3	\N
@@ -14040,7 +14033,7 @@ JM	-	Sigrid	2	\N
 JM	-	Silas	3	\N
 JM	-	Silver	2	\N
 JM	-	Silvio	2	\N
-JM	-	Simon	128	\N
+JM	-	Simon	127	\N
 JM	-	Simone	9	\N
 JM	-	Sinead	2	\N
 JM	-	Siobhan	6	\N
@@ -14132,7 +14125,7 @@ JM	-	Suzy	11	\N
 JM	-	Sy	5	\N
 JM	-	Sybil	8	\N
 JM	-	Syd	8	\N
-JM	-	Sydney	35	\N
+JM	-	Sydney	33	\N
 JM	-	Sylvester	4	\N
 JM	-	Sylvia	25	\N
 JM	-	Sándor	2	\N
@@ -14203,7 +14196,6 @@ JM	-	Thom	20	\N
 JM	-	Thomas	174	\N
 JM	-	Thor	3	\N
 JM	-	Thornton	4	\N
-JM	-	Thurl	2	\N
 JM	-	Thurston	2	\N
 JM	-	Tia	4	\N
 JM	-	Tico	2	\N
@@ -14327,7 +14319,7 @@ JM	-	Walker	6	\N
 JM	-	Wallace	26	\N
 JM	-	Wally	25	\N
 JM	-	Walt	13	\N
-JM	-	Walter	144	\N
+JM	-	Walter	143	\N
 JM	-	Walton	2	\N
 JM	-	Wanda	10	\N
 JM	-	Ward	14	\N
@@ -14344,7 +14336,7 @@ JM	-	Wendi	3	\N
 JM	-	Wendie	2	\N
 JM	-	Wendy	40	\N
 JM	-	Werner	4	\N
-JM	-	Wes	11	\N
+JM	-	Wes	10	\N
 JM	-	Wesley	19	\N
 JM	-	Weston	3	\N
 JM	-	Wheaton	2	\N
@@ -14735,9 +14727,9 @@ KE	-	Damilare	3	\N
 KE	-	Damilola	4	\N
 KE	-	Damola	2	\N
 KE	-	Damon	2	\N
-KE	-	Daniel	6	\N
+KE	-	Daniel	5	\N
 KE	-	Dave	2	\N
-KE	-	David	16	\N
+KE	-	David	15	\N
 KE	-	Dayo	3	\N
 KE	-	Dean	2	\N
 KE	-	Debbie	3	\N
@@ -16583,7 +16575,7 @@ LU	-	Geoffrey	6	\N
 LU	-	Geoffroy	3	\N
 LU	-	Georg	63	\N
 LU	-	George	24	\N
-LU	-	Georges	220	\N
+LU	-	Georges	219	\N
 LU	-	Georgette	7	\N
 LU	-	Georgia	3	\N
 LU	-	Gerald	8	\N
@@ -16807,7 +16799,7 @@ LU	-	Jackie	7	\N
 LU	-	Jacky	11	\N
 LU	-	Jacob	4	\N
 LU	-	Jacqueline	58	\N
-LU	-	Jacques	352	\N
+LU	-	Jacques	351	\N
 LU	-	Jacques-Henri	2	\N
 LU	-	Jade	4	\N
 LU	-	Jakob	21	\N
@@ -17193,7 +17185,7 @@ LU	-	Mara	2	\N
 LU	-	Marc	165	\N
 LU	-	Marc-Henri	2	\N
 LU	-	Marc-Olivier	2	\N
-LU	-	Marcel	119	\N
+LU	-	Marcel	118	\N
 LU	-	Marcela	3	\N
 LU	-	Marcelle	15	\N
 LU	-	Marcia	2	\N
@@ -17284,7 +17276,7 @@ LU	-	Maud	14	\N
 LU	-	Maureen	5	\N
 LU	-	Maurice	125	\N
 LU	-	Maurus	2	\N
-LU	-	Max	136	\N
+LU	-	Max	135	\N
 LU	-	Maxence	5	\N
 LU	-	Maxi	5	\N
 LU	-	Maxim	4	\N
@@ -18202,7 +18194,7 @@ ML	-	Cyril	4	\N
 ML	-	Damilare	3	\N
 ML	-	Damilola	4	\N
 ML	-	Damola	2	\N
-ML	-	Daniel	4	\N
+ML	-	Daniel	3	\N
 ML	-	David	6	\N
 ML	-	Dayo	3	\N
 ML	-	Debbie	3	\N
@@ -18810,7 +18802,7 @@ NG	-	Cyril	4	\N
 NG	-	Damilare	3	\N
 NG	-	Damilola	4	\N
 NG	-	Damola	2	\N
-NG	-	Daniel	4	\N
+NG	-	Daniel	3	\N
 NG	-	David	4	\N
 NG	-	Dayo	3	\N
 NG	-	Debbie	3	\N
@@ -19337,7 +19329,7 @@ NL	-	Serge	2	\N
 NL	-	Sergio	2	\N
 NL	-	Siem	2	\N
 NL	-	Simon	6	\N
-NL	-	Simone	5	\N
+NL	-	Simone	4	\N
 NL	-	Sjoerd	3	\N
 NL	-	Sonia	2	\N
 NL	-	Sophie	3	\N
@@ -21924,7 +21916,6 @@ SG	-	Amlan	2	\N
 SG	-	Amol	4	\N
 SG	-	Amrit	3	\N
 SG	-	Amrita	8	\N
-SG	-	Amruta	2	\N
 SG	-	Amrutha	2	\N
 SG	-	Ana	2	\N
 SG	-	Anand	19	\N
@@ -23463,7 +23454,6 @@ TH	-	Amlan	2	\N
 TH	-	Amol	4	\N
 TH	-	Amrit	3	\N
 TH	-	Amrita	8	\N
-TH	-	Amruta	2	\N
 TH	-	Amrutha	2	\N
 TH	-	Anand	19	\N
 TH	-	Ananda	3	\N
@@ -25106,9 +25096,9 @@ TZ	-	Damilare	3	\N
 TZ	-	Damilola	4	\N
 TZ	-	Damola	2	\N
 TZ	-	Damon	2	\N
-TZ	-	Daniel	6	\N
+TZ	-	Daniel	5	\N
 TZ	-	Dave	2	\N
-TZ	-	David	16	\N
+TZ	-	David	15	\N
 TZ	-	Dayo	3	\N
 TZ	-	Dean	2	\N
 TZ	-	Debbie	3	\N
@@ -25378,7 +25368,7 @@ UG	-	Cyril	4	\N
 UG	-	Damilare	3	\N
 UG	-	Damilola	4	\N
 UG	-	Damola	2	\N
-UG	-	Daniel	4	\N
+UG	-	Daniel	3	\N
 UG	-	David	4	\N
 UG	-	Dayo	3	\N
 UG	-	Debbie	3	\N
@@ -25738,7 +25728,7 @@ ZA	-	Connie	2	\N
 ZA	-	Damon	2	\N
 ZA	-	Daniel	2	\N
 ZA	-	Dave	2	\N
-ZA	-	David	12	\N
+ZA	-	David	11	\N
 ZA	-	Dean	2	\N
 ZA	-	Deon	4	\N
 ZA	-	Desmond	2	\N

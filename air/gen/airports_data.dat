@@ -1022,7 +1022,6 @@ DAC	{"en": "Hazrat Shahjalal", "ru": "Хазрат Шахджалал"}	{"en": "
 DAD	{"en": "Da Nang", "ru": "Дананг"}	{"en": "Da Nang", "ru": "Дананг"}	VN	{"en": "Vietnam", "ru": "Вьетнам"}	(108.199,16.0439)	Asia/Saigon	\N
 DAL	{"en": "Moss L. Love", "ru": "Мосс Лав"}	{"en": "Dallas", "ru": "Даллас"}	US	{"en": "United States", "ru": "Соединенные Штаты"}	(-96.8518,32.8471)	America/Chicago	\N
 DAM	{"en": "Damascus", "ru": "Дамаск"}	{"en": "Damascus", "ru": "Дамаск"}	SY	{"en": "Syria", "ru": "Сирийская Арабская Республика"}	(36.5156,33.4115)	Asia/Damascus	\N
-DAN	{"en": "Danville", "ru": "Дэнвилл"}	{"en": "Danville", "ru": "Дэнвилл"}	US	{"en": "United States", "ru": "Соединенные Штаты"}	(-79.3361,36.5729)	America/New_York	\N
 DAR	{"en": "Julius Nyerere", "ru": "Джулиус Ньерере"}	{"en": "Dar Es Salaam", "ru": "Дар-эс-Салам"}	TZ	{"en": "Tanzania", "ru": "Танзания, Объединенная Республика"}	(39.2026,-6.8781)	Africa/Dar_es_Salaam	\N
 DAT	{"en": "Datong", "ru": "Датун"}	{"en": "Datong", "ru": "Датун"}	CN	{"en": "China", "ru": "Китай"}	(113.482,40.0603)	Asia/Shanghai	\N
 DAU	{"en": "Daru", "ru": "Дару"}	{"en": "Daru", "ru": "Дару"}	PG	{"en": "Papua New Guinea", "ru": "Папуа-Новая Гвинея"}	(143.208,-9.0868)	Pacific/Port_Moresby	\N
@@ -1119,7 +1118,6 @@ DNL	{"en": "Raleigh Daniel", "ru": "Роли Дэниел"}	{"en": "Augusta", "r
 DNN	{"en": "Dalton", "ru": "Далтон"}	{"en": "Dalton", "ru": "Далтон"}	US	{"en": "United States", "ru": "Соединенные Штаты"}	(-84.8702,34.7229)	America/New_York	\N
 DNP	{"en": "Tulsipur", "ru": "Тулсипур"}	{"en": "Dang", "ru": "Данг"}	NP	{"en": "Nepal", "ru": "Непал"}	(82.2942,28.1111)	Asia/Kathmandu	\N
 DNR	{"en": "Dinard-Pleurtuit-Saint-Malo", "ru": "Динар-Плертюи-Сен-Мало"}	{"en": "Dinard", "ru": "Динар"}	FR	{"en": "France", "ru": "Франция"}	(-2.08,48.5877)	Europe/Paris	\N
-DNV	{"en": "Vermilion", "ru": "Вермилион"}	{"en": "Danville", "ru": "Дэнвилл"}	US	{"en": "United States", "ru": "Соединенные Штаты"}	(-87.5959,40.1992)	America/Chicago	\N
 DNZ	{"en": "Çardak", "ru": "Чардак"}	{"en": "Denizli", "ru": "Денизли"}	TR	{"en": "Turkey", "ru": "Турция"}	(29.7013,37.7856)	Europe/Istanbul	\N
 DOD	{"en": "Dodoma", "ru": "Додома"}	{"en": "Dodoma", "ru": "Додома"}	TZ	{"en": "Tanzania", "ru": "Танзания, Объединенная Республика"}	(35.7526,-6.1704)	Africa/Dar_es_Salaam	\N
 DOG	{"en": "Dongola", "ru": "Донгола"}	{"en": "Dongola", "ru": "Донгола"}	SD	{"en": "Sudan", "ru": "Судан"}	(30.4301,19.1539)	Africa/Khartoum	\N
@@ -1528,7 +1526,6 @@ GFK	{"en": "Grand Forks", "ru": "Гранд-Форкс"}	{"en": "Grand Forks", "
 GFL	{"en": "Floyd Bennett", "ru": "Флойд Беннетт"}	{"en": "Glens Falls", "ru": "Гленс-Фолс"}	US	{"en": "United States", "ru": "Соединенные Штаты"}	(-73.6103,43.3412)	America/New_York	\N
 GFN	{"en": "Grafton", "ru": "Графтон"}	{"en": "Grafton", "ru": "Графтон"}	AU	{"en": "Australia", "ru": "Австралия"}	(153.03,-29.7594)	Australia/Sydney	\N
 GFO	{"en": "Bartica", "ru": "Бартика"}	{"en": "Bartica", "ru": "Бартика"}	GY	{"en": "Guyana", "ru": "Гайана"}	(-58.6552,6.3589)	America/Guyana	\N
-GFR	{"en": "Granville", "ru": "Гранвиль"}	{"en": "Granville", "ru": "Гранвиль"}	FR	{"en": "France", "ru": "Франция"}	(-1.5642,48.8831)	Europe/Paris	\N
 GFY	{"en": "Grootfontein", "ru": "Грутфонтейн"}	{"en": "Grootfontein", "ru": "Грутфонтейн"}	NA	{"en": "Namibia", "ru": "Намибия"}	(18.1227,-19.6022)	Africa/Windhoek	\N
 GGE	{"en": "Georgetown", "ru": "Джорджтаун"}	{"en": "Georgetown", "ru": "Джорджтаун"}	US	{"en": "United States", "ru": "Соединенные Штаты"}	(-79.3196,33.3117)	America/New_York	\N
 GGG	{"en": "East Texas", "ru": "Ист-Техас"}	{"en": "Longview", "ru": "Лонгвью"}	US	{"en": "United States", "ru": "Соединенные Штаты"}	(-94.7115,32.384)	America/Chicago	\N
@@ -2569,7 +2566,6 @@ LJG	{"en": "Lijiang", "ru": "Лицзян"}	{"en": "Lijiang", "ru": "Лицзя�
 LJN	{"en": "Texas Gulf Coast", "ru": "Техас-Галф-Коаст"}	{"en": "Angleton", "ru": "Англтон"}	US	{"en": "United States", "ru": "Соединенные Штаты"}	(-95.4621,29.1086)	America/Chicago	\N
 LJU	{"en": "Jože Pučnik", "ru": "Йоже Пучник"}	{"en": "Ljubljana", "ru": "Любляна"}	SI	{"en": "Slovenia", "ru": "Словения"}	(14.4576,46.2237)	Europe/Ljubljana	\N
 LKB	{"en": "Lakeba", "ru": "Лакеба"}	{"en": "Lakeba Island", "ru": "Остров Лакеба"}	FJ	{"en": "Fiji", "ru": "Фиджи"}	(-178.817,-18.1992)	Pacific/Fiji	\N
-LKG	{"en": "Lokichoggio", "ru": "Локичоггио"}	{"en": "Lokichoggio", "ru": "Локичоггио"}	KE	{"en": "Kenya", "ru": "Кения"}	(34.3482,4.2041)	Africa/Nairobi	\N
 LKH	{"en": "Long Akah", "ru": "Лонг-Аках"}	{"en": "Long Akah", "ru": "Лонг-Аках"}	MY	{"en": "Malaysia", "ru": "Малайзия"}	(114.783,3.3)	Asia/Kuala_Lumpur	\N
 LKL	{"en": "Banak", "ru": "Банак"}	{"en": "Lakselv", "ru": "Лакселв"}	NO	{"en": "Norway", "ru": "Норвегия"}	(24.9735,70.0688)	Europe/Oslo	\N
 LKN	{"en": "Leknes", "ru": "Лекнес"}	{"en": "Leknes", "ru": "Лекнес"}	NO	{"en": "Norway", "ru": "Норвегия"}	(13.6094,68.1525)	Europe/Oslo	\N
@@ -3867,7 +3863,6 @@ REY	{"en": "Reyes", "ru": "Рейес"}	{"en": "Reyes", "ru": "Рейес"}	BO	{
 RFD	{"en": "Rockford", "ru": "Рокфорд"}	{"en": "Chicago", "ru": "Чикаго"}	US	{"en": "United States", "ru": "Соединенные Штаты"}	(-89.0972,42.1954)	America/Chicago	\N
 RFP	{"en": "Raiatea", "ru": "Раиатеа"}	{"en": "Raiatea Island", "ru": "Остров Раиатеа"}	PF	{"en": "French Polynesia", "ru": "Французская Полинезия"}	(-151.466,-16.7229)	Pacific/Tahiti	\N
 RFS	{"en": "Rosita", "ru": "Розита"}	{"en": "Rosita", "ru": "Розита"}	NI	{"en": "Nicaragua", "ru": "Никарагуа"}	(-84.4089,13.8897)	America/Managua	\N
-RGA	{"en": "Hermes Quijada", "ru": "Эрмес Кихада"}	{"en": "Rio Grande", "ru": "Рио-Гранде"}	AR	{"en": "Argentina", "ru": "Аргентина"}	(-67.7494,-53.7777)	America/Argentina/Ushuaia	\N
 RGI	{"en": "Rangiroa", "ru": "Рангироа"}	{"en": "Rangiroa", "ru": "Рангироа"}	PF	{"en": "French Polynesia", "ru": "Французская Полинезия"}	(-147.661,-14.9543)	Pacific/Tahiti	\N
 RGK	{"en": "Gorno-Altaysk", "ru": "Горно-Алтайск"}	{"en": "Gorno-Altaysk", "ru": "Горно-Алтайск"}	RU	{"en": "Russia", "ru": "Россия"}	(85.8333,51.9667)	Asia/Krasnoyarsk	\N
 RGL	{"en": "Norberto Fernández", "ru": "Норберто Фернандес"}	{"en": "Rio Gallegos", "ru": "Рио-Гальегос"}	AR	{"en": "Argentina", "ru": "Аргентина"}	(-69.3126,-51.6089)	America/Argentina/Rio_Gallegos	\N
@@ -3968,11 +3963,9 @@ RUS	{"en": "Marau", "ru": "Марау"}	{"en": "Marau", "ru": "Марау"}	SB	{
 RUT	{"en": "Rutland", "ru": "Ратленд"}	{"en": "Rutland", "ru": "Ратленд"}	US	{"en": "United States", "ru": "Соединенные Штаты"}	(-72.9496,43.5294)	America/New_York	\N
 RVA	{"en": "Farafangana", "ru": "Фарафангана"}	{"en": "Farafangana", "ru": "Фарафангана"}	MG	{"en": "Madagascar", "ru": "Мадагаскар"}	(47.8206,-22.8053)	Indian/Antananarivo	\N
 RVD	{"en": "Leite de Castro", "ru": "Лейте де Кастро"}	{"en": "Rio Verde", "ru": "Риу-Верди"}	BR	{"en": "Brazil", "ru": "Бразилия"}	(-50.9561,-17.8347)	America/Sao_Paulo	\N
-RVE	{"en": "Los Colonizadores", "ru": "Лос-Колонизадорес"}	{"en": "Saravena", "ru": "Саравена"}	CO	{"en": "Colombia", "ru": "Колумбия"}	(-71.8572,6.9519)	America/Bogota	\N
 RVK	{"en": "Rørvik", "ru": "Рёрвик"}	{"en": "Rørvik", "ru": "Рёрвик"}	NO	{"en": "Norway", "ru": "Норвегия"}	(11.1461,64.8383)	Europe/Oslo	\N
 RVN	{"en": "Rovaniemi", "ru": "Рованиеми"}	{"en": "Rovaniemi", "ru": "Рованиеми"}	FI	{"en": "Finland", "ru": "Финляндия"}	(25.8304,66.5648)	Europe/Helsinki	\N
 RVS	{"en": "Tulsa Riverside", "ru": "Талса-Риверсайд"}	{"en": "Tulsa", "ru": "Талса"}	US	{"en": "United States", "ru": "Соединенные Штаты"}	(-95.9846,36.0396)	America/Chicago	\N
-RVT	{"en": "Ravensthorpe", "ru": "Рейвенсторп"}	{"en": "Ravensthorpe", "ru": "Рейвенсторп"}	AU	{"en": "Australia", "ru": "Австралия"}	(120.208,-33.7972)	Australia/Perth	\N
 RVV	{"en": "Raivavae", "ru": "Раиваваэ"}	{"en": "Raivavae", "ru": "Раиваваэ"}	PF	{"en": "French Polynesia", "ru": "Французская Полинезия"}	(-147.662,-23.8852)	Pacific/Tahiti	\N
 RVY	{"en": "Óscar D. Gestido", "ru": "Оскар Хестидо"}	{"en": "Rivera", "ru": "Ривера"}	UY	{"en": "Uruguay", "ru": "Уругвай"}	(-55.4762,-30.9746)	America/Montevideo	\N
 RWI	{"en": "Rocky Mount - Wilson", "ru": "Роки-Маунт - Уилсон"}	{"en": "Rocky Mount", "ru": "Роки-Маунт"}	US	{"en": "United States", "ru": "Соединенные Штаты"}	(-77.8919,35.8563)	America/New_York	\N
@@ -4209,7 +4202,6 @@ SOF	{"en": "Sofia", "ru": "София"}	{"en": "Sofia", "ru": "София"}	BG	{
 SOG	{"en": "Sogndal", "ru": "Согндал"}	{"en": "Sogndal", "ru": "Согндал"}	NO	{"en": "Norway", "ru": "Норвегия"}	(7.1378,61.1561)	Europe/Oslo	\N
 SOJ	{"en": "Sørkjosen", "ru": "Сёркьёсен"}	{"en": "Sørkjosen", "ru": "Сёркьёсен"}	NO	{"en": "Norway", "ru": "Норвегия"}	(20.9594,69.7868)	Europe/Oslo	\N
 SOM	{"en": "San Tomé", "ru": "Сан-Томе"}	{"en": "San Tome", "ru": "Сан-Томе"}	VE	{"en": "Venezuela", "ru": "Венесуэла Боливарианская Республика"}	(-64.1511,8.9451)	America/Caracas	\N
-SON	{"en": "Santo", "ru": "Санто"}	{"en": "Luganville", "ru": "Луганвилл"}	VU	{"en": "Vanuatu", "ru": "Вануату"}	(167.22,-15.505)	Pacific/Efate	\N
 SOO	{"en": "Söderhamn", "ru": "Сёдерхамн"}	{"en": "Söderhamn", "ru": "Сёдерхамн"}	SE	{"en": "Sweden", "ru": "Швеция"}	(17.0991,61.2615)	Europe/Stockholm	\N
 SOP	{"en": "Moore", "ru": "Мур"}	{"en": "Southern Pines", "ru": "Саутерн-Пайнс"}	US	{"en": "United States", "ru": "Соединенные Штаты"}	(-79.3912,35.2374)	America/New_York	\N
 SOQ	{"en": "Dominique Edward Osok", "ru": "Доминик Эдвард Осок"}	{"en": "Sorong", "ru": "Соронг"}	ID	{"en": "Indonesia", "ru": "Индонезия"}	(131.287,-0.894)	Asia/Jayapura	\N
