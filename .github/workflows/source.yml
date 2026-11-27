@@ -28,7 +28,8 @@ name: source
 
 on:
   push:
-    tags: ['*-source-*']
+    # снимки авиа (air-source-*) собирают вручную генератором air/gen — этот workflow их не берёт
+    tags: ['*-source-*', '!air-source-*']
   workflow_dispatch:
     inputs:
       code:

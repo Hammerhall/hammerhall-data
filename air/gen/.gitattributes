@@ -1,0 +1,10 @@
+# Скрипты и данные генератора должны оставаться с переводом строки LF и на Windows:
+# CR в конце строки ломает bash (run.sh, export.sh) и \copy (*.dat, *.tsv).
+*.sh   text eol=lf
+*.sql  text eol=lf
+*.md   text eol=lf
+*.dat  -text
+*.tsv  -text
+LICENSE text eol=lf
+*.txt  -text
+*.py   text eol=lf

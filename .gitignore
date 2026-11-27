@@ -30,6 +30,9 @@ air-build-*/
 !*/src/main/resources/**/*.tsv
 !*/schema/*.sql
 !*/pg-check.sql
+# генератор авиа (air/gen — изменённая копия демобазы): его SQL и входы сети — исходники, не данные
+!air/gen/**/*.sql
+!air/gen/**/*.tsv
 
 # сборка (build.sh — target/<код>/, Maven — <модуль>/target/) и рабочие прогоны (входы наборов — <код>/work/)
 target/
