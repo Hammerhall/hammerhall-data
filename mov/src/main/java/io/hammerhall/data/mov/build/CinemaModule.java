@@ -257,6 +257,15 @@ public final class CinemaModule implements Module {
                 "продолжений " + c.sequels().size());
         report.ok("год и название фильмов", "год по путям " + c.yearPaths() + ", название по путям " + c.titlePaths());
 
+        // документальные фильмы (жанр Documentary): ни одной роли — их актёрский состав не берётся
+        Set<Integer> documentaries = new HashSet<>();
+        for (Cinema.Pair p : c.moviesGenres()) if (p.b() == Genres.DOCUMENTARY) documentaries.add(p.a());
+        List<String> docRoles = new ArrayList<>();
+        for (Cinema.Role r : c.roles()) if (documentaries.contains(r.movieId())) docRoles.add(r.actorId() + "-" + r.movieId());
+        report.expectNone("у документальных фильмов — ни одной роли", docRoles, "документальных фильмов " + documentaries.size()
+                + ": не взято ролей " + c.documentaries().rolesNotTaken() + ", выпало актёров " + c.documentaries().actorsDropped()
+                + ", людей " + c.documentaries().peopleDropped());
+
         // места: только те, на кого ссылается профиль; город и расстояние — вместе и только у места, не дальше 30 км;
         // город в ссылках (места фильмов, рождение, штаб-квартира) — тот же, что у места
         Map<Integer, Cinema.Place> placeById = new java.util.HashMap<>();

@@ -55,6 +55,11 @@ import java.util.zip.ZipOutputStream;
  * исключённым кодом (Q9001), место в такой стране (Q6013), место из списка (Q6014); место рождения — первое по номеру
  * из тех, что берутся (у Q503: Q6003 нет в places, Q6014 в списке — Q6015).
  *
+ * <p>Документальный фильм Q111 (§11): его актёрский состав не берётся — Q521 больше нигде не снимается (выпадает из
+ * актёров и людей), Q502 играет и в обычных фильмах (остаётся без этой роли), Q518 — оператор Q101 (не актёр, но в
+ * людях); режиссёр Q522 остаётся. Пол Q521 и Q518 — от seed: доля F актёров с полом из источника не меняется.
+ * Mockumentary (Q120, P136 Q459435, предки — документальный фильм и пародия) — Comedy, не документальный: состав остаётся.
+ *
  * <p>{@link #entries()} — записи снимка (путь → байты): тесты правят копию и пишут свой снимок ({@link #with}).
  */
 public final class TinySnapshot {
@@ -236,7 +241,8 @@ public final class TinySnapshot {
             "Q112|P136|Q8001", "Q112|P136|Q8003", "Q112|P57|Q501", "Q112|P57|Q509", "Q112|P495|Q30",
             "Q113|P136|Q8010", "Q113|P136|Q8020", "Q113|P57|Q501", "Q113|P57|Q508",
             "Q117|P136|Q8030", "Q117|P57|Q501", "Q117|P57|Q506",
-            "Q119|P57|Q506", "Q119|P136|Q24862");
+            "Q119|P57|Q506", "Q119|P136|Q24862", "Q120|P136|Q459435",
+            "Q111|P57|Q522");
 
     static final String FILM_DURATIONS = csv("film,seconds",
             "Q101|5400", "Q110|600", "Q111|2430", "Q112|2490", "Q113|5400", "Q113|20", "Q114|90060", "Q115|90000.0",
@@ -269,7 +275,9 @@ public final class TinySnapshot {
             "Q107|P161|Q502|||Self",
             "Q112|P161|Q510|||",
             "Q112|P161|Q515|||",
-            "Q119|P161|Q513|||");
+            "Q119|P161|Q513|||",
+            "Q111|P161|Q521|||Herself", "Q111|P161|Q502|||Himself", "Q111|P161|Q518|||",
+            "Q120|P161|Q514|||");
 
     static final String GENRE_ITEMS = csv("item,label_en,parent",
             "Q130232|drama film|",
@@ -282,14 +290,15 @@ public final class TinySnapshot {
             "Q8010|deep 1|Q8011", "Q8011|deep 2|Q8012", "Q8012|deep 3|Q8013", "Q8013|deep 4|Q8014",
             "Q8014|deep 5|Q8015", "Q8015|deep 6|Q8016", "Q8016|deep 7|Q130232",
             "Q8020|loop a|Q8021", "Q8021|loop b|Q8020",
-            "Q8030|two anchors|Q157443", "Q8030|two anchors|Q200092");
+            "Q8030|two anchors|Q157443", "Q8030|two anchors|Q200092",
+            "Q459435|mockumentary|Q93204", "Q459435|mockumentary|Q622548", "Q93204|documentary film|", "Q622548|parody film|");
 
     /** Люди: person,human,gender,sitelinks. */
     static final String PEOPLE = csv("person,human,gender,sitelinks",
             "Q501|1|Q6581097|40", "Q502|1|Q6581097|30", "Q503|1|Q6581072|20", "Q504|1|Q2449503|5", "Q505|1|Q1052281|5",
             "Q506|1|Q48270|3", "Q507|1||1", "Q508|1|Q6581072|1", "Q509|0||0", "Q510|1||2", "Q511|1||0", "Q512|1||0",
             "Q513|1|Q6581072|4", "Q514|1|Q6581097|0", "Q515|1||0", "Q516|1|Q48270|0", "Q517|1||0", "Q518|1||0",
-            "Q519|1||0", "Q520|1|Q6581097|0");
+            "Q519|1||0", "Q520|1|Q6581097|0", "Q521|1||0", "Q522|1|Q6581097|0");
 
     static final String PEOPLE_LABELS = csv("person,lang,label",
             "Q501|en|Steven Halden", "Q501|ru|Стивен Халден",
@@ -307,7 +316,8 @@ public final class TinySnapshot {
             "Q513|mul|Ana Torres",
             "Q514|en|(unnamed)", "Q514|mul|Somebody Else",
             "Q515|en|Ole Back\\slash", "Q515|fr|Ole Lund",
-            "Q516|en|Robin Ash", "Q517|en|Maria Ortiz", "Q518|en|Sam Reed", "Q520|en|Carl Stone");
+            "Q516|en|Robin Ash", "Q517|en|Maria Ortiz", "Q518|en|Sam Reed", "Q520|en|Carl Stone", "Q521|en|Dana Wells",
+            "Q522|en|Victor Lane");
 
     static final String PEOPLE_NAMES = csv("person,kind,item,ordinal",
             "Q501|family|Q801|", "Q501|given|Q904|",

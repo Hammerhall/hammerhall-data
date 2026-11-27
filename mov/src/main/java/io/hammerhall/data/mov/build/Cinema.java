@@ -105,6 +105,14 @@ public final class Cinema {
     public record PlaceLink(int movieId, int placeId, Integer cityId) {
     }
 
+    /**
+     * Документальные фильмы профиля (жанр {@code Documentary}) и их актёрский состав, который не берётся (§11): фильмов,
+     * не взятых строк {@code roles} (пар «актёр, фильм»), людей, выпавших из {@code actors} (других ролей нет) и из
+     * {@code people} (нет и других ссылок — режиссёр, съёмочная группа).
+     */
+    public record Documentaries(long movies, long rolesNotTaken, long actorsDropped, long peopleDropped) {
+    }
+
     /** Строки всех таблиц профиля — копятся при сборке. */
     private static final class Rows {
         final List<Movie> movies = new ArrayList<>();
@@ -137,6 +145,7 @@ public final class Cinema {
     private final Map<Rules.TitlePath, Long> titlePaths;
     private final Map<Places.CityPath, Long> placePaths;
     private final Map<Places.Excluded, Long> placesExcluded;
+    private final Documentaries documentaries;
     private final BigDecimal femaleShare;
     private final int moviesFull;
     private final Map<String, Long> stats;
@@ -144,7 +153,8 @@ public final class Cinema {
     private Cinema(Profile profile, Rows rows, Map<Names.GenderPath, Long> genderPaths,
                    Map<Names.GenderPath, Long> peopleGenderPaths, Map<Rules.YearPath, Long> yearPaths,
                    Map<Rules.TitlePath, Long> titlePaths, Map<Places.CityPath, Long> placePaths,
-                   Map<Places.Excluded, Long> placesExcluded, BigDecimal femaleShare, int moviesFull, Map<String, Long> stats) {
+                   Map<Places.Excluded, Long> placesExcluded, Documentaries documentaries, BigDecimal femaleShare, int moviesFull,
+                   Map<String, Long> stats) {
         this.profile = profile;
         this.rows = rows;
         this.genderPaths = Collections.unmodifiableMap(new EnumMap<>(genderPaths));
@@ -153,6 +163,7 @@ public final class Cinema {
         this.titlePaths = Collections.unmodifiableMap(new EnumMap<>(titlePaths));
         this.placePaths = Collections.unmodifiableMap(new EnumMap<>(placePaths));
         this.placesExcluded = Collections.unmodifiableMap(new EnumMap<>(placesExcluded));
+        this.documentaries = documentaries;
         this.femaleShare = femaleShare;
         this.moviesFull = moviesFull;
         this.stats = Collections.unmodifiableMap(stats);
@@ -295,6 +306,11 @@ public final class Cinema {
      */
     public Map<Places.Excluded, Long> placesExcluded() {
         return placesExcluded;
+    }
+
+    /** Документальные фильмы профиля и их актёрский состав, который не берётся (§11). */
+    public Documentaries documentaries() {
+        return documentaries;
     }
 
     /** Доля {@code F} среди актёров {@code full} с полом из источника — вероятность {@code F} там, где источник молчит. */
@@ -470,6 +486,8 @@ public final class Cinema {
         // ---- таблицы профиля: фильмы и их связи
         Rows out = new Rows();
         Set<Integer> profileFilms = new HashSet<>();
+        // документальные фильмы профиля (жанр Documentary — по тем же правилам, что дают жанр): их актёрский состав не берётся
+        Set<Integer> documentaries = new HashSet<>();
         for (int i = 0; i < n; i++) if (in[i]) profileFilms.add(films.get(i).id());
         TreeMap<Integer, List<Integer>> filmsOfDirector = new TreeMap<>();
         Map<Integer, TreeSet<Integer>> genresOf = new HashMap<>();
@@ -492,6 +510,7 @@ public final class Cinema {
             yearPaths.merge(f.year().path(), 1L, Long::sum);
             titlePaths.merge(f.titlePath(), 1L, Long::sum);
             genresOf.put(id, f.genres());
+            if (f.genres().contains(Genres.DOCUMENTARY)) documentaries.add(id);
             for (int g : f.genres()) out.moviesGenres.add(new Pair(id, g));
             for (int d : f.links().directors()) {
                 if (human.apply(d) == null) continue;
@@ -606,12 +625,20 @@ public final class Cinema {
         }
 
         // роли и актёры профиля; пол, где источник молчит, — от доли F среди актёров full с полом из источника (одна на
-        // все профили: пол актёра — один во всех профилях)
-        TreeSet<Integer> actorIds = new TreeSet<>(), fullActors = new TreeSet<>();
+        // все профили: пол актёра — один во всех профилях). Актёрский состав документальных фильмов не берётся: актёр —
+        // только с ролью в другом фильме. Популярность, рейтинг и доля F — как до этого отбора: он касается только того,
+        // какие роли и люди попадают в выпуск
+        TreeSet<Integer> actorIds = new TreeSet<>(), fullActors = new TreeSet<>(), documentaryActors = new TreeSet<>();
+        long documentaryRoles = 0;
         for (long k : pairs) {
             int a = (int) (k >>> 32), f = (int) k;
             fullActors.add(a);
             if (!profileFilms.contains(f)) continue;
+            if (documentaries.contains(f)) {
+                documentaryRoles++;
+                documentaryActors.add(a);
+                continue;
+            }
             out.roles.add(new Role(a, f, Rules.roles(rolesOf.get(k))));
             actorIds.add(a);
         }
@@ -628,7 +655,7 @@ public final class Cinema {
         for (int a : actorIds) paths.merge(humans.get(a).gender().path(), 1L, Long::sum);
         Set<Integer> notTakenInProfile = new TreeSet<>();
         for (int i = 0; i < cast.size(); i++) {
-            if (!profileFilms.contains(cast.film(i))) continue;
+            if (!profileFilms.contains(cast.film(i)) || documentaries.contains(cast.film(i))) continue;
             Human h = humans.get(cast.person(i));
             if (h != null && h.gender().path() == Names.GenderPath.NOT_TAKEN) notTakenInProfile.add(cast.person(i));
         }
@@ -644,6 +671,13 @@ public final class Cinema {
         TreeSet<Integer> peopleIds = new TreeSet<>(actorIds);
         peopleIds.addAll(filmsOfDirector.keySet());
         peopleIds.addAll(crewPeople);
+        long actorsDropped = 0, peopleDropped = 0;
+        for (int a : documentaryActors) {
+            if (actorIds.contains(a)) continue;
+            actorsDropped++;
+            if (!peopleIds.contains(a)) peopleDropped++;
+        }
+        Documentaries docs = new Documentaries(documentaries.size(), documentaryRoles, actorsDropped, peopleDropped);
         Map<Names.GenderPath, Long> peoplePaths = new EnumMap<>(Names.GenderPath.class);
         for (Names.GenderPath gp : Names.GenderPath.values()) peoplePaths.put(gp, 0L);
         for (int p : peopleIds) {
@@ -711,6 +745,10 @@ public final class Cinema {
         stats.put("roles", (long) out.roles.size());
         stats.put("roles_full", (long) pairs.length);
         stats.put("people", (long) out.people.size());
+        stats.put("documentaries", docs.movies());
+        stats.put("documentary_roles_not_taken", docs.rolesNotTaken());
+        stats.put("documentary_actors_dropped", docs.actorsDropped());
+        stats.put("documentary_people_dropped", docs.peopleDropped());
         stats.put("movies_crew", (long) out.crew.size());
         stats.put("companies", (long) out.companies.size());
         stats.put("series", (long) out.series.size());
@@ -722,7 +760,8 @@ public final class Cinema {
         stats.put("movies_settings", (long) out.settings.size());
         stats.put("people_not_taken", (long) notHumans.size());
         BigDecimal shareOut = known == 0 ? null : Rules.prob((int) female, (int) known);
-        return new Cinema(profile, out, paths, peoplePaths, yearPaths, titlePaths, placePaths, placesExcluded, shareOut, n, stats);
+        return new Cinema(profile, out, paths, peoplePaths, yearPaths, titlePaths, placePaths, placesExcluded, docs, shareOut, n,
+                stats);
     }
 
     /**

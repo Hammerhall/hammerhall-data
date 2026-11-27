@@ -74,6 +74,15 @@ class GenresTest {
     }
 
     @Test
+    @DisplayName("Mockumentary (Q459435) — Comedy: якорь уровня 0 перекрывает предков (документальный фильм и пародия)")
+    void mockumentary() {
+        Map<Integer, int[]> g = graph(new int[]{459435, 93204}, new int[]{459435, 622548});
+        assertEquals(Set.of(COMEDY), Genres.ofValue(459435, g));
+        assertEquals(List.of(COMEDY), Genres.ANCHORS.get(459435));
+        assertEquals(Set.of(DOCUMENTARY), Genres.ofValue(472637, graph(new int[]{472637, 93204})), "docufiction — как есть");
+    }
+
+    @Test
     @DisplayName("Глубина: якорь на уровне 6 — да, на уровне 7 — нет; петля P279 и элемент без предков — пусто")
     void depthAndLoops() {
         Map<Integer, int[]> six = graph(new int[]{10, 11}, new int[]{11, 12}, new int[]{12, 13}, new int[]{13, 14},

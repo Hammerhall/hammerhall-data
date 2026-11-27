@@ -3,6 +3,7 @@ package io.hammerhall.data.mov;
 import io.hammerhall.data.core.gen.Profile;
 import io.hammerhall.data.core.random.RandomStreams;
 import io.hammerhall.data.mov.build.Cinema;
+import io.hammerhall.data.mov.build.Genres;
 import io.hammerhall.data.mov.build.Places;
 import io.hammerhall.data.mov.build.Rules;
 import io.hammerhall.data.mov.build.Names.GenderPath;
@@ -107,7 +108,8 @@ class CinemaTest {
         assertNull(g.get(113), "якорь на уровне 7 и петля — жанров нет");
         assertEquals(List.of(6, 14), g.get(117));
         assertEquals(List.of(20), g.get(119), "P136 short film, хотя 41 минута");
-        assertEquals(6, g.size());
+        assertEquals(List.of(6), g.get(120), "mockumentary — только Comedy (не Documentary + Comedy от предков)");
+        assertEquals(7, g.size());
     }
 
     @Test
@@ -133,7 +135,8 @@ class CinemaTest {
         assertEquals("Else", a.get(514).lastName(), "en «(unnamed)» — пусто без уточнения: mul");
         assertEquals("Lund", a.get(515).lastName(), "en с обратной косой — негодна: fr");
         List<Cinema.Director> d = c.directors();
-        assertEquals(List.of(501, 506), d.stream().map(Cinema.Director::id).toList(), "Q508 без имени, Q509 — не человек");
+        assertEquals(List.of(501, 506, 522), d.stream().map(Cinema.Director::id).toList(),
+                "Q508 без имени, Q509 — не человек; Q522 — режиссёр документального фильма");
         assertEquals(new Cinema.Director(501, "Steven", "Halden", "Стивен Халден"), d.get(0));
         assertEquals(new Cinema.Director(506, "John", "Smith", null), d.get(1),
                 "иное P21 — не в актёрах, но в режиссёрах; уточнение в скобках убрано");
@@ -167,7 +170,8 @@ class CinemaTest {
     void roles() throws IOException {
         Map<String, String> r = new HashMap<>();
         for (Cinema.Role x : cinema(Profile.FULL).roles()) r.put(x.actorId() + "-" + x.movieId(), x.role());
-        assertEquals(14, r.size());
+        assertEquals(15, r.size());
+        assertTrue(r.containsKey("514-120"), "состав mockumentary берётся — фильм не документальный");
         assertEquals("Captain Rook / Narrator", r.get("502-101"));
         assertEquals("Ghost", r.get("503-101"), "метка mul персонажа; повтор строки — одна роль");
         assertNull(r.get("504-101"));
@@ -195,7 +199,7 @@ class CinemaTest {
         assertEquals(new BigDecimal("0.6667"), f.get("501-6"), "Comedy — в 2 из 3 (Q113 без жанров не в счёт)");
         assertEquals(new BigDecimal("0.3333"), f.get("501-9"));
         assertEquals(new BigDecimal("0.5000"), f.get("506-20"));
-        assertEquals(10, f.size());
+        assertEquals(12, f.size(), "у Q522 — Documentary и Short документального Q111");
         Map<String, BigDecimal> s = new HashMap<>();
         for (Cinema.DirectorGenre d : cinema(Profile.SMALL).directorsGenres()) s.put(d.directorId() + "-" + d.genreId(), d.prob());
         assertEquals(Map.of("501-6", BigDecimal.ONE.setScale(4), "501-9", BigDecimal.ONE.setScale(4), "501-18",
@@ -326,8 +330,9 @@ class CinemaTest {
     void peopleV2() throws IOException {
         Cinema c = cinema(Profile.FULL);
         Map<Integer, Cinema.Person> p = people(c);
-        assertEquals(List.of(501, 502, 503, 504, 505, 506, 507, 510, 511, 512, 513, 514, 515, 516, 517, 518),
-                c.people().stream().map(Cinema.Person::id).toList(), "Q509 — не человек, Q519 — без имени, Q520 — только в дубле");
+        assertEquals(List.of(501, 502, 503, 504, 505, 506, 507, 510, 511, 512, 513, 514, 515, 516, 517, 518, 522),
+                c.people().stream().map(Cinema.Person::id).toList(),
+                "Q509 — не человек, Q519 — без имени, Q520 — только в дубле, Q521 — только в составе документального фильма");
         assertEquals(new Cinema.Person(501, "Steven", "Halden", "Стивен Халден", "M", LocalDate.of(1946, 12, 18), 1946, null,
                 null, 1_000_001, 6000), p.get(501), "место — первое по номеру P19 (Q6000), город — его");
         assertEquals(new Cinema.Person(506, "John", "Smith", null, null, LocalDate.of(1900, 3, 4), 1900, LocalDate.of(1999, 12, 31),
@@ -359,7 +364,7 @@ class CinemaTest {
         assertEquals("F", p.get(517).gender(), "по имени");
         assertTrue(Set.of("M", "F").contains(p.get(518).gender()), "от seed");
         for (Cinema.Actor a : c.actors()) assertEquals(a.gender(), p.get(a.id()).gender(), "пол актёра — как в actors");
-        assertEquals(Map.of(GenderPath.P21, 7L, GenderPath.GIVEN_NAME, 4L, GenderPath.SEEDED, 3L, GenderPath.NOT_TAKEN, 2L),
+        assertEquals(Map.of(GenderPath.P21, 8L, GenderPath.GIVEN_NAME, 4L, GenderPath.SEEDED, 3L, GenderPath.NOT_TAKEN, 2L),
                 c.peopleGenderPaths());
         assertEquals(List.of("501 USA", "510 QXA", "510 USA"),
                 c.peopleCountries().stream().map(x -> x.movieId() + " " + x.code()).toList(), "ESH — исключён, у Q9002 нет ISO3");
@@ -548,5 +553,29 @@ class CinemaTest {
         assertTrue(d.crew().get(999) == null && d.datesExtra().get("P571").get(999) == null);
         assertEquals(1L, d.stats().get("film_money_unreadable"));
         assertEquals(1L, d.stats().get("people_dates_unreadable"));
+    }
+
+    // ---------------------------------------------------------------- §11: документальные фильмы
+
+    @Test
+    @DisplayName("Документальный фильм: актёрский состав не берётся; актёр без других ролей выпадает, с другими — остаётся; режиссёр — остаётся")
+    void documentaries() throws IOException {
+        Cinema c = cinema(Profile.FULL);
+        assertTrue(c.moviesGenres().contains(new Cinema.Pair(111, Genres.DOCUMENTARY)), "Q111 — документальный (класс Q93204)");
+        assertTrue(c.roles().stream().noneMatch(r -> r.movieId() == 111), "строк roles у документального фильма нет");
+        Map<Integer, Cinema.Actor> a = actors(c);
+        assertTrue(!a.containsKey(521), "Q521 снимается только в документальном — не актёр");
+        assertTrue(!a.containsKey(518), "Q518 — тоже, но он в съёмочной группе");
+        assertTrue(a.containsKey(502), "Q502 играет и в обычных фильмах");
+        assertEquals(List.of("502-101", "502-107"), c.roles().stream().filter(r -> r.actorId() == 502)
+                .map(r -> r.actorId() + "-" + r.movieId()).toList(), "без роли в Q111");
+        Map<Integer, Cinema.Person> p = people(c);
+        assertTrue(!p.containsKey(521), "на Q521 больше ничто не ссылается — его нет и в people");
+        assertTrue(p.containsKey(518), "Q518 — в people (оператор Q101)");
+        assertTrue(p.containsKey(522) && c.moviesDirectors().contains(new Cinema.Pair(522, 111)), "режиссёр — как раньше");
+        assertEquals(new Cinema.Documentaries(1, 3, 2, 1), c.documentaries(), "фильм, роли (3 пары), актёры (Q518, Q521), люди (Q521)");
+        assertEquals(1L, c.stats().get("documentary_people_dropped"));
+        assertEquals(new Cinema.Documentaries(0, 0, 0, 0), cinema(Profile.SMALL).documentaries(), "Q111 не в small");
+        assertEquals(new BigDecimal("0.4444"), c.femaleShare(), "доля F — по актёрам full до отбора (у Q521 и Q518 пол — от seed)");
     }
 }

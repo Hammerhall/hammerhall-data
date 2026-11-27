@@ -251,6 +251,14 @@ public final class MovDataset implements Dataset {
         Map<String, Object> pe = new LinkedHashMap<>();
         if (c != null) for (Places.Excluded e : Places.Excluded.values()) pe.put(e.name().toLowerCase(Locale.ROOT), c.placesExcluded().get(e));
         m.put("places_excluded", pe);
+        Map<String, Object> dm = new LinkedHashMap<>();
+        if (c != null) {
+            dm.put("movies", c.documentaries().movies());
+            dm.put("roles_not_taken", c.documentaries().rolesNotTaken());
+            dm.put("actors_dropped", c.documentaries().actorsDropped());
+            dm.put("people_dropped", c.documentaries().peopleDropped());
+        }
+        m.put("documentaries", dm);
         Map<String, Object> site = SiteModule.manifest(ctx);
         if (site != null) m.put("synthetic", site);
         return m;

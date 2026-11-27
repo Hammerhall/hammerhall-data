@@ -82,6 +82,7 @@ public final class Genres {
         a(m, 40831, COMEDY);                  // comedy
         a(m, 5778924, COMEDY);                // black comedy film
         a(m, 622548, COMEDY);                 // parody film
+        a(m, 459435, COMEDY);                 // mockumentary — пародия с актёрами, не документальный (§11)
         a(m, 128758, COMEDY);                 // satire
         a(m, 859369, COMEDY, DRAMA);          // comedy drama
         a(m, 860626, COMEDY, ROMANCE);        // romantic comedy

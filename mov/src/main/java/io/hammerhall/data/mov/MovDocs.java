@@ -58,6 +58,7 @@ public final class MovDocs implements Release.Docs {
         Map<String, Object> tp = (Map<String, Object>) m.get("movies_title");
         Map<String, Object> pc = (Map<String, Object>) m.get("places_city");
         Map<String, Object> pe = (Map<String, Object>) m.get("places_excluded");
+        Map<String, Object> dm = (Map<String, Object>) m.get("documentaries");
         Map<String, Map<String, Object>> files = new LinkedHashMap<>();
         for (Map<String, Object> f : (List<Map<String, Object>>) m.get("files")) files.put((String) f.get("table"), f);
         String profile = String.valueOf(m.get("profile"));
@@ -163,7 +164,14 @@ public final class MovDocs implements Release.Docs {
                    alpha-3 значений P27.
                 8. **Роли** — строка на пару «актёр, фильм»: роль — P4633, иначе метка `en` (`mul`) персонажа P453, иначе
                    пусто; несколько ролей актёра в фильме — через « / » (по алфавиту, без повторов); роль со знаками,
-                   которых нет в TSV, — пусто.
+                   которых нет в TSV, — пусто. В документальных фильмах актёрский состав не берётся: там снимаются
+                   реальные люди в роли самих себя; актёр — только с ролью в другом фильме, человек в `people` — только
+                   если на него есть другая ссылка (режиссёр, съёмочная группа).
+                """);
+        sb.append("   Документальных фильмов профиля — ").append(sp(dm.get("movies"))).append(", не взято ролей — ")
+                .append(sp(dm.get("roles_not_taken"))).append(", выпало актёров — ").append(sp(dm.get("actors_dropped")))
+                .append(", людей — ").append(sp(dm.get("people_dropped"))).append(".\n");
+        sb.append("""
                 9. **Страны и языки** — коды значений P495 (ISO 3166-1 alpha-3) и P364 (ISO 639-1, иначе ISO 639-3); без
                    кода — строки нет; без нескольких кодов стран (и в гражданстве, странах студий и выхода по странам).
                 10. **Студии и прокатчики** (`companies`) — значения P272 (`production`) и P750 (`distribution`) фильмов

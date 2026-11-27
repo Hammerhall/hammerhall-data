@@ -67,8 +67,8 @@ class MovReleaseTest {
         assertTrue(movies.get(2).endsWith("\t\t"), movies.get(2));
         assertEquals("id\tfirst_name\tlast_name\tgender\tname_ru", lines(tmp.resolve("actors.tsv.gz")).getFirst());
         assertTrue(lines(tmp.resolve("actors.tsv.gz")).contains("505\t\tZelda\tF\t"));
-        assertEquals(List.of("id\tfirst_name\tlast_name\tname_ru", "501\tSteven\tHalden\tСтивен Халден", "506\tJohn\tSmith\t"),
-                lines(tmp.resolve("directors.tsv.gz")));
+        assertEquals(List.of("id\tfirst_name\tlast_name\tname_ru", "501\tSteven\tHalden\tСтивен Халден", "506\tJohn\tSmith\t",
+                "522\tVictor\tLane\t"), lines(tmp.resolve("directors.tsv.gz")));
         List<String> roles = lines(tmp.resolve("roles.tsv.gz"));
         assertEquals("actor_id\tmovie_id\trole", roles.getFirst());
         assertEquals("502\t101\tCaptain Rook / Narrator", roles.get(1));
@@ -92,7 +92,8 @@ class MovReleaseTest {
                 + "\tbirth_place_id", people.getFirst());
         assertEquals("501\tSteven\tHalden\tСтивен Халден\tM\t1946-12-18\t1946\t\t\t1000001\t6000", people.get(1));
         assertTrue(people.contains("506\tJohn\tSmith\t\t\t1900-03-04\t1900\t1999-12-31\t1999\t\t"), people.toString());
-        assertEquals(17, people.size());
+        assertEquals(18, people.size());
+        assertTrue(people.stream().noneMatch(x -> x.startsWith("521\t")), "только в составе документального фильма");
         assertEquals(List.of("person_id\tcountry_code", "501\tUSA", "510\tQXA", "510\tUSA"), lines(tmp.resolve("people_countries.tsv.gz")));
         assertEquals(List.of("movie_id\tperson_id\tjob", "101\t501\tproducer", "101\t502\twriter", "101\t516\twriter",
                 "101\t517\tcomposer", "101\t518\tcinematographer", "112\t516\twriter", "112\t518\teditor"),
@@ -171,6 +172,7 @@ class MovReleaseTest {
         assertEquals(5L, inputs.get(1).get("rows"));
         assertEquals(Map.of("geonames", 2L, "nearest", 3L, "none", 4L, "country", 1L), f.get("places_city"));
         assertEquals(Map.of("excluded_country", 1L, "in_excluded_country", 1L, "listed", 1L), f.get("places_excluded"));
+        assertEquals(Map.of("movies", 1L, "roles_not_taken", 3L, "actors_dropped", 2L, "people_dropped", 1L), f.get("documentaries"));
         Map<String, Object> sel = (Map<String, Object>) a.get("selection");
         assertEquals(18L, sel.get("movies_full"));
         assertEquals(2L, sel.get("movies"));
@@ -240,6 +242,9 @@ class MovReleaseTest {
                 + "другой язык — 0."), md);
         assertTrue(md.contains("Людей по пути\n   пола: P21 — 7, имя — 3, от seed — 3, пусто — 1."), md);
         assertTrue(md.contains("| `people.tsv.gz` | 14 |"), md);
+        assertTrue(md.contains("В документальных фильмах актёрский состав не берётся: там снимаются\n"
+                + "   реальные люди в роли самих себя"), md);
+        assertTrue(md.contains("Документальных фильмов профиля — 0, не взято ролей — 0, выпало актёров — 0, людей — 0."), md);
         assertTrue(md.contains("| `movies_locations.tsv.gz` | 4 |"), md);
         assertTrue(md.contains("| `places.tsv.gz` | 6 |"), md);
         assertTrue(md.contains("| `movies_settings.tsv.gz` | 1 |"), md);
