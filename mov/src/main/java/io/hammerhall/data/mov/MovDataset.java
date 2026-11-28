@@ -20,7 +20,6 @@ import io.hammerhall.data.mov.source.SourceData;
 import io.hammerhall.data.mov.source.WorldCities;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
@@ -49,11 +48,10 @@ public final class MovDataset implements Dataset {
     public static final LocalDate SNAPSHOT_DATE = LocalDate.parse(SNAPSHOT.substring("mov-source-".length()),
             DateTimeFormatter.BASIC_ISO_DATE);
     /**
-     * Окно выпуска — синтетики «Свартальвхейм» (как у «Кременъ»): кино из снимка от окна не зависит; {@code --to} меняет
+     * Окно выпуска — синтетики «Свартальвхейм» (общее окно связанных наборов): кино из снимка от окна не зависит; {@code --to} меняет
      * только конец окна и срез синтетики.
      */
-    public static final Period PERIOD = new Period(LocalDate.of(2025, 10, 1), LocalDate.of(2027, 10, 30),
-            Instant.parse("2027-09-01T00:00:00Z"), Period.MOSCOW);
+    public static final Period PERIOD = Period.common(Period.MOSCOW);
     /**
      * Второй вход — города набора «Мир» ({@code cities.tsv.gz} выпуска {@code wld-data-v1}): город места (P19, P915,
      * P840, P159) — по GeoNames ID или ближайший той же страны. Сумма содержимого — та же, что в паспорте

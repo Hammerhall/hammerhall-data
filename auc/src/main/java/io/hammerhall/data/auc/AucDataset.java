@@ -17,8 +17,6 @@ import io.hammerhall.data.core.schema.Schema;
 import io.hammerhall.data.core.time.Period;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -40,9 +38,8 @@ public final class AucDataset implements Dataset {
     public static final String VERSION = AucSchema.VERSION;
     public static final String GENERATOR_VERSION = "auc-gen 0.1.0";
     public static final long DEFAULT_SEED = 20261018L;
-    /** Период — как у «Кременъ»: 01.10.2025 – 30.10.2027, «сейчас» — 01.09.2027 00:00 UTC (среда, 03:00 по Москве). */
-    public static final Period PERIOD = new Period(LocalDate.of(2025, 10, 1), LocalDate.of(2027, 10, 30),
-            Instant.parse("2027-09-01T00:00:00Z"), Period.MOSCOW);
+    /** Период — общее окно связанных наборов: 01.10.2025 – 30.10.2027, «сейчас» — 01.09.2027 00:00 UTC (среда, 03:00 по Москве). */
+    public static final Period PERIOD = Period.common(Period.MOSCOW);
     /** Вход: города выпуска {@code sto-data-v1}. */
     public static final Input CITIES = new Input("cities", "cities.tsv.gz", CitiesInput.STO_DATA_V1_SHA256_TSV, null);
 

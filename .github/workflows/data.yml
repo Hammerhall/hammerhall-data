@@ -73,6 +73,10 @@ jobs:
           TAG: ${{ github.ref_name }}
           DATASET: ${{ inputs.dataset }}
         run: bash tools/ci/dataset.sh
+      - name: Граф входов всех наборов — без кругов, граф в README — как в паспортах
+        run: |
+          python3 -X utf8 -I -m unittest discover -s tools -p 'test_*.py'
+          python3 -X utf8 -I tools/graph.py
 
   small:
     name: small · ${{ matrix.os }}

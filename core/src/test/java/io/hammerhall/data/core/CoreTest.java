@@ -112,6 +112,8 @@ class CoreTest {
         assertEquals(1824940800L, p.endEpochExclusive(), "2027-10-31T00:00Z");
         assertEquals(1764536400L, p.businessMidnight(LocalDate.of(2025, 12, 1)), "00:00 по Москве = 21:00 UTC");
         assertEquals(LocalDate.of(2025, 12, 1), p.businessDate(1764536400L));
+        assertEquals(p, Period.common(Period.MOSCOW), "общее окно связанных наборов");
+        assertEquals(1819756800L, Period.common(java.time.ZoneOffset.UTC).nowEpoch(), "2027-09-01T00:00Z");
     }
 
     @Test
